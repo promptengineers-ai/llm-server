@@ -18,7 +18,7 @@ REDIS_URL = os.getenv("REDIS_URL", 'redis://localhost:6379/0')
 # S3 Bucket Credentials
 S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY", '')
 S3_SECRET_KEY = os.getenv("S3_SECRET_KEY", '')
-S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME", 'precision-x')
+S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME", 'llm-server')
 
 # Pinecone Credentials
 PINECONE_KEY = os.getenv("PINECONE_KEY", '')
