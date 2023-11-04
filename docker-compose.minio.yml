@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+# Minio
+  minio:
+    image: minio/minio
+    container_name: formio-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ACCESS_KEY: CHANGEME
+      MINIO_SECRET_KEY: CHANGEME
+    volumes:
+      - ~/minio/data:/data
+      - ~/minio/config:/root/.minio
+    command: server /data --console-address ":9001"

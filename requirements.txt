@@ -1,0 +1,14 @@
+cryptography
+fastapi
+uvicorn
+openai
+Jinja2
+langchain==0.0.305
+motor
+boto3
+beautifulsoup4
+nest_asyncio
+python-multipart
+pinecone-client
+tiktoken
+ujson
