@@ -1,5 +1,5 @@
 <h1 align="center">
-  🤖 Precision X - Serverless Chat
+  🤖 Prompt Engineers AI - LLM Server 
 </h1>
 <p align="center">
 Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
