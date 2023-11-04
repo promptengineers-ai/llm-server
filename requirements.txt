@@ -12,3 +12,5 @@ python-multipart
 pinecone-client
 tiktoken
 ujson
+unstructured
+faiss-cpu
