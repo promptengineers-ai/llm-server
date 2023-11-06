@@ -3,7 +3,6 @@ name: Run Tests
 on: [push]
 
 env:
-  PYTHON_VERSION: 3.9
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
 jobs:
@@ -17,7 +16,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: $PYTHON_VERSION
+        python-version: 3.9
         cache: 'pip'
 
     - name: Install dependencies
