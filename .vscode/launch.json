@@ -22,9 +22,9 @@
 			"module": "pytest",
 			"args": [
 				"-s",
-				"tests/unit/strategies/llms/ollama.py"
+				"tests/integration/test_main.py"
 			],
-			"envFile": "${workspaceFolder}/.env.dev",
+			"envFile": "${workspaceFolder}/.env.local",
 		}
 	]
 }

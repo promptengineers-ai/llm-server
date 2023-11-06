@@ -1,8 +1,4 @@
-from starlette.testclient import TestClient
-
-from server.api import app
-
-client = TestClient(app)
+from tests import client
 
 def test_ping():
     response = client.get("/status")
