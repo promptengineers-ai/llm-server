@@ -28,7 +28,7 @@ def token_stream(token: str):
 		'message': token,
 		'type': 'stream'
     }
-    logger.debug('[src.utils.token_stream] Stream: %s', str(data))
+    logger.debug('[utils.stream.token_stream] Stream: %s', str(data))
     return f"data: {ujson.dumps(data)}\n\n"
 
 def end_stream():
@@ -38,7 +38,7 @@ def end_stream():
 		'message': "",
 		'type': 'end'
     }
-    logger.debug('[src.utils.end_stream] End: %s', str(end_content))
+    logger.debug('[stream.utils.end_stream] End: %s', str(end_content))
     return f"data: {ujson.dumps(end_content)}\n\n"
 
 async def handle_streaming_response(stream, stream_type):

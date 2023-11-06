@@ -1,0 +1,30 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Python: FastAPI",
+			"type": "python",
+			"request": "launch",
+			"module": "uvicorn",
+			"args": [
+				"server.api:app",
+				"--log-level",
+				"debug"
+			],
+			"jinja": true,
+			"justMyCode": true,
+			"envFile": "${workspaceFolder}/.env.local"
+		},
+		{
+			"name": "Debug Single Test",
+			"type": "python",
+			"request": "launch",
+			"module": "pytest",
+			"args": [
+				"-s",
+				"tests/unit/strategies/llms/ollama.py"
+			],
+			"envFile": "${workspaceFolder}/.env.dev",
+		}
+	]
+}

@@ -3,14 +3,15 @@ fastapi
 uvicorn
 openai
 Jinja2
-langchain==0.0.305
+langchain==0.0.330
 motor
-boto3
+minio
+# boto3
 beautifulsoup4
 nest_asyncio
 python-multipart
 pinecone-client
+redis
 tiktoken
 ujson
-unstructured
-faiss-cpu
+# unstructured

@@ -8,11 +8,11 @@ from langchain.prompts import MessagesPlaceholder
 # from langchain.tools import AIPluginTool
 from langchain.chains import (
     ConversationChain,
-	# ConversationalRetrievalChain,
-	# LLMChain
+	ConversationalRetrievalChain,
+	LLMChain
 )
-# from langchain.chains.chat_vector_db.prompts import CONDENSE_QUESTION_PROMPT
-# from langchain.chains.question_answering import load_qa_chain
+from langchain.chains.chat_vector_db.prompts import CONDENSE_QUESTION_PROMPT
+from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
@@ -23,8 +23,8 @@ from langchain.prompts import (
 
 # from server.config import APP_ENV
 # from server.config.tools import AVAILABLE_TOOLS
-# from server.utils.chains import get_chat_history, filter_tools
-# from server.utils.prompts import get_system_template
+from server.utils.chains import get_chat_history, filter_tools
+from server.utils.prompts import get_system_template
 
 
 class ChainService:
@@ -32,20 +32,20 @@ class ChainService:
 	def __init__(self, model):
 		self.model = model
 
-	# def condense_question(self):
-	# 	"""Condense a question into a single sentence."""
-	# 	return LLMChain(
-	# 		llm=self.model,
-	# 		prompt=CONDENSE_QUESTION_PROMPT,
-	# 	)
+	def condense_question(self):
+		"""Condense a question into a single sentence."""
+		return LLMChain(
+			llm=self.model,
+			prompt=CONDENSE_QUESTION_PROMPT,
+		)
 
-	# def collect_docs(self, system_message):
-	# 	"""Collect documents from the vectorstore."""
-	# 	return load_qa_chain(
-	# 		self.model,
-	# 		chain_type='stuff',
-	# 		prompt=get_system_template(system_message)
-	# 	)
+	def collect_docs(self, system_message):
+		"""Collect documents from the vectorstore."""
+		return load_qa_chain(
+			self.model,
+			chain_type='stuff',
+			prompt=get_system_template(system_message)
+		)
 
 	# def create_executor(
 	# 	self,
@@ -72,20 +72,20 @@ class ChainService:
 	# 	agent = OpenAIFunctionsAgent(llm=self.model, tools=tools, prompt=prompt)
 	# 	return AgentExecutor(agent=agent, tools=tools, memory=memory, verbose=verbose, callbacks=callbacks)
 
-	# def conversation_retrieval(
-	# 	self,
-	# 	vectorstore,
-	# 	system_message
-	# ):
-	# 	"""Retrieve a conversation."""
-	# 	memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-	# 	return ConversationalRetrievalChain(
-	# 		question_generator=self.condense_question(),
-	# 		retriever=vectorstore.as_retriever(),
-	# 		memory=memory,
-	# 		combine_docs_chain=self.collect_docs(system_message),
-	# 		get_chat_history=get_chat_history,
-	# 	)
+	def conversation_retrieval(
+		self,
+		vectorstore,
+		system_message
+	):
+		"""Retrieve a conversation."""
+		memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+		return ConversationalRetrievalChain(
+			question_generator=self.condense_question(),
+			retriever=vectorstore.as_retriever(),
+			memory=memory,
+			combine_docs_chain=self.collect_docs(system_message),
+			get_chat_history=get_chat_history,
+		)
 
 	# def agent_search(self, tools, chat_history):
 	# 	"""Agent search."""

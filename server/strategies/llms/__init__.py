@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import boto3
 
 from langchain.llms import Ollama
 from langchain.chat_models import ChatOpenAI, BedrockChat
@@ -37,6 +36,7 @@ class OpenAIStrategy(LLMStrategy):
 
 class BedrockStrategy(LLMStrategy):
 	def __init__(self, s3_access_key, s3_secret_key):
+		import boto3
 		self.client = boto3.client(
 			service_name='bedrock',
 			aws_access_key_id=s3_access_key,

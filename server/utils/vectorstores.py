@@ -9,7 +9,7 @@ from server.utils import logger
 def split_docs(
     documents,
     chunk_size: int = 1000,
-    chunk_overlap: int = 0,
+    chunk_overlap: int = 100,
     recursive: bool = True,
 ):
     ## Text Spliter

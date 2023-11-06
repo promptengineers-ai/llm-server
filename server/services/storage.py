@@ -1,80 +1,85 @@
-"""Storage Service"""
+"""Storage Service using MinIO"""
 import os
+from minio import Minio
+from minio.error import S3Error
 
-import boto3
-from botocore.exceptions import ClientError
-
+from server.config import S3_REGION, MINIO_SERVER
 from server.utils import logger
 
 
 class StorageService:
-    """Storage Service Class"""
-    def __init__(self, _aws_access_key_id, _aws_secret_access_key):
-        self.aws_access_key_id = _aws_access_key_id
-        self.aws_secret_access_key = _aws_secret_access_key
-        self.client = boto3.client('s3',
-                                    aws_access_key_id = self.aws_access_key_id, 
-                                    aws_secret_access_key = self.aws_secret_access_key
-                                    )
+    """Storage Service Class for MinIO"""
+    def __init__(self, access_key_id, secret_access_key, minio_server: str = None):
+        self.minio_server = minio_server if minio_server else (MINIO_SERVER or f"s3.{S3_REGION}.amazonaws.com")
+        self.access_key_id = access_key_id
+        self.secret_access_key = secret_access_key
+        self.client = Minio(
+            endpoint=self.minio_server,
+            access_key=self.access_key_id,
+            secret_key=self.secret_access_key,
+            secure=False if MINIO_SERVER or minio_server else True
+        )
 
     def retrieve_all_files_raw(self, bucket: str, prefix: str = ''):
-        """Retrieve all files from a bucket"""
+        """Retrieve all file details from a bucket"""
         files = []
-        for file in self.client.list_objects_v2(Bucket=bucket, Prefix=prefix).get('Contents', []):
-            if file:  # this condition will be False for empty strings
-                files.append(file)
+        try:
+            objects = self.client.list_objects(bucket, prefix=prefix, recursive=True)
+            for obj in objects:
+                files.append(obj)
+        except S3Error as err:
+            logger.error(f"Error retrieving files: {err}")
         return files
 
     def retrieve_all_files(self, bucket: str, prefix: str = ''):
-        """Retrieve all files from a bucket"""
+        """Retrieve all filenames from a bucket"""
         files = []
-        for key in self.client.list_objects_v2(Bucket=bucket, Prefix=prefix).get('Contents', []):
-            # filename = key['Key']
-            filename = key['Key'].split('/')[-1]
-            if filename:  # this condition will be False for empty strings
-                files.append(filename)
+        try:
+            objects = self.client.list_objects(bucket, prefix=prefix, recursive=True)
+            for obj in objects:
+                filename = obj.object_name.split('/')[-1]
+                if filename:
+                    files.append(filename)
+        except S3Error as err:
+            logger.error(f"Error retrieving filenames: {err}")
         return files
 
     def retrieve_file(self, bucket: str, path: str):
         """Retrieve a file from a bucket"""
         try:
-            response = self.client.get_object(Bucket=bucket, Key=path)
-            body = response['Body']
-            return body
-        except ClientError as err:
-            error_code = err.response["Error"]["Code"]
-            if error_code == "AccessDenied":
-                logger.error("[storage_service.retrieve_file] Access denied!")
-                return None
-            elif error_code == "InvalidLocationConstraint":
-                logger.error("[storage_service.retrieve_file] Invalid Path: %s", path)
-                return None
+            response = self.client.get_object(bucket, path)
+            return response.data
+        except S3Error as err:
+            logger.error(f"Error retrieving file {path}: {err}")
+            return None
 
     def delete_file(self, bucket: str, path: str):
         """Delete a file from a bucket"""
-        # Check if the file was deleted successfully
         try:
-            response = self.client.delete_object(Bucket=bucket, Key=path)
-            return response
-        except ClientError as err:
+            self.client.remove_object(bucket, path)
+        except S3Error as err:
+            logger.error(f"Error deleting file {path}: {err}")
             raise ValueError(f"Failed to delete file: {err}") from err
 
     def upload_file(self, file_name, bucket, object_name=None):
-        """Upload a file to an S3 bucket
+        """Upload a file to a MinIO bucket
 
         :param file_name: File to upload
         :param bucket: Bucket to upload to
-        :param object_name: S3 object name. If not specified then file_name is used
+        :param object_name: MinIO object name. If not specified then file_name is used
         :return: True if file was uploaded, else False
         """
 
-        # If S3 object_name was not specified, use file_name
         if object_name is None:
             object_name = os.path.basename(file_name)
 
         try:
-            self.client.upload_file(file_name, bucket, object_name)
-        except ClientError as err:
-            logger.error(err)
+            with open(file_name, 'rb') as file_data:
+                file_stat = os.stat(file_name)
+                self.client.put_object(
+                    bucket, object_name, file_data, file_stat.st_size
+                )
+        except S3Error as err:
+            logger.error(f"Error uploading file {file_name}: {err}")
             return False
         return True

@@ -1,9 +1,9 @@
 from typing import Union
 
 from server.config.test import TEST_USER_ID
-from server.config import (OPENAI_API_KEY, S3_ACCESS_KEY, S3_SECRET_KEY, S3_BUCKET_NAME,
+from server.config import (OPENAI_API_KEY, ACCESS_KEY_ID, ACCESS_SECRET_KEY, BUCKET,
                             PINECONE_ENV, PINECONE_INDEX, PINECONE_KEY, ALCHEMY_API_KEY,
-                            APP_SECRET, MONGO_CONNECTION, REDIS_URL)
+                            APP_SECRET, MONGO_CONNECTION, REDIS_URL, OLLAMA_BASE_URL)
 from server.utils.security import decrypt
 
 class UserRepo:
@@ -16,15 +16,16 @@ class UserRepo:
                 'data': {
                     'keys': {
                         'OPENAI_API_KEY': OPENAI_API_KEY,
-                        'S3_ACCESS_KEY': S3_ACCESS_KEY,
-                        'S3_SECRET_KEY': S3_SECRET_KEY,
-                        'S3_BUCKET_NAME': S3_BUCKET_NAME,
+                        'ACCESS_KEY_ID': ACCESS_KEY_ID,
+                        'ACCESS_SECRET_KEY': ACCESS_SECRET_KEY,
+                        'BUCKET': BUCKET,
                         'PINECONE_KEY': PINECONE_KEY,
                         'PINECONE_ENV': PINECONE_ENV,
                         'PINECONE_INDEX': PINECONE_INDEX,
                         'ALCHEMY_API_KEY': ALCHEMY_API_KEY,
                         'MONGO_CONNECTION': MONGO_CONNECTION,
                         'REDIS_URL': REDIS_URL,
+                        'OLLAMA_BASE_URL': OLLAMA_BASE_URL,
                     },
                 },
             }

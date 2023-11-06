@@ -10,15 +10,19 @@ APP_ORIGINS = os.getenv("APP_ORIGINS", '*')
 
 # OpenAI API Key
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", '')
+## Ollama URL
+OLLAMA_BASE_URL= os.getenv("OLLAMA_BASE_URL", 'http://localhost:11434')
 
 # Database Connections
-MONGO_CONNECTION = os.getenv("MONGO_CONNECTION", 'mongodb://localhost:27017/test')
+MONGO_CONNECTION = os.getenv("MONGO_CONNECTION")
 REDIS_URL = os.getenv("REDIS_URL", 'redis://localhost:6379/0')
 
 # S3 Bucket Credentials
-S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY", '')
-S3_SECRET_KEY = os.getenv("S3_SECRET_KEY", '')
-S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME", 'llm-server')
+BUCKET = os.getenv("BUCKET", 'precision-x')
+S3_REGION = os.getenv("S3_REGION", 'us-east-1')
+ACCESS_KEY_ID = os.getenv("ACCESS_KEY_ID", '')
+ACCESS_SECRET_KEY = os.getenv("ACCESS_SECRET_KEY", '')
+MINIO_SERVER = os.getenv("MINIO_SERVER", '')
 
 # Pinecone Credentials
 PINECONE_KEY = os.getenv("PINECONE_KEY", '')
