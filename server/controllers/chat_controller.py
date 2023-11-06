@@ -20,7 +20,7 @@ from server.utils.stream import token_stream, end_stream, wrap_done
 from server.utils.validation import Validator
 from server.utils.prompts import get_system_template
 
-ACCEPTED_OPENAI_MODELS = ['gpt-3.5-turbo', 'gpt-3.5-turbo-16k', 'gpt-4']
+ACCEPTED_OPENAI_MODELS = ['gpt-3.5-turbo', 'gpt-3.5-turbo-16k', 'gpt-4', 'gpt-4-1106-preview', 'gpt-4-vision-preview']
 ACCEPTED_OLLAMA_MODELS = ['llama2', 'codellama', 'vicuna', 'mistral']
 
 validator = Validator()
