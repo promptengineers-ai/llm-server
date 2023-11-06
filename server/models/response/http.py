@@ -96,10 +96,10 @@ class ResponseCreateVectorStore(BaseModel):
             "example": {
                 "message": "Vectorstore Created!",
                 "data": {
-                    "name": "formio-docs-and-website",
+                    "name": "docs-and-website",
                     "loaders": [
-                        {"type": "gitbook", "urls": ["https://help.form.io"]},
-                        {"type": "website", "urls": ["https://form.io"]},
+                        {"type": "gitbook", "urls": ["https://prompt-engineers.gitbook.io/documentation"]},
+                        {"type": "website", "urls": ["https://promptengineers.ai"]},
                     ],
                 },
             }
@@ -112,5 +112,5 @@ class ResponseCreateVectorStore(BaseModel):
 class ResponseListPineconeVectorStores(BaseModel):
     class Config:
         json_schema_extra = {
-            "example": {"vectorstores": ["pinecone-docs-guide-and-api", "formio"]}
+            "example": {"vectorstores": ["pinecone-docs-guide-and-api", "promptengineers-ai"]}
         }

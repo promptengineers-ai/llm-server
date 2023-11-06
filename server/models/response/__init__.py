@@ -42,7 +42,7 @@ class ResponseRetrieveVectorstores(BaseModel):
     class Config:
         """A message to send to the chatbot."""
 
-        json_schema_extra = {"example": {"vectorstores": ["formio.pkl", "bullmq.pkl"]}}
+        json_schema_extra = {"example": {"vectorstores": ["promptengineers-ai.pkl", "bullmq.pkl"]}}
 
 
 class ResponseRetrieveFiles(BaseModel):
@@ -64,8 +64,8 @@ class ResponseFileStorage(BaseModel):
                 "message": "File(s) Uploaded!",
                 "bucket_name": "prompt-engineers-dev",
                 "files": [
-                    "formio-standard-procedure.pdf",
-                    "formio-interview-questions.pdf",
+                    "standard-procedure.pdf",
+                    "interview-questions.pdf",
                 ],
             }
         }

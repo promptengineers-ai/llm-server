@@ -148,13 +148,13 @@ class RequestMultiLoader(BaseModel):
         json_schema_extra = {
             "example": {
                 "provider": "pinecone",
-                "index_name": "formio-docs-and-website",
+                "index_name": "docs-and-website",
                 "files": [
-                    "formio-customer-issue.pdf",
+                    "customer-issue.pdf",
                 ],
                 "loaders": [
-                    {"type": "gitbook", "urls": ["https://help.form.io"]},
-                    {"type": "web_base", "urls": ["https://form.io"]},
+                    {"type": "gitbook", "urls": ["https://prompt-engineers.gitbook.io/documentation"]},
+                    {"type": "web_base", "urls": ["https://promptengineers.ai"]},
                 ],
             }
         }
@@ -171,10 +171,10 @@ class RequestDataLoader(BaseModel):
         json_schema_extra = {
             "example": {
                 "provider": "pinecone",
-                "index_name": "formio-docs-and-website",
+                "index_name": "docs-and-website",
                 "loaders": [
-                    {"type": "gitbook", "urls": ["https://help.form.io"]},
-                    {"type": "web_base", "urls": ["https://form.io"]},
+                    {"type": "gitbook", "urls": ["https://prompt-engineers.gitbook.io/documentation"]},
+                    {"type": "web_base", "urls": ["https://promptengineers.ai"]},
                     {"type": "copy", "text": "This is a test."},
                 ],
             }
