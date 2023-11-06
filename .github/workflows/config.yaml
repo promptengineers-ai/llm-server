@@ -3,7 +3,7 @@ name: Run Tests
 on: [push]
 
 env:
-  PYTHON_VERSION: '3.9'
+  PYTHON_VERSION: 3.9
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
 jobs:
