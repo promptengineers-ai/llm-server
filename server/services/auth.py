@@ -8,9 +8,8 @@ security = HTTPBasic()
 
 # Simple in-memory user database
 users_db = {
-    "ryan.eggleston": "test1234",
-    "matt.martin": "test1234",
-    "jake.mertel": "test1234",
+    "admin": "password",
+    "user": "password"
 }
 
 def get_current_user(request: Request, credentials: HTTPBasicCredentials = Depends(security)):

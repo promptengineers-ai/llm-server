@@ -38,7 +38,7 @@ def end_stream():
 		'message': "",
 		'type': 'end'
     }
-    logger.debug('[stream.utils.end_stream] End: %s', str(end_content))
+    logger.debug('[utils.stream.end_stream] End: %s', str(end_content))
     return f"data: {ujson.dumps(end_content)}\n\n"
 
 async def handle_streaming_response(stream, stream_type):
