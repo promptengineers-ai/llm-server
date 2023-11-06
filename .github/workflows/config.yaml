@@ -17,20 +17,16 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: $PYTHON_VERSION
         cache: 'pip'
 
     - name: Install dependencies
       run: |
-        export OPENAI_API_KEY=$OPENAI_API_KEY
         python -m pip install --upgrade pip
         pip install -r requirements.txt -r requirements-dev.txt
 
     - name: Run tests
       run: |
+        export OPENAI_API_KEY=$OPENAI_API_KEY
         echo ">> Running all test cases"
         python3 -m pytest -s tests
-      # env:
-        # Set your environment variables here, if they are sensitive, use secrets.
-        # Example:
-        # MY_ENV_VAR: ${{ secrets.MY_ENV_VAR }}
