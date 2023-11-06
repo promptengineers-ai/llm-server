@@ -1,9 +1,12 @@
 import ujson
+import traceback
 
 from fastapi import APIRouter, Depends, Request, Response, HTTPException
 from fastapi.responses import StreamingResponse
 
 from server.controllers.chat_controller import ChatController
+from server.exceptions import ValidationException
+from server.factories.provider import VectorSearchProviderFactory
 from server.models.request import (ReqBodyChat, ReqBodyAgentChat,
 									ReqBodyVectorstoreChat, ReqBodyAgentPluginsChat)
 from server.models.response import (ResponseChat, ResponseAgentChat, ResponseVectorstoreChat,
@@ -12,10 +15,12 @@ from server.models.response import (ResponseChat, ResponseAgentChat, ResponseVec
 									RESPONSE_STREAM_CHAT)
 from server.repos.user import UserRepo
 from server.services.auth import get_current_user
-from server.strategies.vectorstores import PineconeStrategy, VectorstoreContext
+from server.strategies.vectorstores import VectorstoreContext
 from server.utils import logger
+from server.utils.validation import Validator
 
 user_repo = UserRepo()
+validator = Validator()
 router = APIRouter()
 TAG = "Chat"
 
@@ -108,7 +113,7 @@ async def chat(
 		}
 	},
 )
-async def chat_agent(
+async def agent(
 	body: ReqBodyAgentChat,
 	chat_controller: ChatController = Depends(get_chat_controller),
 ):
@@ -175,7 +180,7 @@ async def chat_agent(
 		}
 	},
 )
-async def chat_agent_plugins(
+async def agent_plugins(
 	body: ReqBodyAgentPluginsChat,
 	chat_controller: ChatController = Depends(get_chat_controller),
 ):
@@ -242,7 +247,7 @@ async def chat_agent_plugins(
 		}
 	},
 )
-async def chat_vector_search(
+async def vector_search(
 	request: Request,
 	body: ReqBodyVectorstoreChat,
 	chat_controller: ChatController = Depends(get_chat_controller),
@@ -254,17 +259,12 @@ async def chat_vector_search(
 
 		# Retrieve User Tokens
 		user_id = getattr(request.state, "user_id", None)
-		required_keys = ['OPENAI_API_KEY', 'PINECONE_KEY', 'PINECONE_ENV', 'PINECONE_INDEX']
-		tokens = user_repo.find_token(user_id, [*required_keys, 'PROMPTLAYER_API_KEY'])
 
 		# Retreve Vectorstore
-		logger.debug('[POST /chat/vectorstore] Namespace: %s', body.vectorstore)
-		vectorstore_strategy = PineconeStrategy(
-			openai_api_key=tokens.get(required_keys[0]),
-			api_key=tokens.get(required_keys[1]),
-			env=tokens.get(required_keys[2]),
-			index_name=tokens.get(required_keys[3]),
-			namespace=body.vectorstore,
+		vectorstore_strategy = VectorSearchProviderFactory.choose(
+			provider=body.provider, 
+			user_id=user_id, 
+			index_name=body.vectorstore
 		)
 		vectostore_service = VectorstoreContext(vectorstore_strategy)
 		vectorstore = vectostore_service.load()
@@ -312,6 +312,16 @@ async def chat_vector_search(
 			),
 			media_type="text/event-stream"
 		)
-	except Exception as e:
-		logger.error("Error in chat endpoint: %s", e, stack_info=True)
-		raise HTTPException(status_code=500, detail="Internal Server Error") from e
+	except ValidationException as err:
+		logger.warning("[routes.chat.vector_search] ValidationException: %s", err)
+		raise HTTPException(
+			status_code=400,
+			detail=str(err)
+		) from err
+	except HTTPException as err:
+		logger.error("[routes.chat.vector_search] HTTPException: %s", err.detail)
+		raise
+	except Exception as err:
+		tb = traceback.format_exc()
+		logger.error("[routes.chat.vector_search] Exception: %s\n%s", err, tb)
+		raise HTTPException(status_code=500, detail="Internal Server Error") from err

@@ -1,11 +1,10 @@
 """Chat Controller"""
 import openai
-import faiss
 import asyncio
 from typing import Any, Union, AsyncIterable
 
 from fastapi import Request
-from langchain.chains import LLMChain, ConversationChain
+from langchain.chains import LLMChain
 from langchain.callbacks import AsyncIteratorCallbackHandler, get_openai_callback
 
 from server.models.message import SystemMessage, UserMessage, AssistantMessage
@@ -13,16 +12,20 @@ from server.repos.user import UserRepo
 from server.services.llm import openai_chat_functions_model
 from server.strategies.callbacks import AgentStreamCallbackHandler
 from server.strategies.chains import ChainService
-from server.strategies.llms import OpenAIStrategy, ModelContext
-from server.strategies.memories import MemoryContext, VectorstoreMemoryStrategy
+from server.strategies.llms import OllamaStrategy, OpenAIStrategy, ModelContext
 from server.strategies.vectorstores import VectorstoreContext
-from server.utils import retrieve_chat_messages, retrieve_system_message, logger
+from server.utils import retrieve_chat_messages, retrieve_system_message
+from server.utils.chains import get_chat_history
 from server.utils.stream import token_stream, end_stream, wrap_done
+from server.utils.validation import Validator
 from server.utils.prompts import get_system_template
 
-ACCEPTED_MODELS = ['gpt-3.5-turbo', 'gpt-3.5-turbo-16k', 'gpt-4']
+ACCEPTED_OPENAI_MODELS = ['gpt-3.5-turbo', 'gpt-3.5-turbo-16k', 'gpt-4']
+ACCEPTED_OLLAMA_MODELS = ['llama2', 'codellama', 'vicuna', 'mistral']
 
+validator = Validator()
 user_repo = UserRepo()
+
 
 class ChatController:
 	def __init__(self, request: Request = None):
@@ -125,7 +128,7 @@ class ChatController:
 		# Get Tokens
 		api_key = user_repo.find_token(self.user_id, 'OPENAI_API_KEY')
 		# Check allowed
-		if model in ACCEPTED_MODELS:
+		if model in ACCEPTED_OPENAI_MODELS:
 			model_service = ModelContext(strategy=OpenAIStrategy(api_key=api_key))
 		# Construct the model
 		model = model_service.chat(
@@ -133,20 +136,12 @@ class ChatController:
 			temperature=temperature,
 			streaming=False
 		)
-		memory = MemoryContext(strategy=VectorstoreMemoryStrategy()).history(chat_history)
-		logger.debug(
-			'[chat_controller.langchain_http_chat] Memory: %s',
-			memory.load_memory_variables({"prompt": filtered_messages[-1]})
-		)
+		query = {'question': filtered_messages[-1], 'context': chat_history}
 		with get_openai_callback() as cb:
 			# Retrieve the conversation
-			chain = ConversationChain(
-				llm=model,
-				prompt=get_system_template(system_message),
-				memory=memory,
-			)
+			chain = LLMChain(llm=model, prompt=get_system_template(system_message))
 			# Begin a task that runs in the background.
-			response = chain.predict(input=filtered_messages[-1])
+			response = chain.run(query)
 		return response, cb
 
 	##############################################################################
@@ -168,7 +163,7 @@ class ChatController:
 		# Get Tokens
 		api_key = user_repo.find_token(self.user_id, 'OPENAI_API_KEY')
 		# Create the model
-		if model in ACCEPTED_MODELS:
+		if model in ACCEPTED_OPENAI_MODELS:
 			model_service = ModelContext(strategy=OpenAIStrategy(api_key=api_key))
 		else:
 			raise NotImplementedError(f"Model {model} not implemented")
@@ -206,8 +201,10 @@ class ChatController:
 		# Get Tokens
 		api_key = user_repo.find_token(self.user_id, 'OPENAI_API_KEY')
 		# Create the model
-		if model in ACCEPTED_MODELS:
+		if model in ACCEPTED_OPENAI_MODELS:
 			model_service = ModelContext(strategy=OpenAIStrategy(api_key=api_key))
+		elif model in ACCEPTED_OLLAMA_MODELS:
+			model_service = ModelContext(strategy=OllamaStrategy())
 		else:
 			raise NotImplementedError(f"Model {model} not implemented")
 
@@ -244,7 +241,7 @@ class ChatController:
 		# Get Tokens
 		api_key = user_repo.find_token(self.user_id, 'OPENAI_API_KEY')
 		# Create the model
-		if model in ACCEPTED_MODELS:
+		if model in ACCEPTED_OPENAI_MODELS:
 			model_service = ModelContext(strategy=OpenAIStrategy(api_key=api_key))
 		else:
 			raise NotImplementedError(f"Model {model} not implemented")
@@ -277,36 +274,56 @@ class ChatController:
 		chat_history = list(zip(filtered_messages[::2], filtered_messages[1::2]))
 		# Retrieve the system message
 		system_message = retrieve_system_message(messages)
-		# Get Tokens
-		api_key = user_repo.find_token(self.user_id, 'OPENAI_API_KEY')
+		
 		# Create the model
-		if model in ACCEPTED_MODELS:
+		if model in ACCEPTED_OPENAI_MODELS:
+			# Get Tokens
+			api_key = user_repo.find_token(self.user_id, 'OPENAI_API_KEY')
 			model_service = ModelContext(strategy=OpenAIStrategy(api_key=api_key))
-
-		callback = AsyncIteratorCallbackHandler()
-		model = model_service.chat(
-			model_name=model,
-			temperature=temperature,
-			streaming=stream,
-			callbacks=[callback]
-		)
-		memory = MemoryContext(strategy=VectorstoreMemoryStrategy()).history(chat_history)
-		# Retrieve the conversation
-		chain = ConversationChain(
-			llm=model,
-			prompt=get_system_template(system_message),
-			memory=memory,
-		)
-		# Begin a task that runs in the background.
-		task = asyncio.create_task(wrap_done(
-			chain.apredict(input=filtered_messages[-1]),
-			callback.done),
-		)
-		# Yield the tokens as they come in.
-		async for token in callback.aiter():
-			yield token_stream(token)
-		yield end_stream()
-		await task
+			callback = AsyncIteratorCallbackHandler()
+			model = model_service.chat(
+				model_name=model,
+				temperature=temperature,
+				streaming=stream,
+				callbacks=[callback]
+			)
+			query = {'question': filtered_messages[-1], 'context': chat_history}
+			# Retrieve the conversation
+			chain = LLMChain(llm=model, prompt=get_system_template(system_message))
+			# Begin a task that runs in the background.
+			task = asyncio.create_task(wrap_done(
+				chain.acall(query),
+				callback.done),
+			)
+			# Yield the tokens as they come in.
+			async for token in callback.aiter():
+				yield token_stream(token)
+			yield end_stream()
+			await task
+		elif model in ACCEPTED_OLLAMA_MODELS:
+			# Get Tokens
+			base_url = user_repo.find_token(self.user_id, 'OLLAMA_BASE_URL')
+			if base_url:
+				strategy = OllamaStrategy(base_url=base_url)
+			else:
+				strategy = OllamaStrategy()
+			model_service = ModelContext(strategy=strategy)
+			callback = AgentStreamCallbackHandler()
+			llm = model_service.chat(
+				model_name=model,
+				temperature=temperature,
+				streaming=stream,
+				callbacks=[callback]
+			)
+			template = get_system_template(system_message)
+			prompt = template.format(
+				context=get_chat_history(chat_history), 
+				question=filtered_messages[-1]
+			)
+			# Yield the tokens as they come in.
+			for token in llm._stream(prompt):
+				yield token_stream(token.text)
+			yield end_stream()
 
 	#######################################################
 	## Langchain Agent Stream Chat
@@ -327,7 +344,7 @@ class ChatController:
 		# Get Tokens
 		api_key = user_repo.find_token(self.user_id, 'OPENAI_API_KEY')
 		# Create the model
-		if model in ACCEPTED_MODELS:
+		if model in ACCEPTED_OPENAI_MODELS:
 			model_service = ModelContext(strategy=OpenAIStrategy(api_key=api_key))
 		else:
 			raise NotImplementedError(f"Model {model} not implemented")
@@ -374,7 +391,7 @@ class ChatController:
 		# Get Tokens
 		api_key = user_repo.find_token(self.user_id, 'OPENAI_API_KEY')
 		# Create the model
-		if model in ACCEPTED_MODELS:
+		if model in ACCEPTED_OPENAI_MODELS:
 			model_service = ModelContext(strategy=OpenAIStrategy(api_key=api_key))
 		else:
 			raise NotImplementedError(f"Model {model} not implemented")
@@ -423,7 +440,7 @@ class ChatController:
 		# Create the callback
 		callback = AsyncIteratorCallbackHandler()
 		# Create the model
-		if model in ACCEPTED_MODELS:
+		if model in ACCEPTED_OPENAI_MODELS:
 			model_service = ModelContext(strategy=OpenAIStrategy(api_key=api_key))
 
 		model = model_service.chat(

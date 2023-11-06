@@ -59,10 +59,10 @@ def accumulate_files(files, user_id, tokens):
 	collected_files = []
 	for name in files:
 		try:
-			s3 = StorageService(tokens.get('S3_ACCESS_KEY'), tokens.get('S3_SECRET_KEY'))
+			s3 = StorageService(tokens.get('ACCESS_KEY_ID'), tokens.get('ACCESS_SECRET_KEY'))
 			file = s3.retrieve_file(
 				path=f'users/{user_id}/files/{name}',
-				bucket=tokens.get('S3_BUCKET_NAME'),
+				bucket=tokens.get('BUCKET'),
 			)
 			collected_files.append(file)
 		except Exception as err:
@@ -78,27 +78,27 @@ def accumulate_files(files, user_id, tokens):
 ##############################################################
 def accumulate_loaders(body, files=None, tmpdirname=None):
 	loaders = []
-	for loader in body.get('loaders', []):
-		loader_type = loader.get('type')
+	for loader in dict(body).get('loaders', []):
+		loader_type = loader.type
 		loader_data = {}
 		if loader_type == 'copy':
-			loader_data = {'text': loader.get('text')}
+			loader_data = {'text': loader.text}
 		elif loader_type == 'yt':
-			loader_data = {'ytId': loader.get('ytId')}
+			loader_data = {'ytId': loader.ytId}
 		elif loader_type == 'ethereum' or loader_type == 'polygon':
-			loader_data = {'contract_address': loader.get('contract_address')}
+			loader_data = {'contract_address': loader.contract_address}
 		else:
-			loader_data = {'urls': loader.get('urls')}
+			loader_data = {'urls': loader.urls}
 
 		doc_loader = LoaderFactory.create_loader(
-			loader.get('type'),
+			loader.type,
 			loader_data
 		)
 		loaders.append(doc_loader)
 
 	if tmpdirname:
 		try:
-			for file_body, name in zip(files, body.get('files', [])):
+			for file_body, name in zip(files, body.files):
 				file_path = os.path.join(tmpdirname, name)
 				with open(file_path, 'wb') as file:
 					file.write(file_body.read())  # write the file to the temporary directory
@@ -134,11 +134,11 @@ def faiss_vectorstore(loaders, tmpdirname, user_id, name, tokens):
 		with open(temp_file_path, "wb") as file:
 			pickle.dump(vectorstore, file)
 
-		s3 = StorageService(tokens.get('S3_ACCESS_KEY'), tokens.get('S3_SECRET_KEY'))
+		s3 = StorageService(tokens.get('ACCESS_KEY_ID'), tokens.get('ACCESS_SECRET_KEY'))
 		# Save to S3
 		file = s3.upload_file(
 			file_name=temp_file_path,
-			bucket=tokens.get('S3_BUCKET_NAME'),
+			bucket=tokens.get('BUCKET'),
 			object_name=f'users/{user_id}/vectorstores/{name}.pkl'
 		)
 	except Exception as err:
@@ -162,13 +162,12 @@ class VectorSearchController:
 	##############################################################
 	async def create_multi_loader_vectorstore(self, body, user_id = TEST_USER_ID):
 		"""Create a vectorstore from multiple loaders."""
-
-		passed_file_names = body.get('files', [])
+		passed_file_names = dict(body).get('files', [])
 		pinecone_keys = ['PINECONE_KEY', 'PINECONE_ENV', 'PINECONE_INDEX', 'OPENAI_API_KEY']
 		redis_keys = ['REDIS_URL', 'OPENAI_API_KEY']
 
 		if not passed_file_names:
-			if body.get('provider') == 'pinecone':
+			if dict(body).get('provider') == 'pinecone':
 				tokens = user_repo.find_token(user_id, pinecone_keys)
 				validator.validate_api_keys(tokens, pinecone_keys)
 				embeddings = OpenAIEmbeddings(openai_api_key=tokens.get('OPENAI_API_KEY'))
@@ -181,21 +180,21 @@ class VectorSearchController:
 				pinecone_service.from_documents(
 					loaders,
 					embeddings,
-					namespace=body.get('index_name')
+					namespace=dict(body).get('index_name')
 				)
 
-			if body.get('provider') == 'redis':
+			if dict(body).get('provider') == 'redis':
 				tokens = user_repo.find_token(user_id, redis_keys)
 				validator.validate_api_keys(tokens, redis_keys)
 				redis_service = RedisService(
 					openai_api_key=tokens.get('OPENAI_API_KEY'),
 					redis_url=tokens.get('REDIS_URL'),
-					index_name=body.get('index_name'),
+					index_name=dict(body).get('index_name'),
 				)
 				loaders = accumulate_loaders(body)
 				redis_service.from_documents(loaders)
 		else:
-			aws_keys = ['S3_ACCESS_KEY', 'S3_SECRET_KEY', 'S3_BUCKET_NAME']
+			aws_keys = ['ACCESS_KEY_ID', 'ACCESS_SECRET_KEY', 'BUCKET']
 			tokens = user_repo.find_token(user_id, [*pinecone_keys, *aws_keys])
 			validator.validate_api_keys(tokens, [*pinecone_keys, *aws_keys])
 			# Accumulate Files
@@ -207,25 +206,25 @@ class VectorSearchController:
 				# Your logic here to save uploaded files to tmpdirname
 				loaders = accumulate_loaders(body, files, tmpdirname)
 
-				if body.get('provider') == 'faiss':
-					faiss_vectorstore(loaders, tmpdirname, user_id, body.get('index_name'), tokens)
+				if dict(body).get('provider') == 'faiss':
+					faiss_vectorstore(loaders, tmpdirname, user_id, dict(body).get('index_name'), tokens)
 
-				if body.get('provider') == 'pinecone':
+				if dict(body).get('provider') == 'pinecone':
 					embeddings = OpenAIEmbeddings(openai_api_key=tokens.get('OPENAI_API_KEY'))
 					pinecone_service = PineconeService(
 						api_key=tokens.get('PINECONE_KEY'),
 						env=tokens.get('PINECONE_ENV'),
 						index_name=tokens.get('PINECONE_INDEX'),
 					)
-					pinecone_service.from_documents(loaders, embeddings, namespace=body.get('index_name'))
+					pinecone_service.from_documents(loaders, embeddings, namespace=dict(body).get('index_name'))
 
-				if body.get('provider') == 'redis':
+				if dict(body).get('provider') == 'redis':
 					tokens = user_repo.find_token(user_id, redis_keys)
 					validator.validate_api_keys(tokens, redis_keys)
 					redis_service = RedisService(
 						openai_api_key=tokens.get('OPENAI_API_KEY'),
 						redis_url=tokens.get('REDIS_URL'),
-						index_name=body.get('index_name'),
+						index_name=dict(body).get('index_name'),
 					)
 					loaders = accumulate_loaders(body)
 					redis_service.from_documents(loaders)

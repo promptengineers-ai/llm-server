@@ -1,13 +1,5 @@
 version: '3'
 services:
-  ## GUI
-  redis-ui:
-    container_name: redis-ui
-    image: redislabs/redisinsight:latest
-    ports:
-      - 8001:8001
-    volumes:
-      - redisinsight:/db
   ## Cache
   redis:
     container_name: redis

@@ -1,4 +1,5 @@
 from typing import Optional, List
+import traceback
 import ujson
 
 from fastapi import (APIRouter, Depends, Request, Form, status,
@@ -52,7 +53,8 @@ async def create_vectorstore(
 		logger.error("HTTPException: %s", err.detail, stack_info=True)
 		raise
 	except Exception as err:
-		logger.error("%s", err, stack_info=True)
+		tb = traceback.format_exc()
+		logger.error("[routes.vectorstores.create_vectorstore]: %s\n%s", err, tb)
 		raise HTTPException(
 			status_code=500,
 			detail=f"An unexpected error occurred. {str(err)}"

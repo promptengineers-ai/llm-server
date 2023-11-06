@@ -1,16 +1,30 @@
 from bson import ObjectId
-from fastapi import Request
+from fastapi import Request, HTTPException
 
 from server.repos.user import UserRepo
 from server.services.mongo import MongoService
+from server.utils.validation import Validator
+from server.utils import logger
+from server.exceptions import ValidationException
 
 user_repo = UserRepo()
-
+validator = Validator()
 class HistoryController:
 	def __init__(self, request: Request = None):
-		self.request = request
-		self.user_id = getattr(request.state, "user_id", None)
-		self.history_service = MongoService(user_repo.find_token(self.user_id, 'MONGO_CONNECTION'))
+		try:
+			self.request = request
+			self.user_id = getattr(request.state, "user_id", None)
+			required = ['MONGO_CONNECTION']
+			token = user_repo.find_token(self.user_id, required)
+			if not token.get(required[0]):
+				raise ValidationException(f"{required[0]} is required")
+			self.history_service = MongoService(token.get(required[0]))
+		except ValidationException as err:
+			logger.warning("ValidationException: %s", err)
+			raise HTTPException(
+				status_code=400,
+				detail=str(err)
+			) from err
 
 	##############################################################
 	### Create Chat History

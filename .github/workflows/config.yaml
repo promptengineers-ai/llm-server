@@ -2,6 +2,9 @@ name: Run Tests
 
 on: [push]
 
+env:
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -23,9 +26,6 @@ jobs:
 
     - name: Run tests
       run: |
+        export OPENAI_API_KEY=$OPENAI_API_KEY
         echo ">> Running all test cases"
         python3 -m pytest -s tests
-      # env:
-        # Set your environment variables here, if they are sensitive, use secrets.
-        # Example:
-        # MY_ENV_VAR: ${{ secrets.MY_ENV_VAR }}

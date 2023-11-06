@@ -6,14 +6,11 @@ from fastapi import (APIRouter, HTTPException, Response,
 					status, Depends, Request)
 
 from server.services.auth import get_current_user
-from server.config import MONGO_CONNECTION
 from server.controllers.history import HistoryController
-from server.services.mongo import MongoService
 from server.models.request import ReqBodyChatHistory, ReqBodyListChatHistory
 from server.utils import logger, JSONEncoder
 
 router = APIRouter()
-history_service = MongoService(MONGO_CONNECTION)
 TAG = "Chat"
 
 def get_controller(request: Request) -> HistoryController:

@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import faiss
 
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.memory import VectorStoreRetrieverMemory
@@ -23,6 +22,7 @@ class VectorstoreMemoryStrategy(MemoryStrategy):
 		self,
 		messages: list,
 	) -> str:
+		import faiss
 		index = faiss.IndexFlatL2(self.embedding_size)
 		embedding_fn = OpenAIEmbeddings().embed_query
 		vectorstore = FAISS(embedding_fn, index, InMemoryDocstore({}), {})

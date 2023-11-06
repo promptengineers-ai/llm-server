@@ -4,10 +4,12 @@ from langchain.chains import LLMMathChain
 from langchain.agents import Tool, tool, OpenAIFunctionsAgent, AgentExecutor
 from langchain.callbacks.streaming_stdout_final_only import FinalStreamingStdOutCallbackHandler
 
-from server.config import OPENAI_API_KEY
+from server.config.test import TEST_USER_ID
 from server.strategies.llms import ModelContext, OpenAIStrategy
+from server.repos.user import UserRepo
 
-model_service = ModelContext(strategy=OpenAIStrategy(api_key=OPENAI_API_KEY))
+api_key = UserRepo().find_token(TEST_USER_ID, 'OPENAI_API_KEY')
+model_service = ModelContext(strategy=OpenAIStrategy(api_key=api_key))
 llm = model_service.chat(
     model_name='gpt-3.5-turbo-16k',
     temperature=0.0,

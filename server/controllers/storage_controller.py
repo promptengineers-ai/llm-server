@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from fastapi import File, HTTPException, UploadFile
 
-from server.config import S3_ACCESS_KEY, S3_BUCKET_NAME, S3_SECRET_KEY
+from server.config import ACCESS_KEY_ID, BUCKET, ACCESS_SECRET_KEY
 from server.config.test import TEST_USER_ID
 from server.services.storage import StorageService
 
@@ -17,8 +17,8 @@ class StorageController:
 	def save_files_to_bucket(self, files: Optional[List[UploadFile]] = File(...), directory: str = 'files'):
 		try:
 			s3client = StorageService(
-				S3_ACCESS_KEY,
-				S3_SECRET_KEY
+				ACCESS_KEY_ID,
+				ACCESS_SECRET_KEY
 			)
 		except Exception as err:
 			raise HTTPException(status_code=500, detail=str(err)) from err
@@ -51,7 +51,7 @@ class StorageController:
 						s3_file_path = f'users/{TEST_USER_ID}/{directory}/{file_name}'  # Add the desired prefix
 						s3client.upload_file(
 							file_path,
-							S3_BUCKET_NAME,
+							BUCKET,
 							s3_file_path
 						)
 						uploaded_files.append(file_name)
@@ -66,11 +66,11 @@ class StorageController:
 
 	def retrieve_files_from_bucket(self, directory: str = 'files'):
 		s3client = StorageService(
-			S3_ACCESS_KEY,
-			S3_SECRET_KEY
+			ACCESS_KEY_ID,
+			ACCESS_SECRET_KEY
 		)
 		files = s3client.retrieve_all_files(
-			S3_BUCKET_NAME,
+			BUCKET,
 			f'users/{TEST_USER_ID}/{directory}'
 		)
 		return {
@@ -84,11 +84,11 @@ class StorageController:
 		try:
 			## Delete File
 			s3client = StorageService(
-				S3_ACCESS_KEY,
-				S3_SECRET_KEY
+				ACCESS_KEY_ID,
+				ACCESS_SECRET_KEY
 			)
 			s3client.delete_file(
-				S3_BUCKET_NAME,
+				BUCKET,
 				f'users/{TEST_USER_ID}/files/{file_name}'
 			)
 		except Exception as err:
