@@ -5,19 +5,3 @@ promptengineers[chat]
 promptengineers[history]
 promptengineers[retrieval]
 promptengineers[storage]
-# cryptography
-# langchain==0.0.330
-# openai
-# motor
-# minio
-# beautifulsoup4
-# nest_asyncio
-# numexpr
-# python-multipart
-# pinecone-client
-# redis
-# tiktoken
-# ujson
-# boto3 # 86mB
-# faiss-cpu # 70mB
-# unstructured
