@@ -12,7 +12,7 @@
 				"debug"
 			],
 			"jinja": true,
-			"justMyCode": true,
+			"justMyCode": false,
 			"envFile": "${workspaceFolder}/.env.local"
 		},
 		{
