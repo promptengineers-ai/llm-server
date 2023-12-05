@@ -1,4 +1,3 @@
-"""Configuration files for the project."""
 import os
 
 # Path to the vector store
@@ -31,3 +30,4 @@ PINECONE_INDEX = os.getenv("PINECONE_INDEX", '')
 
 # Blockchain Credentials
 ALCHEMY_API_KEY = os.getenv("ALCHEMY_API_KEY", '')
+MY_NEW_VAR = os.getenv("MY_NEW_VAR", '')
