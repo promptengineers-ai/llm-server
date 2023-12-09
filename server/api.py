@@ -49,6 +49,9 @@ async def get_application_version():
             detail="Internal Server Error"
         ) from err
 
+#######################################################################
+###  API Endpoints
+#######################################################################
 V1_CHAT_PREFIX = '/api/v1'
 auth_middleware = AuthMiddleware()
 app.include_router(
