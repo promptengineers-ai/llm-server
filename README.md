@@ -3,6 +3,7 @@
 </h1>
 <p align="center">
 Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
+</p>
 <p align="center">
   <a href="#"><img src="https://img.shields.io/badge/View%20Documentation-Docs-yellow"></a>
   <a href="https://promptengineersai.slack.com/ssb/redirect"><img src="https://img.shields.io/badge/Join%20our%20community-Slack-blue"></a>
@@ -13,9 +14,20 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
   <!-- <a href="https://www.youtube.com/@promptengineersai"><img src="https://img.shields.io/youtube/channel/views/UCpGq31VRTZ9JzosUFA_HWzw?label=@promptengineersai
 "></a> -->
 </p>
+<!-- <p align="center">
+  <video autoplay loop muted playsinline>
+    <source src="https://github.com/promptengineers-ai/llm-server/blob/development/static/demos/chat-ui-demo.mp4?raw=true" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</p> -->
+
+<p align="center">
+  <img src="https://github.com/promptengineers-ai/llm-server/blob/development/static/demos/llm-server.gif?raw=true" />
+</p>
 
 ### Useful Links
-- [Blog Rocket - Deploying FastAPI to Vercel](https://blog.logrocket.com/deploying-fastapi-applications-to-vercel/)
+- [Deploying FastAPI to Vercel](https://blog.logrocket.com/deploying-fastapi-applications-to-vercel/)
+- [Demo of AI Assistant Chat Client UI](https://www.loom.com/share/a697426952e94d95957773e973759693?sid=5014613d-4785-4a79-840c-4bcb45d969dd)
 
 
 ## 🛠️ Server Setup and Usage
@@ -70,8 +82,8 @@ bash scripts/client.sh
   </tr>
   <tr>
     <td>OPENAI_API_KEY</td>
-    <td>30</td>
     <td>sk-abc123...</td>
+    <td>Default LLM OpenAI key</td>
   </tr>
   <tr>
     <td>MONGO_CONNECTION</td>
