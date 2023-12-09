@@ -1,7 +1,2 @@
-fastapi
-uvicorn
 Jinja2
-promptengineers[chat]
-promptengineers[history]
-promptengineers[retrieval]
-promptengineers[storage]
+promptengineers[fastapi]
