@@ -18,7 +18,7 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
 - [Blog Rocket - Deploying FastAPI to Vercel](https://blog.logrocket.com/deploying-fastapi-applications-to-vercel/)
 
 
-## 🛠️ Setup and Usage
+## 🛠️ Server Setup and Usage
 ```bash
 ### Setup Virtual Env
 python3 -m venv .venv
@@ -34,6 +34,21 @@ pip install -r requirements.txt
 
 ### Run Application on local machine
 bash scripts/dev.sh
+```
+
+## 🛠️ Client Setup and Usage
+```bash
+### Navigate to client folder
+cd client
+
+### Install Dependencies
+npm install
+
+### Run Development Environment
+npm start
+
+### Build Production Start App (Optional)
+bash scripts/client.sh
 ```
 
 ### Environment Variables
