@@ -21,7 +21,7 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
 </p>
 
 ### Useful Links
-- [Blog Rocket - Deploying FastAPI to Vercel](https://blog.logrocket.com/deploying-fastapi-applications-to-vercel/)
+- [ Deploying FastAPI to Vercel](https://blog.logrocket.com/deploying-fastapi-applications-to-vercel/)
 
 
 ## 🛠️ Server Setup and Usage
