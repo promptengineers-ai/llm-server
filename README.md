@@ -82,8 +82,8 @@ bash scripts/client.sh
   </tr>
   <tr>
     <td>OPENAI_API_KEY</td>
-    <td>30</td>
     <td>sk-abc123...</td>
+    <td>Default LLM OpenAI key</td>
   </tr>
   <tr>
     <td>MONGO_CONNECTION</td>
