@@ -21,7 +21,8 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
 </p>
 
 ### Useful Links
-- [ Deploying FastAPI to Vercel](https://blog.logrocket.com/deploying-fastapi-applications-to-vercel/)
+- [Deploying FastAPI to Vercel](https://blog.logrocket.com/deploying-fastapi-applications-to-vercel/)
+- [Demo of AI Assistant Chat Client UI](https://www.loom.com/share/a697426952e94d95957773e973759693?sid=5014613d-4785-4a79-840c-4bcb45d969dd)
 
 
 ## 🛠️ Server Setup and Usage
