@@ -4,35 +4,42 @@ import traceback
 from fastapi import APIRouter, Depends, Request, Response, HTTPException
 from fastapi.responses import StreamingResponse
 
-from server.controllers.chat_controller import ChatController
-from server.exceptions import ValidationException
-from server.factories.provider import VectorSearchProviderFactory
-from server.models.request import (ReqBodyChat, ReqBodyAgentChat,
+from promptengineers.controllers import ChatController, AuthController
+from promptengineers.exceptions import ValidationException
+from promptengineers.factories.provider import VectorSearchProviderFactory
+from promptengineers.models.request import (ReqBodyChat, ReqBodyAgentChat,
 									ReqBodyVectorstoreChat, ReqBodyAgentPluginsChat)
-from server.models.response import (ResponseChat, ResponseAgentChat, ResponseVectorstoreChat,
+from promptengineers.models.response import (ResponseChat, ResponseAgentChat, ResponseVectorstoreChat,
 									ResponseAgentPluginsChat, RESPONSE_STREAM_AGENT_PLUGINS_CHAT,
 									RESPONSE_STREAM_AGENT_CHAT, RESPONSE_STREAM_VECTORSTORE_CHAT,
 									RESPONSE_STREAM_CHAT)
-from server.repos.user import UserRepo
-from server.services.auth import get_current_user
-from server.strategies.vectorstores import VectorstoreContext
-from server.utils import logger
-from server.utils.validation import Validator
+from promptengineers.strategies.vectorstores import VectorstoreContext
+from promptengineers.utils import logger
+from promptengineers.utils.chains import format_agent_actions
+from promptengineers.utils.validation import Validator
+from promptengineers.config.test import TEST_USER_ID
 
-user_repo = UserRepo()
+from server.config.tools import AVAILABLE_TOOLS
+from server.repos.user import UserRepo
+
 validator = Validator()
+auth_controller = AuthController()
 router = APIRouter()
 TAG = "Chat"
 
-def get_chat_controller(request: Request) -> ChatController:
-	return ChatController(request=request)
+def get_controller(request: Request) -> ChatController:
+	return ChatController(
+		request=request, 
+		user_repo=UserRepo(), 
+		user_id=TEST_USER_ID, 
+		available_tools=AVAILABLE_TOOLS
+	)
 
 #################################################
 # ChatGPT
 #################################################
 @router.post(
 	"/chat",
-	dependencies=[Depends(get_current_user)],
 	tags=[TAG],
 	response_model=ResponseChat,
 	responses={
@@ -47,7 +54,7 @@ def get_chat_controller(request: Request) -> ChatController:
 )
 async def chat(
 	body: ReqBodyChat,
-	chat_controller: ChatController = Depends(get_chat_controller),
+	chat_controller: ChatController = Depends(get_controller),
 ):
 	"""Chat endpoint."""
 	try:
@@ -89,9 +96,10 @@ async def chat(
 				"Content-Type": "text/event-stream",
 			}
 		)
-	except Exception as e:
-		logger.error("Error in chat endpoint: %s", e, stack_info=True)
-		raise HTTPException(status_code=500, detail="Internal Server Error") from e
+	except Exception as err:
+		tb = traceback.format_exc()
+		logger.error("[routes.files.list_files] Exception: %s\n%s", err, tb)
+		raise HTTPException(status_code=500, detail="Internal Server Error") from err
 
 
 
@@ -100,7 +108,6 @@ async def chat(
 #################################################
 @router.post(
 	"/chat/agent",
-	dependencies=[Depends(get_current_user)],
 	tags=[TAG],
 	response_model=ResponseAgentChat,
 	responses={
@@ -115,7 +122,7 @@ async def chat(
 )
 async def agent(
 	body: ReqBodyAgentChat,
-	chat_controller: ChatController = Depends(get_chat_controller),
+	chat_controller: ChatController = Depends(get_controller),
 ):
 	"""Chat endpoint."""
 	try:
@@ -129,7 +136,8 @@ async def agent(
 				tools=body.tools
 			)
 			data = ujson.dumps({
-				'message': result,
+				'message': result['output'],
+				'actions': format_agent_actions(result['intermediate_steps']),
 				'usage': {
 					'total_tokens': cb.total_tokens,
 					'prompt_tokens': cb.prompt_tokens,
@@ -158,16 +166,16 @@ async def agent(
 				"Content-Type": "text/event-stream",
 			}
 		)
-	except Exception as e:
-		logger.error("Error in chat endpoint: %s", e, stack_info=True)
-		raise HTTPException(status_code=500, detail="Internal Server Error") from e
+	except Exception as err:
+		tb = traceback.format_exc()
+		logger.error("[routes.chat.vector_search] Exception: %s\n%s", err, tb)
+		raise HTTPException(status_code=500, detail="Internal Server Error") from err
 
 #################################################
 # Langchain Agent Plugins
 #################################################
 @router.post(
 	"/chat/agent/plugins",
-	dependencies=[Depends(get_current_user)],
 	tags=[TAG],
 	response_model=ResponseAgentPluginsChat,
 	responses={
@@ -182,7 +190,7 @@ async def agent(
 )
 async def agent_plugins(
 	body: ReqBodyAgentPluginsChat,
-	chat_controller: ChatController = Depends(get_chat_controller),
+	chat_controller: ChatController = Depends(get_controller),
 ):
 	"""Chat endpoint."""
 	try:
@@ -225,16 +233,16 @@ async def agent_plugins(
 				"Content-Type": "text/event-stream",
 			}
 		)
-	except Exception as e:
-		logger.error("Error in chat endpoint: %s", e, stack_info=True)
-		raise HTTPException(status_code=500, detail="Internal Server Error") from e
+	except Exception as err:
+		tb = traceback.format_exc()
+		logger.error("[routes.chat.vector_search] Exception: %s\n%s", err, tb)
+		raise HTTPException(status_code=500, detail="Internal Server Error") from err
 
 #################################################
 # Langchain Vectorstore Route
 #################################################
 @router.post(
 	"/chat/vectorstore",
-	dependencies=[Depends(get_current_user)],
 	tags=[TAG],
 	response_model=ResponseVectorstoreChat,
 	responses={
@@ -250,7 +258,7 @@ async def agent_plugins(
 async def vector_search(
 	request: Request,
 	body: ReqBodyVectorstoreChat,
-	chat_controller: ChatController = Depends(get_chat_controller),
+	chat_controller: ChatController = Depends(get_controller),
 ):
 	"""Chat Vectorstore endpoint."""
 	try:
@@ -262,8 +270,8 @@ async def vector_search(
 
 		# Retreve Vectorstore
 		vectorstore_strategy = VectorSearchProviderFactory.choose(
-			provider=body.provider, 
-			user_id=user_id, 
+			provider=body.provider,
+			user_id=user_id,
 			index_name=body.vectorstore
 		)
 		vectostore_service = VectorstoreContext(vectorstore_strategy)

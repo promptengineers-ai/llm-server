@@ -1,15 +1,14 @@
 "App Entrypoint"
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
+from promptengineers.config import APP_NAME, APP_VERSION, APP_ORIGINS
+from promptengineers.fastapi import history_router, retrieval_router, storage_router
+from promptengineers.models.response import ResponseStatus
+from promptengineers.utils import logger
 
-from server.config import APP_VERSION, APP_NAME, APP_ORIGINS
-from server.models.response import ResponseStatus
+from server.middleware.auth import AuthMiddleware
 from server.routes.chat import router as chat_router
-from server.routes.chat.history import router as history_router
-from server.routes.vectorstores import router as vectorstore_router
-from server.routes.files import router as file_router
-from server.utils import logger
 
 app = FastAPI(
     title=APP_NAME,
@@ -50,7 +49,25 @@ async def get_application_version():
             detail="Internal Server Error"
         ) from err
 
-app.include_router(chat_router)
-app.include_router(history_router)
-app.include_router(vectorstore_router)
-app.include_router(file_router)
+V1_CHAT_PREFIX = '/api/v1'
+auth_middleware = AuthMiddleware()
+app.include_router(
+    chat_router,
+    prefix=V1_CHAT_PREFIX,
+    dependencies=[Depends(auth_middleware.check_auth)],
+)
+app.include_router(
+    history_router,
+    dependencies=[Depends(auth_middleware.check_auth)],
+    prefix=V1_CHAT_PREFIX
+)
+app.include_router(
+    retrieval_router,
+    dependencies=[Depends(auth_middleware.check_auth)],
+    prefix=V1_CHAT_PREFIX
+)
+app.include_router(
+    storage_router,
+    dependencies=[Depends(auth_middleware.check_auth)],
+    prefix=V1_CHAT_PREFIX
+)

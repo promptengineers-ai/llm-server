@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v0.0.1
 ### Added 
-  - feature/7-update-loader-factory (2023-10-28)
-  - feature/adds-gitbook-links (2023-09-24)
-  - feature/2-add-loader-endpoints (2023-09-24)
-  - feature/adds-vectorstore-routes (2023-09-23)
+  - feature/add-promptengineers-pypi-package (2023-11-23)
+  - feature/2-add-gpt-4-turbo
   - development
