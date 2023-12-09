@@ -1,0 +1,136 @@
+/************************************************
+	************************************************
+				1. Importing Sass Variables
+	************************************************
+************************************************/
+@import "variables.scss";
+
+/************************************************
+	************************************************
+				2. Importing Web Fonts
+	************************************************
+************************************************/
+// 2.1 Lato Font
+@font-face {
+	font-family: "Lato";
+	src: url("../fonts/lato/Lato-Thin.ttf") format("truetype");
+	font-weight: 100;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Lato";
+	src: url("../fonts/lato/Lato-Light.ttf") format("truetype");
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Lato";
+	src: url("../fonts/lato/Lato-Regular.ttf") format("truetype");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Lato";
+	src: url("../fonts/lato/Lato-Bold.ttf") format("truetype");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+// 2.2 Rubik Mono One Font
+@font-face {
+	font-family: "Rubik Mono One";
+	src: url("../fonts/rubik-mono/RubikMonoOne-Regular.ttf") format("truetype");
+	font-style: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+.login-container {
+	background: $body-bg;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.maintenance-page {
+	background: $body-bg;
+	display: flex;
+	align-items: center;
+	color: $white;
+}
+
+/************* Login *************/
+.login-box {
+	background: $white;
+	margin: auto;
+	width: 450px;
+	min-height: 320px;
+	.login-logo {
+		display: flex;
+		img {
+			width: 150px;
+		}
+	}
+	.btn {
+		img.login-icon {
+			width: 30px;
+			height: 30px;
+		}
+	}
+	.login-form-footer {
+		border-top: 1px solid $white;
+	}
+}
+@media (max-width: 576px) {
+	.login-box {
+		padding: 30px 20px 30px 20px;
+		width: auto;
+	}
+}
+
+/******** Maintenance Screen ********/
+.maintenance-screen {
+	background: $primary;
+	color: $white;
+	h1 {
+		font-size: 5rem;
+	}
+	.btn {
+		padding: 0.7rem 1.8rem;
+		@include roundedCorners(50);
+		color: $white;
+		background: transparent;
+		border: 2px solid $white;
+		&:hover {
+			color: $primary;
+			background: $white;
+			border: 2px solid $white;
+		}
+	}
+}
+
+/************* Error Page *************/
+
+.error-screen {
+	background: $red;
+	color: $white;
+	h1 {
+		font-family: Rubik Mono One;
+		font-size: 15rem;
+	}
+	.btn {
+		padding: 0.7rem 1.8rem;
+		@include roundedCorners(50);
+		color: $white;
+		background: transparent;
+		border: 2px solid $white;
+		&:hover {
+			color: $red;
+			background: $white;
+			border: 2px solid $white;
+		}
+	}
+}
