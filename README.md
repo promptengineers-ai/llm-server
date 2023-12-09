@@ -14,7 +14,7 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
 "></a> -->
 </p>
 <p align="center">
-  <img src="https://github.com/kre8mymedia/chatgpt-sse/assets/40816745/5696ee4c-4695-4bd9-912d-b375b5695f7e" />
+  <img src="https://github.com/promptengineers-ai/llm-server/blob/development/static/gifs/llm-server.gif?raw=true" />
 </p>
 
 ### Useful Links
