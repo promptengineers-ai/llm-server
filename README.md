@@ -13,6 +13,9 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
   <!-- <a href="https://www.youtube.com/@promptengineersai"><img src="https://img.shields.io/youtube/channel/views/UCpGq31VRTZ9JzosUFA_HWzw?label=@promptengineersai
 "></a> -->
 </p>
+<p align="center">
+  <img src="https://github.com/kre8mymedia/chatgpt-sse/assets/40816745/5696ee4c-4695-4bd9-912d-b375b5695f7e" />
+</p>
 
 ### Useful Links
 - [Blog Rocket - Deploying FastAPI to Vercel](https://blog.logrocket.com/deploying-fastapi-applications-to-vercel/)
