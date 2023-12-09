@@ -1,19 +1,7 @@
-cryptography
 fastapi
 uvicorn
-openai
 Jinja2
-langchain==0.0.330
-motor
-minio
-beautifulsoup4
-nest_asyncio
-numexpr
-python-multipart
-pinecone-client
-redis
-tiktoken
-ujson
-# boto3 # 86mB
-# faiss-cpu # 70mB
-# unstructured
+promptengineers[chat]
+promptengineers[history]
+promptengineers[retrieval]
+promptengineers[storage]
