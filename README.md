@@ -14,7 +14,10 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
 "></a> -->
 </p>
 <p align="center">
-  <img src="https://github.com/promptengineers-ai/llm-server/blob/development/static/gifs/llm-server.gif?raw=true" />
+  <video autoplay loop muted playsinline>
+    <source src="https://github.com/promptengineers-ai/llm-server/blob/development/static/demos/chat-ui-demo.mp4?raw=true" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
 </p>
 
 ### Useful Links
