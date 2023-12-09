@@ -133,7 +133,8 @@ async def agent(
 				messages=body.messages,
 				model=body.model,
 				temperature=body.temperature,
-				tools=body.tools
+				tools=body.tools,
+				plugins=body.plugins,
 			)
 			data = ujson.dumps({
 				'message': result['output'],
@@ -158,7 +159,8 @@ async def agent(
 				messages=body.messages,
 				model=body.model,
 				temperature=body.temperature,
-				tools=body.tools
+				tools=body.tools,
+				plugins=body.plugins,
 			),
 			headers={
 				"Cache-Control": "no-cache",
