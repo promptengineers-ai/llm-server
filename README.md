@@ -17,6 +17,7 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
 ### Useful Links
 - [Blog Rocket - Deploying FastAPI to Vercel](https://blog.logrocket.com/deploying-fastapi-applications-to-vercel/)
 
+
 ## 🛠️ Setup and Usage
 ```bash
 ### Setup Virtual Env
@@ -34,6 +35,40 @@ pip install -r requirements.txt
 ### Run Application on local machine
 bash scripts/dev.sh
 ```
+
+### Environment Variables
+<table border="1" width="100%">
+  <tr>
+    <th>Variable Name</th>
+    <th>Example</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>APP_SUPER_ADMIN_KEY</td>
+    <td>this-is-a-secret-key</td>
+    <td>Custom `x-api-key` header</td>
+  </tr>
+  <tr>
+    <td>USER_admin</td>
+    <td>password</td>
+    <td>Basic Authentication</td>
+  </tr>
+  <tr>
+    <td>OPENAI_API_KEY</td>
+    <td>30</td>
+    <td>sk-abc123...</td>
+  </tr>
+  <tr>
+    <td>MONGO_CONNECTION</td>
+    <td>mongodb://localhost:27017</td>
+    <td>Mongo database server host</td>
+  </tr>
+  <tr>
+    <td>MONGO_DB_NAME</td>
+    <td>promptengineers-llm-server</td>
+    <td>Application database</td>
+  </tr>
+</table>
 
 ## Deploy
 1. Log in to vercel

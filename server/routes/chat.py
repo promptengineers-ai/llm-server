@@ -133,7 +133,8 @@ async def agent(
 				messages=body.messages,
 				model=body.model,
 				temperature=body.temperature,
-				tools=body.tools
+				tools=body.tools,
+				plugins=body.plugins,
 			)
 			data = ujson.dumps({
 				'message': result['output'],
@@ -158,7 +159,8 @@ async def agent(
 				messages=body.messages,
 				model=body.model,
 				temperature=body.temperature,
-				tools=body.tools
+				tools=body.tools,
+				plugins=body.plugins,
 			),
 			headers={
 				"Cache-Control": "no-cache",
@@ -171,72 +173,6 @@ async def agent(
 		logger.error("[routes.chat.vector_search] Exception: %s\n%s", err, tb)
 		raise HTTPException(status_code=500, detail="Internal Server Error") from err
 
-#################################################
-# Langchain Agent Plugins
-#################################################
-@router.post(
-	"/chat/agent/plugins",
-	tags=[TAG],
-	response_model=ResponseAgentPluginsChat,
-	responses={
-		200: {
-			"content": {
-				"text/event-stream": {
-					"example": RESPONSE_STREAM_AGENT_PLUGINS_CHAT
-				}
-			}
-		}
-	},
-)
-async def agent_plugins(
-	body: ReqBodyAgentPluginsChat,
-	chat_controller: ChatController = Depends(get_controller),
-):
-	"""Chat endpoint."""
-	try:
-		# You can use the stream variable in your function as needed
-		if not body.stream:
-			# Format Response
-			result, cb = chat_controller.langchain_http_agent_plugins_chat(
-				messages=body.messages,
-				model=body.model,
-				temperature=body.temperature,
-				plugins=body.plugins
-			)
-			data = ujson.dumps({
-				'message': result,
-				'usage': {
-					'total_tokens': cb.total_tokens,
-					'prompt_tokens': cb.prompt_tokens,
-					'completion_tokens': cb.completion_tokens,
-					'total_cost': cb.total_cost,
-					'successful_requests': cb.successful_requests
-				},
-			})
-			logger.debug('[POST /chat/agent/plugins] Result: %s', str(data))
-			return Response(
-				content=data,
-				media_type='application/json',
-				status_code=200
-			)
-
-		return StreamingResponse(
-			chat_controller.langchain_stream_agent_plugins_chat(
-				messages=body.messages,
-				model=body.model,
-				temperature=body.temperature,
-				plugins=body.plugins
-			),
-			headers={
-				"Cache-Control": "no-cache",
-				"Connection": "keep-alive",
-				"Content-Type": "text/event-stream",
-			}
-		)
-	except Exception as err:
-		tb = traceback.format_exc()
-		logger.error("[routes.chat.vector_search] Exception: %s\n%s", err, tb)
-		raise HTTPException(status_code=500, detail="Internal Server Error") from err
 
 #################################################
 # Langchain Vectorstore Route

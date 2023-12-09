@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
 from promptengineers.config import APP_NAME, APP_VERSION, APP_ORIGINS
-from promptengineers.fastapi import history_router, retrieval_router, storage_router
+from promptengineers.fastapi import history_router, retrieval_router, storage_router, prompt_router
 from promptengineers.models.response import ResponseStatus
 from promptengineers.utils import logger
 
@@ -49,6 +49,9 @@ async def get_application_version():
             detail="Internal Server Error"
         ) from err
 
+#######################################################################
+###  API Endpoints
+#######################################################################
 V1_CHAT_PREFIX = '/api/v1'
 auth_middleware = AuthMiddleware()
 app.include_router(
@@ -58,6 +61,11 @@ app.include_router(
 )
 app.include_router(
     history_router,
+    dependencies=[Depends(auth_middleware.check_auth)],
+    prefix=V1_CHAT_PREFIX
+)
+app.include_router(
+    prompt_router,
     dependencies=[Depends(auth_middleware.check_auth)],
     prefix=V1_CHAT_PREFIX
 )
