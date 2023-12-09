@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="176.459" height="110.288" viewBox="0 0 176.459 110.288">
+  <g id="Group_1" data-name="Group 1" transform="translate(0)">
+    <rect id="Rectangle_4" data-name="Rectangle 4" width="31.194" height="31.194" transform="translate(44.115 22.058) rotate(45)" fill="#276dd9" opacity="0.6"/>
+    <path id="Rectangle_11" data-name="Rectangle 11" d="M0,0H31.194V31.194H4a4,4,0,0,1-4-4Z" transform="translate(22.058 44.115) rotate(45)" fill="#276dd9" opacity="0.8"/>
+    <rect id="Rectangle_7" data-name="Rectangle 7" width="31.194" height="31.194" transform="translate(88.23 22.058) rotate(45)" fill="#276dd9" opacity="0.6"/>
+    <rect id="Rectangle_9" data-name="Rectangle 9" width="31.194" height="31.194" transform="translate(66.172 44.115) rotate(45)" fill="#276dd9" opacity="0.8"/>
+    <path id="Rectangle_13" data-name="Rectangle 13" d="M0,0H31.194V27.194a4,4,0,0,1-4,4H0Z" transform="translate(88.23 66.173) rotate(45)" fill="#276dd9"/>
+    <path id="Rectangle_14" data-name="Rectangle 14" d="M0,0H31.194V27.194a4,4,0,0,1-4,4H0Z" transform="translate(44.115 66.173) rotate(45)" fill="#276dd9"/>
+    <path id="Rectangle_15" data-name="Rectangle 15" d="M0,0H31.194V27.194a4,4,0,0,1-4,4H0Z" transform="translate(132.345 66.173) rotate(45)" fill="#276dd9"/>
+    <rect id="Rectangle_10" data-name="Rectangle 10" width="31.194" height="31.194" transform="translate(110.287 44.115) rotate(45)" fill="#276dd9" opacity="0.8"/>
+    <path id="Rectangle_12" data-name="Rectangle 12" d="M0,0H27.194a4,4,0,0,1,4,4V31.194H0Z" transform="translate(154.402 44.115) rotate(45)" fill="#276dd9" opacity="0.8"/>
+    <rect id="Rectangle_8" data-name="Rectangle 8" width="31.194" height="31.194" transform="translate(132.345 22.058) rotate(45)" fill="#276dd9" opacity="0.6"/>
+    <path id="Rectangle_5" data-name="Rectangle 5" d="M3,0H31.194V31.194H0V3A3,3,0,0,1,3,0Z" transform="translate(66.172) rotate(45)" fill="#276dd9" opacity="0.4"/>
+    <path id="Rectangle_6" data-name="Rectangle 6" d="M3,0H31.194V31.194H0V3A3,3,0,0,1,3,0Z" transform="translate(110.287) rotate(45)" fill="#276dd9" opacity="0.4"/>
+  </g>
+</svg>
