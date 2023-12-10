@@ -4,20 +4,20 @@ import traceback
 from fastapi import APIRouter, Depends, Request, Response, HTTPException
 from fastapi.responses import StreamingResponse
 
-from promptengineers.controllers import ChatController, AuthController
-from promptengineers.exceptions import ValidationException
-from promptengineers.factories.provider import VectorSearchProviderFactory
+from promptengineers.fastapi.controllers import ChatController, AuthController
+from promptengineers.core.exceptions import ValidationException
+from promptengineers.retrieval.factories.provider import VectorSearchProviderFactory
 from promptengineers.models.request import (ReqBodyChat, ReqBodyAgentChat,
 									ReqBodyVectorstoreChat, ReqBodyAgentPluginsChat)
 from promptengineers.models.response import (ResponseChat, ResponseAgentChat, ResponseVectorstoreChat,
 									ResponseAgentPluginsChat, RESPONSE_STREAM_AGENT_PLUGINS_CHAT,
 									RESPONSE_STREAM_AGENT_CHAT, RESPONSE_STREAM_VECTORSTORE_CHAT,
 									RESPONSE_STREAM_CHAT)
-from promptengineers.strategies.vectorstores import VectorstoreContext
-from promptengineers.utils import logger
-from promptengineers.utils.chains import format_agent_actions
-from promptengineers.utils.validation import Validator
-from promptengineers.config.test import TEST_USER_ID
+from promptengineers.retrieval.strategies import VectorstoreContext
+from promptengineers.core.utils import logger
+from promptengineers.tools.utils import format_agent_actions
+from promptengineers.core.validations import Validator
+from promptengineers.core.config.test import TEST_USER_ID
 
 from server.config.tools import AVAILABLE_TOOLS
 from server.repos.user import UserRepo
