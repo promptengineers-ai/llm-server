@@ -5,12 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prompt Engineers AI - LLM Server</title>
-	<link rel="icon" href="/assets/favicon.ico" />
+    <link rel="icon" href="/assets/favicon.ico" />
     <style>
+        html, body {
+            height: 100%; /* New: Set the height of the html and body to 100% */
+            margin: 0; /* New: Remove default margin */
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 40px;
+            display: flex; /* New: Set display to flex */
+            justify-content: center; /* New: Center horizontally */
+            align-items: center; /* New: Center vertically */
         }
 
         h1 {
@@ -26,19 +33,38 @@
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+            display: flex; /* New: Set display to flex */
+            flex-direction: column; /* New: Stack items vertically */
+            justify-content: center; /* New: Center items horizontally */
+            align-items: center; /* New: Center items vertically */
         }
+
+        .links-container {
+            display: flex; /* Align children in a row */
+            justify-content: center; /* Center the links horizontally */
+            align-items: center; /* Align the links vertically */
+            gap: 10px; /* Add some space between the links */
+        }
+
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>👨‍💻 Prompt Engineers AI - LLM Server</h1>
-	<a href="#"><img src="https://img.shields.io/badge/View%20Documentation-Docs-yellow"></a>
-	<a href="https://promptengineersai.slack.com/ssb/redirect"><img src="https://img.shields.io/badge/Join%20our%20community-Slack-blue"></a>
-    <p>This is the beta open-source API for Prompt Engineeers AI, please contact ryan.adaptivebiz@gmail.com for more details.</p>
-    <a href="/docs">Client</a>
-	<a href="https://prompt-engineers.gitbook.io/documentation/open-source">Docs</a>
-    <a href="https://github.com/promptengineers-ai/llm-server">Github</a>
+    <!-- <h1>👨‍💻 Prompt Engineers AI - LLM Server</h1> -->
+    <img src="https://raw.githubusercontent.com/promptengineers-ai/llm-server/master/demos/logo.png" />
+    <div class="links-container">
+        <a href="#"><img src="https://img.shields.io/badge/View%20Documentation-Docs-yellow"></a>
+        <a href="https://promptengineersai.slack.com/ssb/redirect"><img src="https://img.shields.io/badge/Join%20our%20community-Slack-blue"></a>
+    </div>
+    <p style="text-align: center;">This is the beta open-source API for Prompt Engineeers AI, please contact ryan.adaptivebiz@gmail.com for more details.</p>
+    <div class="links-container">
+        <a href="/docs">Client</a>
+        <a href="https://prompt-engineers.gitbook.io/documentation/open-source">Docs</a>
+        <a href="https://github.com/promptengineers-ai/llm-server">Github</a>
+        <a href="https://promptengineers.ai">Saas</a>
+    </div>
 </div>
 
 </body>
