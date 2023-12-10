@@ -3,13 +3,13 @@ import ujson
 
 from langchain.agents import tool
 from langchain.embeddings.openai import OpenAIEmbeddings
-from promptengineers.config.llm import OpenAIModels
-from promptengineers.services.pinecone import PineconeService
-from promptengineers.strategies.vectorstores import VectorstoreContext
-from promptengineers.factories.provider import VectorSearchProviderFactory
+from promptengineers.core.config.llm import OpenAIModels
+from promptengineers.retrieval.services.pinecone import PineconeService
+from promptengineers.retrieval.strategies import VectorstoreContext
+from promptengineers.retrieval.factories.provider import VectorSearchProviderFactory
 from promptengineers.repos.user import UserRepo
-from promptengineers.utils.validation import Validator
-from promptengineers.utils import logger
+from promptengineers.core.validations import Validator
+from promptengineers.core.utils import logger
 
 #############################################################
 ## List Pinecone Indexes (Not very useful)
@@ -116,7 +116,7 @@ async def pinecone_rag(
 		user_message (str): A question or statement generated based on the user's message, which
 					will be used to find the most relevant documents in the namespace.
 	"""
-	from promptengineers.controllers import ChatController
+	from promptengineers.fastapi.controllers import ChatController
 	required_keys = ['OPENAI_API_KEY', 'PINECONE_KEY', 'PINECONE_ENV', 'PINECONE_INDEX']
 	tokens = UserRepo().find_token(user_id, required_keys)
 	Validator().validate_api_keys(tokens, required_keys)

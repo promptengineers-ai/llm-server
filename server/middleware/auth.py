@@ -1,7 +1,8 @@
 import os
 from fastapi import HTTPException, Request, Depends, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from promptengineers.config.test import TEST_USER_ID
+
+from promptengineers.core.config.test import TEST_USER_ID
 
 from server.config import APP_SUPER_ADMIN_KEY
 

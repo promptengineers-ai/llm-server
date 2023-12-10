@@ -2,10 +2,10 @@ import unittest
 
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
-from server.strategies.callbacks import AgentStreamCallbackHandler, AsyncIteratorCallbackHandler
-from server.strategies.llms import ModelContext, OllamaStrategy
-from server.strategies.chains import ChainService
-from server.utils.stream import (token_stream, end_stream)
+from promptengineers.llms.services.langchain.callbacks import AgentStreamCallbackHandler, AsyncIteratorCallbackHandler
+from promptengineers.llms.strategies import ModelContext, OllamaStrategy
+from promptengineers.llms.services.langchain.chains import ChainService
+from promptengineers.stream.utils import token_stream, end_stream
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
 
 

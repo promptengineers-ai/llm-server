@@ -2,10 +2,10 @@
 from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.templating import Jinja2Templates
-from promptengineers.config import APP_NAME, APP_VERSION, APP_ORIGINS
+from promptengineers.core.config import APP_NAME, APP_VERSION, APP_ORIGINS
 from promptengineers.fastapi import history_router, retrieval_router, storage_router, prompt_router
 from promptengineers.models.response import ResponseStatus
-from promptengineers.utils import logger
+from promptengineers.core.utils import logger
 
 from server.middleware.auth import AuthMiddleware
 from server.routes.chat import router as chat_router
