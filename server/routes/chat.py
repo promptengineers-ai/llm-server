@@ -8,9 +8,8 @@ from promptengineers.fastapi.controllers import ChatController, AuthController
 from promptengineers.core.exceptions import ValidationException
 from promptengineers.retrieval.factories.provider import VectorSearchProviderFactory
 from promptengineers.models.request import (ReqBodyChat, ReqBodyAgentChat,
-									ReqBodyVectorstoreChat, ReqBodyAgentPluginsChat)
+									ReqBodyVectorstoreChat)
 from promptengineers.models.response import (ResponseChat, ResponseAgentChat, ResponseVectorstoreChat,
-									ResponseAgentPluginsChat, RESPONSE_STREAM_AGENT_PLUGINS_CHAT,
 									RESPONSE_STREAM_AGENT_CHAT, RESPONSE_STREAM_VECTORSTORE_CHAT,
 									RESPONSE_STREAM_CHAT)
 from promptengineers.retrieval.strategies import VectorstoreContext
@@ -121,11 +120,26 @@ async def chat(
 	},
 )
 async def agent(
+	request: Request,
 	body: ReqBodyAgentChat,
 	chat_controller: ChatController = Depends(get_controller),
 ):
 	"""Chat endpoint."""
 	try:
+		vectorstore = None
+		if body.retrieval.provider and body.retrieval.index:
+			# Retrieve User Tokens
+			user_id = getattr(request.state, "user_id", None)
+
+			# Retreve Vectorstore
+			vectorstore_strategy = VectorSearchProviderFactory.choose(
+				provider=body.retrieval.provider,
+				user_id=user_id,
+				index_name=body.retrieval.index
+			)
+			vectostore_service = VectorstoreContext(vectorstore_strategy)
+			vectorstore = vectostore_service.load()
+
 		# You can use the stream variable in your function as needed
 		if not body.stream:
 			# Format Response
@@ -135,6 +149,7 @@ async def agent(
 				temperature=body.temperature,
 				tools=body.tools,
 				plugins=body.plugins,
+				vectorstore=vectorstore,
 			)
 			data = ujson.dumps({
 				'message': result['output'],
@@ -161,6 +176,7 @@ async def agent(
 				temperature=body.temperature,
 				tools=body.tools,
 				plugins=body.plugins,
+				vectorstore=vectorstore,
 			),
 			headers={
 				"Cache-Control": "no-cache",
