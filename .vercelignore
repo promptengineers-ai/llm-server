@@ -5,3 +5,4 @@ tests/*
 Changelog.md
 docker-compose.yml
 requirements-dev.txt
+demos
