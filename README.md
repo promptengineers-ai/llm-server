@@ -21,9 +21,9 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
   </video>
 </p> -->
 
-<p align="center">
+<!-- <p align="center">
   <img src="https://github.com/promptengineers-ai/llm-server/blob/development/static/demos/llm-server.gif?raw=true" />
-</p>
+</p> -->
 
 ### Useful Links
 - [Deploying FastAPI to Vercel](https://blog.logrocket.com/deploying-fastapi-applications-to-vercel/)

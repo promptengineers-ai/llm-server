@@ -29,7 +29,7 @@ cd $(dirname $0)
 cd ../
 DIR=$(pwd)
 
-IMAGE_URL="promptengineersai/chat-stream-full-stack:$TAG"
+IMAGE_URL="promptengineersai/llm-server:$TAG"
 
 docker build -t $IMAGE_URL .
 docker push $IMAGE_URL
