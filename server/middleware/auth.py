@@ -5,6 +5,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from promptengineers.core.config.test import TEST_USER_ID
 
 from server.config import APP_SUPER_ADMIN_KEY
+from server.config.tools import AVAILABLE_TOOLS
 
 
 async def get_api_key_or_credentials(
@@ -25,8 +26,10 @@ async def get_api_key_or_credentials(
 
 
 class AuthMiddleware:
-	def __init__(self) -> None:
+	def __init__(self, user_repo) -> None:
 		self.users_db = self.load_users_from_env()
+		self.user_repo = user_repo
+		self.available_tools = AVAILABLE_TOOLS
 
 	def load_users_from_env(self):
 		users = {}
@@ -43,6 +46,9 @@ class AuthMiddleware:
 	):
 		if "api_key" in credentials:
 			request.state.user_id = TEST_USER_ID
+			request.state.user_repo = self.user_repo
+			request.state.available_tools = self.available_tools
+
 			return request
 		else:
 			http_basic_auth = credentials.get("http_basic_auth")
@@ -54,6 +60,9 @@ class AuthMiddleware:
 					headers={"WWW-Authenticate": "Basic"},
 				)
 			request.state.user_id = TEST_USER_ID
+			request.state.user_repo = self.user_repo
+			request.state.available_tools = self.available_tools
+
 			return request
 
 	def get_current_user(

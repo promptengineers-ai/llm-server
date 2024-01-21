@@ -2,7 +2,7 @@ from typing import Union
 
 from promptengineers.core.config.test import TEST_USER_ID
 from promptengineers.core.config import (OPENAI_API_KEY, ACCESS_KEY_ID, ACCESS_SECRET_KEY, BUCKET,
-                            PINECONE_ENV, PINECONE_INDEX, PINECONE_KEY, ALCHEMY_API_KEY,
+                            PINECONE_ENV, PINECONE_INDEX, PINECONE_API_KEY, ALCHEMY_API_KEY,
                             APP_SECRET, MONGO_CONNECTION, REDIS_URL, OLLAMA_BASE_URL, MONGO_DB_NAME)
 from promptengineers.mongo.utils import decrypt
 
@@ -22,7 +22,7 @@ class UserRepo:
                         'ACCESS_KEY_ID': ACCESS_KEY_ID,
                         'ACCESS_SECRET_KEY': ACCESS_SECRET_KEY,
                         'BUCKET': BUCKET,
-                        'PINECONE_KEY': PINECONE_KEY,
+                        'PINECONE_API_KEY': PINECONE_API_KEY,
                         'PINECONE_ENV': PINECONE_ENV,
                         'PINECONE_INDEX': PINECONE_INDEX,
                         'ALCHEMY_API_KEY': ALCHEMY_API_KEY,

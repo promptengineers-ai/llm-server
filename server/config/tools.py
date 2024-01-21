@@ -1,6 +1,6 @@
 # Desc: This file contains the list of tools that are available to the server.
 from server.tools.retrieval import (pinecone_list_indexes, pinecone_index_info, 
-									pinecone_similarity_search, pinecone_rag)
+									pinecone_similarity_search)
 from promptengineers.tools import math_tool
 
 AVAILABLE_TOOLS = {
@@ -9,5 +9,4 @@ AVAILABLE_TOOLS = {
 	'pinecone_list_indexes': pinecone_list_indexes,
 	'pinecone_index_info': pinecone_index_info,
 	'pinecone_similarity_search': pinecone_similarity_search,
-	'pinecone_rag': pinecone_rag,
 }
