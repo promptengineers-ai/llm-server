@@ -8,6 +8,7 @@ import {
 } from "react";
 import { IContextProvider } from "../interfaces/provider";
 import { redirect, useRouter } from "next/navigation";
+import { API_URL } from "@/config/app";
 
 export const AuthContext = createContext({});
 
@@ -61,7 +62,7 @@ export default function AuthProvider({ children }: IContextProvider) {
     const login = async (email: string, password: string) => {
         try {
             const loginResponse = await fetch(
-                "http://localhost:8000/auth/login",
+                `${API_URL}/auth/login`,
                 {
                     method: "POST",
                     headers: {
@@ -79,7 +80,7 @@ export default function AuthProvider({ children }: IContextProvider) {
 
             // Fetch additional user data after successful login
             const userDataResponse = await fetch(
-                "http://localhost:8000/auth/user",
+                `${API_URL}/auth/user`,
                 {
                     headers: {
                         Authorization: `Bearer ${access_token}`,

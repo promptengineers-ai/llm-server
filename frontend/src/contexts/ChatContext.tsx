@@ -25,6 +25,7 @@ import { SSE } from "sse.js";
 import { constructBubbleMessage } from "@/utils/chat";
 import { userMessageTitleStyle } from "@/config/message";
 import Image from "next/image";
+import { API_URL } from "@/config/app";
 
 const defaultChatContextValue: ChatContextType = {
     loading: false,
@@ -335,7 +336,6 @@ export default function ChatProvider({
     };
 
     const submitQuestionStream = async () => {
-        const API_URL = `http://localhost:8000/api/v1/chat`;
         setLoading(true);
         responseRef.current = "";
         setResponse("");
@@ -349,10 +349,10 @@ export default function ChatProvider({
             streaming: true,
         };
 
-        const source = new SSE(API_URL, {
+        const source = new SSE(API_URL + "/api/v1/chat", {
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem('token')}`, // set this yourself
+                Authorization: `Bearer ${localStorage.getItem("token")}`, // set this yourself
             },
             payload: JSON.stringify(config),
         });
