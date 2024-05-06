@@ -9,25 +9,23 @@ export const withAuth = (
     getRoute: (id: string | string[] | undefined) => string,
     minimumPlan: string[]
 ) => {
-    return (props: any) => {
+    const WithAuthComponent = (props: any) => {
         const pathname = usePathname();
         const { id } = useParams();
         const { logout, token, updateToken } = useAuthContext();
 
         useEffect(() => {
-            // Ensure the user is authenticated before proceeding
             const token = localStorage.getItem("token");
             updateToken(token);
             if (!token) {
                 logout();
             } else {
-                // Redirect to the intended page or to chat if no specific route is needed
                 const route = getRoute(id);
                 if (pathname !== route) {
                     redirect(route);
                 }
             }
-        }, [pathname, id]);
+        }, [pathname, id, logout, updateToken]);
 
         if (!token) {
             return (
@@ -47,4 +45,8 @@ export const withAuth = (
 
         return <WrappedComponent {...props} />;
     };
+
+    WithAuthComponent.displayName = "WithAuth";
+    return WithAuthComponent;
 };
+

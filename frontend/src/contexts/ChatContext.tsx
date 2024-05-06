@@ -24,6 +24,7 @@ import rehypeHighlight from "rehype-highlight";
 import { SSE } from "sse.js";
 import { constructBubbleMessage } from "@/utils/chat";
 import { userMessageTitleStyle } from "@/config/message";
+import Image from "next/image";
 
 const defaultChatContextValue: ChatContextType = {
     loading: false,
@@ -294,14 +295,15 @@ export default function ChatProvider({
                             ),
                             // Add more custom components as needed
                         }}
-                        children={conversationItem.content}
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[
                             rehypeSanitize,
                             rehypeRaw,
                             rehypeHighlight,
                         ]}
-                    />
+                    >
+                        {conversationItem.content}
+                    </ReactMarkdown>
                     {conversationItem.images && (
                         <div
                             style={{
@@ -312,7 +314,7 @@ export default function ChatProvider({
                             }}
                         >
                             {conversationItem.images.map((image, index) => (
-                                <img
+                                <Image
                                     onClick={() => setSelectedImage(image)}
                                     key={index}
                                     src={image}
@@ -484,11 +486,11 @@ export default function ChatProvider({
         if (userInput.length) {
             submitQuestionStream();
         }
-    }, [messages]);
+    }, [submitQuestionStream, userInput.length, messages]);
 
     useEffect(() => {
         fetchChats();
-    }, [])
+    }, [fetchChats]);
 
     return (
         <ChatContext.Provider
@@ -523,6 +525,7 @@ export default function ChatProvider({
                     handleImageClick,
                 };
             }, [
+                chats,
                 userInput,
                 loading,
                 chatboxRef,
