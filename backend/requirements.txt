@@ -1,0 +1,30 @@
+langchain 
+langchain_openai 
+langchain-anthropic
+langchain-pinecone
+langchain-groq
+langchain_experimental 
+# litellm
+pandas
+pinecone-client
+uvicorn
+fastapi
+transformers
+lxml
+playwright
+beautifulsoup4
+nest-asyncio
+fillpdf
+pypdf
+# faiss-gpu
+faiss-cpu
+networkx
+ujson
+minio
+python-multipart
+sqlalchemy 
+asyncpg 
+aiosqlite
+python-jose[cryptography]
+aioredis
+redis

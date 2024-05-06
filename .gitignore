@@ -1,6 +1,0 @@
-.env*
-.env.local
-__pycache__/
-.venv/
-.pytest_cache/
-.vercel
