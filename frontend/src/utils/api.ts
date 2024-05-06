@@ -5,6 +5,7 @@ import {
 } from "./chat";
 import { log } from "../utils/log";
 import { Message } from "../types";
+import { API_URL } from "@/config/app";
 
 /**----------------------------------------------------------
  * Send a message to the server and get a response
@@ -17,7 +18,7 @@ export class Client {
     protected theme: string | undefined;
 
     constructor(_apiUrl?: string) {
-        this.apiUrl = _apiUrl || "http://localhost:8000";
+        this.apiUrl = _apiUrl || API_URL;
     }
 }
 
