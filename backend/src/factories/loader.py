@@ -1,4 +1,4 @@
-import nest_asyncio
+# import nest_asyncio
 from langchain_community.document_loaders import (CSVLoader, DirectoryLoader, GitbookLoader,
 										PyPDFLoader, TextLoader, JSONLoader, RecursiveUrlLoader,
 										ReadTheDocsLoader, DataFrameLoader, UnstructuredHTMLLoader, 
@@ -8,7 +8,7 @@ from langchain_community.document_loaders import (CSVLoader, DirectoryLoader, Gi
 
 from src.loaders import CopyPasteLoader
 
-nest_asyncio.apply()
+# nest_asyncio.apply()
 
 class LoaderFactory:
     LOADER_CLASSES = {

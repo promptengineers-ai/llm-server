@@ -11,7 +11,7 @@ uvicorn
 fastapi
 transformers
 lxml
-playwright
+# playwright
 beautifulsoup4
 nest-asyncio
 fillpdf
@@ -28,3 +28,4 @@ aiosqlite
 python-jose[cryptography]
 aioredis
 redis
+alembic

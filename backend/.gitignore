@@ -1,7 +1,9 @@
 .env*
 .env.local
-__pycache__/
+__pycache__*
 .venv/
 .pytest_cache/
 .vercel
 test.sqlite
+alembic.ini
+vercel.json

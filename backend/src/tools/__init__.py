@@ -1,4 +1,4 @@
-import nest_asyncio
+# import nest_asyncio
 from langchain_core.tools import StructuredTool
 from langchain_experimental.utilities import PythonREPL
 from langchain_community.tools.playwright.utils import create_async_playwright_browser
@@ -7,7 +7,7 @@ from langchain_community.agent_toolkits.playwright.toolkit import PlayWrightBrow
 from .csv import csv_agent
 from .pdf import get_form_field_names, fill_pdf_fields
 
-nest_asyncio.apply()
+# nest_asyncio.apply()
 
 python_repl = PythonREPL()
 repl_tool = StructuredTool.from_function(
@@ -51,11 +51,11 @@ defined in the PDF form, and each value is the value to set for that field.
     handle_tool_error=True,
 )
 
-def playwright_toolkit():
-    browser = create_async_playwright_browser()
-    toolkit = PlayWrightBrowserToolkit.from_browser(async_browser=browser)
-    tools = toolkit.get_tools()
-    return tools
+# def playwright_toolkit():
+#     browser = create_async_playwright_browser()
+#     toolkit = PlayWrightBrowserToolkit.from_browser(async_browser=browser)
+#     tools = toolkit.get_tools()
+#     return tools
 
 
 
@@ -65,5 +65,5 @@ AVAILABLE_TOOLS = {
     'csv_tool': csv_tool,
     'pdf_get_field_names': pdf_get_field_names,
     'pdf_fill_form_fields': pdf_fill_form_fields,
-    'playwright_toolkit': playwright_toolkit(),
+    # 'playwright_toolkit': playwright_toolkit(),
 }
