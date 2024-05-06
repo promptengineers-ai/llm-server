@@ -5,8 +5,8 @@
 Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
 </p>
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/View%20Documentation-Docs-yellow"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Join%20our%20community-Slack-blue"></a>
+  <a href="https://promptengineers-ai.gitbook.io/documentation/open-source"><img src="https://img.shields.io/badge/View%20Documentation-Docs-yellow"></a>
+  <a href="https://join.slack.com/t/promptengineersai/shared_invite/zt-21upjsftv-gX~gNjTCU~2HfbeM_ZwTEQ"><img src="https://img.shields.io/badge/Join%20our%20community-Slack-blue"></a>
 </p>
 
 ### Useful Links
@@ -32,6 +32,18 @@ pip install -r requirements.txt
 
 ### Run Application on local machine
 bash scripts/dev.sh
+```
+
+## 🛠️ Setup Client 
+```bash
+### Change into Backend directory
+cd frontend
+
+### Install node_modules
+npm install
+
+### Start Development Server
+npm run dev
 ```
 
 ### Environment Variables
