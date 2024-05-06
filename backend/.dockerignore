@@ -1,0 +1,14 @@
+tests/*
+.vscode/*
+.github/*
+.example.env
+Changelog.md
+docker-compose.yml
+requirements-dev.txt
+demos
+static/*
+__pycache__/
+.venv/
+.pytest_cache/
+.vercel
+test.sqlite

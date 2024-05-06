@@ -9,8 +9,9 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
   <a href="https://join.slack.com/t/promptengineersai/shared_invite/zt-21upjsftv-gX~gNjTCU~2HfbeM_ZwTEQ"><img src="https://img.shields.io/badge/Join%20our%20community-Slack-blue"></a>
 </p>
 
-### Useful Links
-- [Deploying FastAPI to Vercel](https://blog.logrocket.com/deploying-fastapi-applications-to-vercel/)
+<p align="center">
+  <img src="https://github.com/kre8mymedia/chatgpt-sse/assets/40816745/5696ee4c-4695-4bd9-912d-b375b5695f7e" />
+</p>
 
 
 ## 🛠️ Setup API Server
