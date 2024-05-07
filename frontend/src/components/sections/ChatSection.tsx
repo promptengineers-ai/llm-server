@@ -1,14 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import FileIcon from "../icons/FileIcon";
 import SubmitIcon from "../icons/SubmitIcon";
 import { useChatContext } from "../../contexts/ChatContext";
-import DOMPurify from "dompurify";
 import { FcCancel } from "react-icons/fc";
 
 
 
-export default function ChatInputSection() {
-
+export default function ChatSection() {
     const {
         loading,
         chatInputRef,
@@ -25,7 +23,7 @@ export default function ChatInputSection() {
         setSelectedImage,
         handleImageClick,
     } = useChatContext();
-    
+
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
         e.preventDefault(); // Prevent the default paste action
         const items = e.clipboardData.items; // Get clipboard items
@@ -114,7 +112,7 @@ export default function ChatInputSection() {
     }, [userInput]);
 
     return (
-        <div className="w-full pt-2 md:pt-0 border-t md:border-t-0 gizmo:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:pl-2 gizmo:pl-0 gizmo:md:pl-0 md:w-[calc(100%-.5rem)] absolute bottom-0 left-0 md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent dark:md:bg-vert-dark-gradient">
+        <div className="w-full pt-2 md:pt-0 border-t md:border-t-0 bg-white md:!bg-transparent">
             <form className="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
                 <div className="relative flex h-full flex-1 items-stretch md:flex-col">
                     <div>
@@ -139,6 +137,9 @@ export default function ChatInputSection() {
                                                                         {localStorage.getItem(
                                                                             "theme"
                                                                         )}
+                                                                        {/* Come up
+                                                                        with
+                                                                        concepts */}
                                                                     </div>
                                                                     <div className="truncate opacity-50">
                                                                         for a
@@ -314,7 +315,7 @@ export default function ChatInputSection() {
                         </div>
                     </div>
                     <div className="flex w-full items-center">
-                        <div className="shadow-custom overflow-hidden gizmo:[&amp;:has(textarea:focus)]:border-token-border-xheavy gizmo:[&amp;:has(textarea:focus)]:shadow-[0_2px_6px_rgba(0,0,0,.05)] flex flex-col w-full dark:border-gray-900/50 gizmo:dark:border-token-border-heavy flex-grow relative border border-black/10 dark:text-white rounded-xl shadow-xs dark:shadow-xs dark:bg-gray-700 bg-primary-300">
+                        <div className="shadow-custom overflow-hidden flex flex-col w-full flex-grow relative border border-black/10 bg-primary-300 rounded-xl shadow-xs">
                             {/* Images container */}
                             {images.length > 0 && (
                                 <div className="flex w-full flex-row flex-wrap items-center justify-start gap-2 p-2">
@@ -372,7 +373,6 @@ export default function ChatInputSection() {
                             <textarea
                                 ref={chatInputRef}
                                 value={userInput}
-                                // disabled={loading}
                                 onChange={(e) => setUserInput(e.target.value)}
                                 onPaste={handlePaste}
                                 onKeyDown={handleKeyDown}
@@ -381,9 +381,8 @@ export default function ChatInputSection() {
                                 data-id="root"
                                 rows={1}
                                 placeholder="Message ChatGPT..."
-                                className="m-0 w-full resize-none border-0 focus:ring-0 focus-visible:ring-0 dark:bg-transparent py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] max-h-52 placeholder-black/50 dark:placeholder-white/50 pl-10 md:pl-[55px]"
+                                className="m-0 w-full resize-none border-0 focus:ring-0 focus-visible:ring-0 bg-transparent py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] max-h-52 placeholder-black/50 pl-10 md:pl-[55px]"
                                 style={{
-                                    // height: "auto",
                                     overflowY: "auto",
                                     borderRadius: "10px",
                                 }}
@@ -391,7 +390,7 @@ export default function ChatInputSection() {
                             <div className="absolute bottom-2 md:bottom-3 left-2 md:left-4">
                                 <div className="flex">
                                     <button
-                                        className="btn relative p-0 text-black dark:text-white"
+                                        className="btn relative p-0 text-black"
                                         aria-label="Attach files"
                                     >
                                         <div className="flex w-full gap-2 items-center justify-center">
@@ -403,8 +402,7 @@ export default function ChatInputSection() {
                             <button
                                 onClick={(e) => sendChatPayload(e)}
                                 disabled={loading}
-                                className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-0.5 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 dark:border-white dark:bg-white dark:hover:bg-white md:bottom-3 md:right-3"
-                                data-testid="send-button"
+                                className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-0.5 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"
                             >
                                 <span className="" data-state="closed">
                                     <SubmitIcon />
@@ -414,7 +412,7 @@ export default function ChatInputSection() {
                     </div>
                 </div>
             </form>
-            <div className="relative px-2 py-2 text-center text-[11px] text-secondary-100 dark:text-gray-300 md:px-[60px] bg-white">
+            <div className="relative px-2 py-2 text-center text-[11px] text-secondary-100 bg-white">
                 <span>
                     ChatGPT can make mistakes. Consider checking important
                     information.

@@ -21,6 +21,15 @@ export const ThemeProvider = ({ children }: IContextProvider) => {
         setTheme(savedTheme);
         localStorage.setItem("theme", savedTheme);
     }, []);
+    // useEffect(() => {
+    //     const savedTheme =
+    //         localStorage.getItem("theme") ||
+    //         (window.matchMedia("(prefers-color-scheme: dark)").matches
+    //             ? "dark"
+    //             : "light");
+    //     setTheme(savedTheme);
+    //     localStorage.setItem("theme", savedTheme);
+    // }, []);
 
     // Apply the theme to the root element
     useEffect(() => {
