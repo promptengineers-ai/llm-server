@@ -12,19 +12,21 @@ const themeState = {
 const ThemeContext = createContext(themeState);
 
 export const ThemeProvider = ({ children }: IContextProvider) => {
-    const [theme, setTheme] = useState(() => {
-        // Retrieve the stored theme or determine it based on system preference
-        const savedTheme = localStorage.getItem("theme");
-        if (savedTheme) {
-            return savedTheme;
-        }
-        return window.matchMedia &&
-            window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light";
-    });
+    // Use a state initialized to light mode by default
+    const [theme, setTheme] = useState(DEFAULT_COLOR_MODE);
 
-    // This effect runs once on mount and whenever the theme changes
+    // Effect to check the system theme or stored theme, but only run this on the client side
+    useEffect(() => {
+        const savedTheme =
+            localStorage.getItem("theme") ||
+            (window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light");
+        setTheme(savedTheme);
+        localStorage.setItem("theme", savedTheme);
+    }, []);
+
+    // Apply the theme to the root element
     useEffect(() => {
         const root = document.documentElement;
         root.style.setProperty(
@@ -39,8 +41,7 @@ export const ThemeProvider = ({ children }: IContextProvider) => {
             "--background-end-rgb",
             theme === "dark" ? "0, 0, 0" : "255, 255, 255"
         );
-        root.className = theme; // This applies the theme class to the root element
-        localStorage.setItem("theme", theme); // Persist the theme in localStorage
+        root.className = theme;
     }, [theme]);
 
     return (
