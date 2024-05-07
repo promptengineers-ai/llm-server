@@ -14,7 +14,7 @@ const withPWA = withPWAInit({
 });
 
 export default withPWA({
-    // experimental: {
-    //     missingSuspenseWithCSRBailout: false,
-    // },
+    experimental: {
+        missingSuspenseWithCSRBailout: false,
+    },
 });
