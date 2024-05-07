@@ -17,11 +17,7 @@ export const ThemeProvider = ({ children }: IContextProvider) => {
 
     // Effect to check the system theme or stored theme, but only run this on the client side
     useEffect(() => {
-        const savedTheme =
-            localStorage.getItem("theme") ||
-            (window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "dark"
-                : "light");
+        const savedTheme = localStorage.getItem("theme") || DEFAULT_COLOR_MODE;
         setTheme(savedTheme);
         localStorage.setItem("theme", savedTheme);
     }, []);
