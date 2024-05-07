@@ -7,8 +7,8 @@ const LoginForm = () => {
     const { theme } = useTheme(); // This will give us the current theme
     const { login } = useAuthContext();
     const [payload, setPayload] = useState({
-        email: "",
-        password: "",
+        email: "ryan@test.com",
+        password: "test1234",
     });
 
     // Determine the class names based on the theme

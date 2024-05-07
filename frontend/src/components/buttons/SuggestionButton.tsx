@@ -14,7 +14,7 @@ export default function SuggestionButton({ title, description }: { title: string
                             <div className="truncate font-semibold text-black">
                                 {title}
                             </div>
-                            <div className="truncate opacity-50">
+                            <div className="truncate text-gray-400">
                                 {description}
                             </div>
                         </div>
