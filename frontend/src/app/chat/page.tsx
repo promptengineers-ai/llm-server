@@ -36,8 +36,13 @@ const Chat = () => {
     const [isUserScrolledUp, setIsUserScrolledUp] = useState(false);
     const [showScrollButton, setShowScrollButton] = useState(false);
     const { isOpen, setIsOpen } = useDefaultOpenState();
-    const { messages, renderConversation, selectedImage, setSelectedImage } =
-        useChatContext();
+    const {
+        messages,
+        renderConversation,
+        selectedImage,
+        setSelectedImage,
+        fetchChats,
+    } = useChatContext();
     const isMobile = window.innerWidth < 768;
 
     const toggleSideSection = () => setIsOpen(!isOpen);
@@ -79,6 +84,10 @@ const Chat = () => {
             scrollToBottom();
         }
     }, [messages, isUserScrolledUp]);
+
+    useEffect(() => {
+        fetchChats();
+    }, []);
 
     return (
         <main className="overflow-hidden w-full h-screen relative flex z-0">

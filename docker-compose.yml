@@ -2,31 +2,31 @@ version: '3'
 
 services:
   # API
-  api:
-    container_name: api
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    command: uvicorn src.api:app --host 0.0.0.0
-    volumes:
-      - sqlite-data:/app/data  # Mount for SQLite database
-    ports:
-      - 8000:8000
-      - 5678:5678
-    env_file:
-      - ./backend/.env.local
+  # api:
+  #   container_name: api
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   command: uvicorn src.api:app --host 0.0.0.0
+  #   volumes:
+  #     - sqlite-data:/app/data  # Mount for SQLite database
+  #   ports:
+  #     - 8000:8000
+  #     - 5678:5678
+  #   env_file:
+  #     - ./backend/.env.local
 
-  # Proxy (Nginx)
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
-    ports:
-      - 80:80
-      - 443:443
-    depends_on:
-      - api
+  # # Proxy (Nginx)
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: nginx
+  #   volumes:
+  #     - ./nginx:/etc/nginx/conf.d
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   depends_on:
+  #     - api
 
   # Redis (Cache / Broker / Vector Index / Stream)
   redis:

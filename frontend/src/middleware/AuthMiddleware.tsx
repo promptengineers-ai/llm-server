@@ -1,5 +1,5 @@
 'use client';
-import { useRouter, usePathname, useParams, redirect } from "next/navigation";
+import { usePathname, useParams, redirect } from "next/navigation";
 import { useEffect } from "react";
 import { useAuthContext } from "@/contexts/AuthContext"; // Adjust the import path as necessary
 import { NextPage } from "next";

@@ -18,7 +18,7 @@ export class Client {
     protected theme: string | undefined;
 
     constructor(_apiUrl?: string) {
-        this.apiUrl = _apiUrl || API_URL;
+        this.apiUrl = API_URL;
     }
 }
 

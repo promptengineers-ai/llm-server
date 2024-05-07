@@ -486,11 +486,7 @@ export default function ChatProvider({
         if (userInput.length) {
             submitQuestionStream();
         }
-    }, [submitQuestionStream, userInput.length, messages]);
-
-    useEffect(() => {
-        fetchChats();
-    }, [fetchChats]);
+    }, [messages]);
 
     return (
         <ChatContext.Provider
@@ -523,6 +519,7 @@ export default function ChatProvider({
                     setUserInput,
                     setSelectedImage,
                     handleImageClick,
+                    fetchChats,
                 };
             }, [
                 chats,
@@ -544,7 +541,8 @@ export default function ChatProvider({
                 renderConversation,
                 setUserInput,
                 setSelectedImage,
-                handleImageClick
+                handleImageClick,
+                fetchChats,
             ])}
         >
             {children}

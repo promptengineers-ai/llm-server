@@ -5,9 +5,10 @@ import {
     useReducer,
     useMemo,
     useEffect,
+    useCallback,
 } from "react";
 import { IContextProvider } from "../interfaces/provider";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { API_URL } from "@/config/app";
 
 export const AuthContext = createContext({});
@@ -59,7 +60,7 @@ export default function AuthProvider({ children }: IContextProvider) {
         }
     }, []);
 
-    const login = async (email: string, password: string) => {
+    const login = useCallback(async (email: string, password: string) => {
         try {
             const loginResponse = await fetch(
                 `${API_URL}/auth/login`,
@@ -104,17 +105,17 @@ export default function AuthProvider({ children }: IContextProvider) {
             alert(error);
             throw error; // Re-throw to handle it in the component if needed
         }
-    };
+    }, []);
 
-    const logout = () => {
+    const logout = useCallback(() => {
         router.push("/");
         dispatch({ type: "LOGOUT" });
-    };
+    }, []);
 
-    const updateToken = (token: string) => {
+    const updateToken = useCallback((token: string) => {
         const user = sessionStorage.getItem("user") || "{}";
         dispatch({ type: "LOGIN", payload: { user: JSON.parse(user), token } });
-    };
+    }, []);
 
     const value = useMemo(
         () => ({
@@ -123,7 +124,7 @@ export default function AuthProvider({ children }: IContextProvider) {
             logout,
             updateToken,
         }),
-        [state]
+        [state, updateToken]
     );
 
     return (

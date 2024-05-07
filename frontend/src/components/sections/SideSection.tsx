@@ -99,7 +99,7 @@ const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
                                                     </h3>
                                                 </div>
                                                 <ol className="bg-primary-800">
-                                                    {chats.map((chat: any) => (
+                                                    {chats?.map((chat: any) => (
                                                         <li
                                                             key={chat.id}
                                                             className="relative z-[15] h-auto bg-primary-800"
