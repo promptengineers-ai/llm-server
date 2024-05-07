@@ -31,6 +31,14 @@ const useDefaultOpenState = () => {
     return { isOpen, setIsOpen };
 };
 
+const mobileFixedBottomStyle: React.CSSProperties = {
+    position: "fixed",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+};
+
 const Chat = () => {
     const messagesContainerRef = useRef<null | HTMLDivElement>(null);
     const [isUserScrolledUp, setIsUserScrolledUp] = useState(false);
@@ -185,7 +193,15 @@ const Chat = () => {
                                 </>
                             )}
                         </div>
-                        <ChatSection />
+                        <div
+                            style={
+                                isMobile
+                                    ? mobileFixedBottomStyle
+                                    : undefined
+                            }
+                        >
+                            <ChatSection />
+                        </div>
                     </div>
                 </div>
             </div>
