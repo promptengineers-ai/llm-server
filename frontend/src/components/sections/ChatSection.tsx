@@ -136,9 +136,9 @@ export default function ChatInputSection() {
                                                             <div className="flex w-full items-center justify-between">
                                                                 <div className="flex flex-col overflow-hidden py-1 px-2 text-secondary-100">
                                                                     <div className="truncate font-semibold">
-                                                                        Come up
-                                                                        with
-                                                                        concepts
+                                                                        {localStorage.getItem(
+                                                                            "theme"
+                                                                        )}
                                                                     </div>
                                                                     <div className="truncate opacity-50">
                                                                         for a
