@@ -10,47 +10,37 @@ const themeState = {
 };
 
 const ThemeContext = createContext(themeState);
+
 export const ThemeProvider = ({ children }: IContextProvider) => {
-    const [theme, setTheme] = useState(DEFAULT_COLOR_MODE);
-
-    useEffect(() => {
-        // Access localStorage only on the client side, after mounting
-        const storedTheme = localStorage.getItem("theme");
-        setTheme(storedTheme || DEFAULT_COLOR_MODE);
-    }, []);
-
-    // Check local storage for theme
-    useEffect(() => {
-        const root = document.documentElement;
+    const [theme, setTheme] = useState(() => {
+        // Retrieve the stored theme or determine it based on system preference
         const savedTheme = localStorage.getItem("theme");
-
         if (savedTheme) {
-            setTheme(savedTheme);
-        } else {
-            const defaultTheme =
-                window.matchMedia &&
-                window.matchMedia("(prefers-color-scheme: dark)").matches
-                    ? "dark"
-                    : "light";
-            setTheme(defaultTheme); // Set theme based on system preference initially
-            localStorage.setItem("theme", defaultTheme);
+            return savedTheme;
         }
-    }, []);
+        return window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
+    });
 
-    // Update the theme in local storage
+    // This effect runs once on mount and whenever the theme changes
     useEffect(() => {
         const root = document.documentElement;
-        if (theme === "dark") {
-            root.style.setProperty("--foreground-rgb", "255, 255, 255");
-            root.style.setProperty("--background-start-rgb", "0, 0, 0");
-            root.style.setProperty("--background-end-rgb", "0, 0, 0");
-        } else {
-            root.style.setProperty("--foreground-rgb", "0, 0, 0");
-            root.style.setProperty("--background-start-rgb", "214, 219, 220");
-            root.style.setProperty("--background-end-rgb", "255, 255, 255");
-        }
-        document.documentElement.className = theme;
-        localStorage.setItem("theme", theme);
+        root.style.setProperty(
+            "--foreground-rgb",
+            theme === "dark" ? "255, 255, 255" : "0, 0, 0"
+        );
+        root.style.setProperty(
+            "--background-start-rgb",
+            theme === "dark" ? "0, 0, 0" : "214, 219, 220"
+        );
+        root.style.setProperty(
+            "--background-end-rgb",
+            theme === "dark" ? "0, 0, 0" : "255, 255, 255"
+        );
+        root.className = theme; // This applies the theme class to the root element
+        localStorage.setItem("theme", theme); // Persist the theme in localStorage
     }, [theme]);
 
     return (
