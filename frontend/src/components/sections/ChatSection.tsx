@@ -224,7 +224,7 @@ export default function ChatSection() {
                                 tabIndex={0}
                                 data-id="root"
                                 rows={1}
-                                placeholder="Message ChatGPT..."
+                                placeholder="Message ChatGPTiddy..."
                                 className="m-0 w-full resize-none border-0 focus:ring-0 focus-visible:ring-0 bg-transparent py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] max-h-52 placeholder-black/50 pl-10 md:pl-[55px]"
                                 style={{
                                     overflowY: "auto",
