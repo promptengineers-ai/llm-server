@@ -223,6 +223,7 @@ export default function ChatProvider({
                                     alt={image || "Conversation image"}
                                     className="my-2"
                                     style={{
+                                        cursor: "pointer",
                                         maxWidth: "350px",
                                         maxHeight: "450px",
                                         borderRadius: "5px",
