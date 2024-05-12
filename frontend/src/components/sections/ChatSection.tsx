@@ -220,7 +220,7 @@ export default function ChatSection() {
                                 data-id="root"
                                 rows={1}
                                 placeholder="Acting as a expert at..."
-                                className="m-0 w-full resize-none border-0 focus:ring-0 focus-visible:ring-0 bg-transparent py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] max-h-52 placeholder-black/50 pl-10 md:pl-[55px]"
+                                className="m-0 w-full resize-none border-0 bg-transparent py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] max-h-52 placeholder-black/50 pl-10 md:pl-[55px] focus:outline-none"
                                 style={{
                                     overflowY: "auto",
                                     borderRadius: "10px",
