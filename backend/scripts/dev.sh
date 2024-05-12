@@ -29,5 +29,6 @@ fi
 
 # Start the server with logging debug mode
 uvicorn src.api:app \
+--port 8080 \
 --log-level debug \
 --reload

@@ -41,15 +41,23 @@ retrieval_service = RetrievalService()
 async def chat(body: Agent):
 	try:     
 		if not body.tools and body.retrieval.provider and body.retrieval.index_name:
-			filtered_messages = retrieve_chat_messages(body.messages)
-			chat_history = list(zip(filtered_messages[::2], filtered_messages[1::2]))
 			chain = retrieval_chain(body)
+			query = {'input': body.messages[-1]['content']}
 		else:
 			chain, filtered_messages = agent_chain(body)
+			query = filtered_messages
    
 		if body.streaming:
 			return StreamingResponse(
-				chain_stream(chain, filtered_messages),
+				chain_stream(
+        			chain, 
+           			query, 
+              		config={
+                    	'configurable': {
+							'chat_history': retrieve_chat_messages(body, True)[:-1]
+						}
+                    }
+                ),
 				headers={
 					"Cache-Control": "no-cache",
 					"Connection": "keep-alive",
@@ -58,7 +66,6 @@ async def chat(body: Agent):
 			)
 		else:
 			if not body.tools and body.retrieval.provider and body.retrieval.index_name:
-				query = {'input': filtered_messages[-1], 'chat_history': chat_history}
 				result = await chain.ainvoke(query)
 				content = {
 					'result': {
@@ -67,7 +74,7 @@ async def chat(body: Agent):
 					}
 				}
 			else:
-				result = await chain.ainvoke(filtered_messages)
+				result = await chain.ainvoke(query)
 				content = {
 					'result': {
 						"output": result.content,
@@ -152,7 +159,7 @@ async def list_chats(chat_repo: ChatRepository = Depends(get_repo)):
 
 @router.post("/c", tags=[TAG])
 async def create_chat(chat: Chat, chat_repo: ChatRepository = Depends(get_repo)):
-    # Retrieve user_id (assuming it's an email) from request state
+	# Retrieve user_id (assuming it's an email) from request state
 	chat = await chat_repo.create(chat)
 	if not chat:
 		raise HTTPException(status_code=404, detail="Not found")
@@ -175,10 +182,10 @@ async def update_chat(chat_id: str, chat: Chat, chat_repo: ChatRepository = Depe
 	return {"chat": chat}
  
 @router.delete(
-    "/c/{chat_id}", 
-    tags=[TAG], 
-    dependencies=[Depends(current_user)], 
-    responses={204: {"description": "Chat deleted"}}
+	"/c/{chat_id}", 
+	tags=[TAG], 
+	dependencies=[Depends(current_user)], 
+	responses={204: {"description": "Chat deleted"}}
 )
 async def delete_chat(chat_id: str, chat_repo: ChatRepository = Depends(get_repo)):
 	# Retrieve user_id (assuming it's an email) from request state

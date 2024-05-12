@@ -2,6 +2,7 @@ from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.history_aware_retriever import create_history_aware_retriever
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_community.chat_message_histories import SQLChatMessageHistory
 
 from src.models import Agent, Retrieval
 from src.config.llm import filter_models
@@ -36,6 +37,10 @@ qa_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
+
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory, ConfigurableFieldSpec
+
 def retrieval_chain(body: Retrieval or Agent): # type: ignore
     vectorstore = None
     if body.retrieval.provider and body.retrieval.index_name:
@@ -53,5 +58,34 @@ def retrieval_chain(body: Retrieval or Agent): # type: ignore
         ), 
         contextualize_q_prompt
     )
-    chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
-    return chain
+    rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
+    
+    # def get_session_history(session_id: str) -> SQLChatMessageHistory:
+    #     connection_string = "sqlite:///sqlite.db"  # Adjust the connection string as needed
+    #     history = SQLChatMessageHistory(
+    #         session_id=session_id, connection_string=connection_string
+    #     )
+    #     return history
+    
+    def get_session_history(chat_history) -> ChatMessageHistory:
+        history = ChatMessageHistory(messages=chat_history)
+        return history
+    
+    conversational_rag_chain = RunnableWithMessageHistory(
+        rag_chain,
+        get_session_history,
+        input_messages_key="input",
+        history_messages_key="chat_history",
+        output_messages_key="answer",
+        history_factory_config = [
+            ConfigurableFieldSpec(
+                id="chat_history",
+                annotation=list,
+                name="History",
+                description="The chat history to be used for the conversation",
+                default="",
+                is_shared=True,
+            ),
+        ]
+    )
+    return conversational_rag_chain
