@@ -5,17 +5,18 @@ import { FaCog } from "react-icons/fa";
 import { FaCamera, FaGlobe } from "react-icons/fa";
 import FileIcon from "../icons/FileIcon";
 import { useAppContext } from "@/contexts/AppContext";
+import { multiModalModels } from "@/types/llm";
 
 const ChatInputSelect: React.FC = () => {
     const { isMobile } = useAppContext();
-    const { setImages, adjustHeight } = useChatContext();
+    const { setImages, adjustHeight, chatPayload } = useChatContext();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const toggleMenu = (e: any) => {
         e.preventDefault();
-        !isMenuOpen ? adjustHeight(isMobile() ? "170px" : "145px") : adjustHeight();
+        !isMenuOpen ? adjustHeight((isMobile() && chatPayload.model in multiModalModels) ? "170px" : "145px") : adjustHeight();
         setIsMenuOpen(!isMenuOpen);
     };
 
@@ -98,7 +99,7 @@ const ChatInputSelect: React.FC = () => {
                             <FaGlobe fontSize={"20px"} />
                         </a>
 
-                        {isMobile() && (
+                        {isMobile() && chatPayload.model in multiModalModels && (
                             <>
                                 <a
                                     onClick={triggerFileInput}

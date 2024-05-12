@@ -4,6 +4,7 @@ import { useChatContext } from "../../contexts/ChatContext";
 import { FcCancel } from "react-icons/fc";
 import SuggestionButton from "../buttons/SuggestionButton";
 import ChatInputSelect from "../selects/ChatInputSelect";
+import { multiModalModels } from "@/types/llm";
 
 const SUGGESTIONS = [
     {
@@ -52,22 +53,28 @@ export default function ChatSection() {
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
         e.preventDefault(); // Prevent the default paste action
         const items = e.clipboardData.items; // Get clipboard items
-        let isImagePasted = false;
         const textarea = e.target as HTMLTextAreaElement;
 
         for (let i = 0; i < items.length; i++) {
             const item = items[i];
             if (item.type.startsWith("image")) {
-                isImagePasted = true;
                 const blob = item.getAsFile(); // Get the image as a blob
                 const reader = new FileReader(); // Create a file reader
 
+                // Check if the model is not in multiModalModels after handling the image
+                if (!(chatPayload.model in multiModalModels)) {
+                    alert(`${chatPayload.model} does not support images.`);
+                    return;
+                }
+
                 if (blob) {
-                    // Add null check
                     reader.onloadend = () => {
                         setImages((prevImages: any) => [
                             ...prevImages,
-                            { id: Math.random(), src: reader.result as string },
+                            {
+                                id: Math.random(),
+                                src: reader.result as string,
+                            },
                         ]); // Update the state with the new image
                     };
                     reader.readAsDataURL(blob); // Read the blob as a Data URL
@@ -75,26 +82,20 @@ export default function ChatSection() {
             }
         }
 
-        if (!isImagePasted) {
-            // Handle text
-            const text = e.clipboardData.getData("text");
-            const cursorPosition = textarea.selectionStart;
-            const textBeforeCursor = textarea.value.substring(
-                0,
-                cursorPosition
-            );
-            const textAfterCursor = textarea.value.substring(
-                textarea.selectionEnd,
-                textarea.value.length
-            );
+        // Handle text if no images are pasted
+        const text = e.clipboardData.getData("text");
+        const cursorPosition = textarea.selectionStart;
+        const textBeforeCursor = textarea.value.substring(0, cursorPosition);
+        const textAfterCursor = textarea.value.substring(
+            textarea.selectionEnd,
+            textarea.value.length
+        );
 
-            setUserInput(textBeforeCursor + text + textAfterCursor); // Insert text at the cursor position
-            // Optionally, set cursor position right after the inserted text
-            setTimeout(() => {
-                textarea.selectionStart = cursorPosition + text.length;
-                textarea.selectionEnd = cursorPosition + text.length;
-            }, 0);
-        }
+        setUserInput(textBeforeCursor + text + textAfterCursor); // Insert text at the cursor position
+        setTimeout(() => {
+            textarea.selectionStart = cursorPosition + text.length;
+            textarea.selectionEnd = cursorPosition + text.length;
+        }, 0);
     };
 
     const removeImage = (id: number) => {
@@ -218,7 +219,7 @@ export default function ChatSection() {
                                 tabIndex={0}
                                 data-id="root"
                                 rows={1}
-                                placeholder="Message ChatGPTiddy..."
+                                placeholder="Acting as a expert at..."
                                 className="m-0 w-full resize-none border-0 focus:ring-0 focus-visible:ring-0 bg-transparent py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] max-h-52 placeholder-black/50 pl-10 md:pl-[55px]"
                                 style={{
                                     overflowY: "auto",
