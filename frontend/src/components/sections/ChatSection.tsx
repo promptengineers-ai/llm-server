@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import FileIcon from "../icons/FileIcon";
 import SubmitIcon from "../icons/SubmitIcon";
 import { useChatContext } from "../../contexts/ChatContext";
@@ -47,6 +47,27 @@ export default function ChatSection() {
         setSelectedImage,
         handleImageClick,
     } = useChatContext();
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files && files[0]) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImages((prevImages: any) => [
+                    ...prevImages,
+                    { id: Math.random(), src: reader.result as string },
+                ]);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const triggerFileInput = () => {
+        fileInputRef.current?.click();
+    };
 
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
         e.preventDefault(); // Prevent the default paste action
@@ -236,11 +257,20 @@ export default function ChatSection() {
                                     <button
                                         className="btn relative p-0 text-black"
                                         aria-label="Attach files"
+                                        onClick={triggerFileInput} // Add the onClick handler
                                     >
                                         <div className="flex w-full gap-2 items-center justify-center">
                                             <FileIcon />
                                         </div>
                                     </button>
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        style={{ display: "none" }} // Hide the input element
+                                        accept="image/*"
+                                        capture="environment" // Use this to hint that you want to use the camera
+                                        onChange={handleFileChange}
+                                    />
                                 </div>
                             </div>
                             <button

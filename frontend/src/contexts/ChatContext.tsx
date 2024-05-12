@@ -315,7 +315,7 @@ export default function ChatProvider({
                             }}
                         >
                             {conversationItem.images.map((image, index) => (
-                                <Image
+                                <img
                                     onClick={() => setSelectedImage(image)}
                                     key={index}
                                     src={image}
