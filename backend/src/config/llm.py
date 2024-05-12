@@ -56,7 +56,10 @@ ACCEPTED_OPENAI_MODELS = {
     OpenAIModels.GPT_4_VISION.value,
     OpenAIModels.EMBED_ADA.value,
     OpenAIModels.TEXT_EMBED_3_SMALL.value,
-    OpenAIModels.TEXT_EMBED_3_LARGE.value
+    OpenAIModels.TEXT_EMBED_3_LARGE.value,
+    ModelType.OPENAI_GPT_3_5_TURBO_16K.value,
+    ModelType.OPENAI_GPT_4_VISION_PREVIEW.value,
+    ModelType.OPENAI_GPT_4_TURBO_PREVIEW.value,
 }
 
 ACCEPTED_OLLAMA_MODELS = {
@@ -64,7 +67,17 @@ ACCEPTED_OLLAMA_MODELS = {
     OllamaModels.LLAMA_2_7B.value,
     OllamaModels.CODE_LLAMA.value,
     OllamaModels.VICUNA.value,
-    OllamaModels.MISTRAL.value
+    OllamaModels.MISTRAL.value,
+    ModelType.OLLAMA_LLAVA.value,
+    ModelType.OLLAMA_BAKLLAVA.value,
+    ModelType.OLLAMA_MISTRAL.value,
+    ModelType.OLLAMA_LLAMA_2.value,
+    ModelType.OLLAMA_LLAMA_3.value,
+    ModelType.OLLAMA_LLAMA_2_CHAT.value,
+    ModelType.OLLAMA_LLAMA_3_CHAT.value,
+    ModelType.GROQ_MIXTRAL.value,
+    ModelType.GROQ_LLAMA_2_70B.value,
+    ModelType.GROQ_LLAMA_3_70B.value,
 }
 
 ACCEPTED_EMBEDDING_MODELS = {

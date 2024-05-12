@@ -3,6 +3,10 @@ from langchain.chains.history_aware_retriever import create_history_aware_retrie
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
+from src.db.strategies import VectorstoreContext
+from src.factories.retrieval import RetrievalFactory
+from src.config import OPENAI_API_KEY, PINECONE_API_KEY, PINECONE_ENV, PINECONE_INDEX, REDIS_URL
+from src.factories.embedding import EmbeddingFactory
 from src.models import Agent, Retrieval
 from src.config.llm import filter_models
 from src.services import LLMService, RetrievalService
@@ -14,11 +18,11 @@ which might reference context in the chat history, formulate a standalone questi
 which can be understood without the chat history. Do NOT answer the question, \
 just reformulate it if needed and otherwise return it as is."""
 contextualize_q_prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", contextualize_q_system_prompt),
-        MessagesPlaceholder("chat_history"),
-        ("human", "{input}"),
-    ]
+	[
+		("system", contextualize_q_system_prompt),
+		MessagesPlaceholder("chat_history"),
+		("human", "{input}"),
+	]
 )
 
 qa_system_prompt = """You are an assistant for question-answering tasks. \
@@ -29,11 +33,11 @@ Use three sentences maximum and keep the answer concise.\
 {context}"""
 
 qa_prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", qa_system_prompt),
-        MessagesPlaceholder("chat_history"),
-        ("human", "{input}"),
-    ]
+	[
+		("system", qa_system_prompt),
+		MessagesPlaceholder("chat_history"),
+		("human", "{input}"),
+	]
 )
 
 
@@ -41,50 +45,64 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory, ConfigurableFieldSpec
 
 def retrieval_chain(body: Retrieval or Agent): # type: ignore
-    vectorstore = None
-    if body.retrieval.provider and body.retrieval.index_name:
-        documents = retrieval_service.load('pdf', {'path': 'static/contract_filled.pdf'})
-        chunks = retrieval_service.split(documents, 'char', 1000, 0)
-        vectorstore = retrieval_service.db('faiss', chunks)
+	vectorstore = None
+	if body.retrieval.provider and body.retrieval.index_name:
+		embedding = EmbeddingFactory(body.model, OPENAI_API_KEY)
+		if body.retrieval.provider == 'redis':
+			provider_keys={
+				'redis_url': REDIS_URL,
+				'index_name': body.retrieval.index_name,
+			}
+		elif body.retrieval.provider == 'pinecone':
+			provider_keys = {
+				'api_key': PINECONE_API_KEY,
+				'env': PINECONE_ENV,
+				'index_name': PINECONE_INDEX,
+				'namespace': body.retrieval.index_name,
+			}
+		else:
+			raise ValueError(f"Invalid retrieval provider {body.retrieval.provider}")
 
-    llm = LLMService(model_list=filter_models(body.model)).chat()
-    question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
-    history_aware_retriever = create_history_aware_retriever(
-        llm, 
-        vectorstore.as_retriever(
-            search_type=body.retrieval.search_type, 
-            search_kwargs=body.retrieval.search_kwargs
-        ), 
-        contextualize_q_prompt
-    )
-    rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
-    
-    # def get_session_history(session_id: str) -> SQLChatMessageHistory:
-    #     connection_string = "sqlite:///sqlite.db"  # Adjust the connection string as needed
-    #     history = SQLChatMessageHistory(
-    #         session_id=session_id, connection_string=connection_string
-    #     )
-    #     return history
-    
-    def get_session_history(chat_history) -> ChatMessageHistory:
-        history = ChatMessageHistory(messages=chat_history)
-        return history
-    
-    conversational_rag_chain = RunnableWithMessageHistory(
-        rag_chain,
-        get_session_history,
-        input_messages_key="input",
-        history_messages_key="chat_history",
-        output_messages_key="answer",
-        history_factory_config = [
-            ConfigurableFieldSpec(
-                id="chat_history",
-                annotation=list,
-                name="History",
-                description="The chat history to be used for the conversation",
-                default="",
-                is_shared=True,
-            ),
-        ]
-    )
-    return conversational_rag_chain
+		retrieval_provider = RetrievalFactory(
+			provider=body.retrieval.provider,
+			embeddings=embedding.create_embedding(),
+			provider_keys=provider_keys
+		)
+		vectostore_service = VectorstoreContext(retrieval_provider.create_strategy())
+		vectorstore = vectostore_service.load()
+
+	llm = LLMService(model_list=filter_models(body.model)).chat()
+	question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
+	filter_search_kwargs = body.retrieval.search_kwargs.model_dump()
+	history_aware_retriever = create_history_aware_retriever(
+		llm, 
+		vectorstore.as_retriever(
+			search_type=body.retrieval.search_type, 
+			search_kwargs={k: v for k, v in filter_search_kwargs.items() if v is not None}
+		), 
+		contextualize_q_prompt
+	)
+	rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
+	
+	def get_session_history(chat_history) -> ChatMessageHistory:
+		history = ChatMessageHistory(messages=chat_history)
+		return history
+	
+	conversational_rag_chain = RunnableWithMessageHistory(
+		rag_chain,
+		get_session_history,
+		input_messages_key="input",
+		history_messages_key="chat_history",
+		output_messages_key="answer",
+		history_factory_config = [
+			ConfigurableFieldSpec(
+				id="chat_history",
+				annotation=list,
+				name="History",
+				description="The chat history to be used for the conversation",
+				default="",
+				is_shared=True,
+			),
+		]
+	)
+	return conversational_rag_chain
