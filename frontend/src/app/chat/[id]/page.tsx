@@ -2,9 +2,11 @@
 import ToggleThemeButton from "@/components/buttons/ToggleThemeButton";
 import TopNav from "@/components/nav/TopNav";
 import ChatSection from "@/components/sections/ChatSection";
+import ModelSection from "@/components/sections/ModelSection";
 import SideSection from "@/components/sections/SideSection";
 import ModelSelect from "@/components/selects/ModelSelect";
 import theme from "@/config/theme";
+import { useAppContext } from "@/contexts/AppContext";
 import { useChatContext } from "@/contexts/ChatContext";
 import { withAuth } from "@/middleware/AuthMiddleware";
 import { useState, useEffect, useRef } from "react";
@@ -27,6 +29,14 @@ const useDefaultOpenState = () => {
     }, [isClient]);
 
     return { isOpen, setIsOpen };
+};
+
+const mobileFixedBottomStyle: React.CSSProperties = {
+    position: "fixed",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
 };
 
 const Chat = () => {
@@ -59,7 +69,7 @@ const Chat = () => {
         if (element) {
             element.scrollTo({
                 top: element.scrollHeight,
-                behavior: "smooth",
+                // behavior: "smooth",
             });
             setIsUserScrolledUp(false);
         }
@@ -93,15 +103,15 @@ const Chat = () => {
             {!isMobile ? (
                 <>
                     {/* <div
-                    style={{
-                        position: "absolute",
-                        top: 20,
-                        right: 20,
-                        zIndex: 1000,
-                    }}
-                >
-                    <ToggleThemeButton />
-                </div> */}
+                        style={{
+                            position: "absolute",
+                            top: 20,
+                            right: 20,
+                            zIndex: 1000,
+                        }}
+                    >
+                        <ToggleThemeButton />
+                    </div> */}
 
                     <button onClick={toggleSideSection}>
                         {isOpen ? (
@@ -135,7 +145,9 @@ const Chat = () => {
                             </div>
                         )}
                         <div
-                            className="flex-1 overflow-auto lg:px-48 xl:px-[28%] mt-16 mb-30 mb-[50px] pb-[50px] px-2"
+                            className={`flex-1 overflow-auto px-2 mt-16 lg:px-48 xl:px-[27%] pb-[60px] md:pb-[30px] ${
+                                isMobile && "mb-[50px]"
+                            }`}
                             ref={messagesContainerRef}
                         >
                             {messages.length === 0 ? (
@@ -147,7 +159,7 @@ const Chat = () => {
                                             width="100px"
                                         />
                                     </div>
-                                    <h1 className="text-3xl font-semibold text-center text-primary-200 dark:text-gray-600 mt-4 mb-10 sm:mb-16">
+                                    <h1 className="text-3xl font-semibold text-center text-primary-200 dark:text-gray-600 mt-4 mb-64 sm:mb-16">
                                         {theme.chatWindow.welcomeMessage}
                                     </h1>
                                 </div>
@@ -166,26 +178,32 @@ const Chat = () => {
                                                 src={selectedImage}
                                                 alt="Enlarged content"
                                                 className="max-w-full max-h-full"
-                                                style={{
-                                                    borderRadius: "10px",
-                                                }}
+                                                style={{ borderRadius: "10px" }}
                                             />
                                         </div>
                                     )}
                                     {showScrollButton && (
-                                        <button
-                                            onClick={scrollToBottom}
-                                            className="fixed bottom-24 left-1/2 transform -translate-x-1/2 p-2 rounded-full bg-gray-200 shadow-lg"
-                                            aria-label="Scroll to bottom"
-                                            style={{ zIndex: 1050 }}
-                                        >
-                                            <MdKeyboardArrowDown size="20" />
-                                        </button>
+                                        <div className="flex items-center justify-center">
+                                            <button
+                                                onClick={scrollToBottom}
+                                                className="fixed bottom-24 p-2 rounded-full bg-gray-200 shadow-lg"
+                                                aria-label="Scroll to bottom"
+                                                style={{ zIndex: 1050 }}
+                                            >
+                                                <MdKeyboardArrowDown size="20" />
+                                            </button>
+                                        </div>
                                     )}
                                 </>
                             )}
                         </div>
-                        <ChatSection />
+                        <div
+                            style={
+                                isMobile ? mobileFixedBottomStyle : undefined
+                            }
+                        >
+                            <ChatSection />
+                        </div>
                     </div>
                 </div>
             </div>
