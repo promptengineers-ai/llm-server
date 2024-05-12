@@ -116,7 +116,7 @@ const Chat = () => {
             )}
 
             <div className="relative flex h-full max-w-full flex-1 flex-col overflow-hidden">
-                <div className="relative h-full w-full flex-1 overflow-autot transition-width">
+                <div className="relative h-full w-full flex-1 overflow-auto transition-width">
                     <div
                         role="presentation"
                         className="flex h-full flex-col position-relative"

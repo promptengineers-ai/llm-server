@@ -5,13 +5,13 @@ import { useAppContext } from "@/contexts/AppContext";
 import { useChatContext } from "@/contexts/ChatContext";
 
 export default function ChatHistoryButton({ chat }: { chat: any }) {
-    const { isMobile } = useAppContext();
+    const { isMobile, closeDrawer } = useAppContext();
     const { deleteChat, findChat, chatPayload, setChatPayload } = useChatContext();
 
     // Determine the background color based on the condition
     const bgColorClass =
         chatPayload.history_id === chat.id
-            ? (isMobile()
+            ? (!isMobile()
                 ? "bg-black text-white"
                 : "bg-white text-black")
             : "hover:bg-gray-100 dark:hover:bg-gray-800";
@@ -26,6 +26,9 @@ export default function ChatHistoryButton({ chat }: { chat: any }) {
                     ...chatPayload,
                     history_id: chat.id,
                 });
+                setTimeout(() => {
+                    closeDrawer();
+                }, 500);
             }}
             className={`group relative flex items-center gap-3 rounded-md p-3 pr-14 ${bgColorClass}`}
         >

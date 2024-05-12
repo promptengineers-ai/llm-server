@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import ToggleThemeButton from "../buttons/ToggleThemeButton";
+// import ToggleThemeButton from "../buttons/ToggleThemeButton";
 import ChatHistoryButton from "../buttons/ChatHistoryButton";
 import SidebarIcon from "../icons/SidebarIcon";
 import PlusIcon from "../icons/PlusIcon";
@@ -9,40 +9,15 @@ import DotsIcon from "../icons/DotsIcon";
 import { useAuthContext } from "@/contexts/AuthContext";
 import NewChatIcon from "../icons/NewChatIcon";
 import ModelSelect from "../selects/ModelSelect";
-import { ChatClient } from "@/utils/api";
 import { useChatContext } from "@/contexts/ChatContext";
 import { useRouter } from "next/navigation";
+import { useAppContext } from "@/contexts/AppContext";
 
 const TopNav: React.FC = () => {
     const router = useRouter();
+    const { toggleDrawer, closeDrawer, isDrawerOpen } = useAppContext();
     const { logout } = useAuthContext();
-    const { chats, shallowUrl } = useChatContext();
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-    const toggleDrawer = () => {
-        setIsDrawerOpen(!isDrawerOpen);
-    };
-
-    const closeDrawer = () => {
-        setIsDrawerOpen(false);
-    };
-
-    useEffect(() => {
-        const handleOutsideClick = (event: any) => {
-            const drawer = document.getElementById("drawer");
-            if (drawer && !drawer.contains(event.target)) {
-                closeDrawer();
-            }
-        };
-
-        if (isDrawerOpen) {
-            document.addEventListener("mousedown", handleOutsideClick);
-        }
-
-        return () => {
-            document.removeEventListener("mousedown", handleOutsideClick);
-        };
-    }, [isDrawerOpen]);
+    const { chats } = useChatContext();
 
     return (
         <>

@@ -26,6 +26,7 @@ import { constructBubbleMessage } from "@/utils/chat";
 import { userMessageTitleStyle } from "@/config/message";
 import Image from "next/image";
 import { API_URL } from "@/config/app";
+import CopyCodeButton from "@/components/buttons/CopyCodeButton";
 
 const defaultChatContextValue: ChatContextType = {
     loading: false,
@@ -264,43 +265,7 @@ export default function ChatProvider({
                                                     className=""
                                                     data-state="closed"
                                                 >
-                                                    <button
-                                                        className="flex gap-1 items-center"
-                                                        onClick={(e) => {
-                                                            const preElement = (
-                                                                e.target as HTMLElement
-                                                            ).closest("pre");
-                                                            const codeContent =
-                                                                preElement?.querySelector(
-                                                                    "code"
-                                                                )?.innerText ||
-                                                                "";
-                                                            navigator.clipboard
-                                                                .writeText(
-                                                                    codeContent
-                                                                )
-                                                                .then(() => {
-                                                                    // Optional: Show a toast or feedback to user saying "Copied to clipboard!"
-                                                                    alert(
-                                                                        "Copied to clipboard!"
-                                                                    );
-                                                                    return;
-                                                                })
-                                                                .catch(
-                                                                    (err) => {
-                                                                        console.error(
-                                                                            "Failed to copy: ",
-                                                                            err
-                                                                        );
-                                                                    }
-                                                                );
-                                                        }}
-                                                    >
-                                                        <FiClipboard
-                                                            fontSize={"16px"}
-                                                        />
-                                                        Copy code
-                                                    </button>
+                                                    <CopyCodeButton />
                                                 </span>
                                             </div>
                                         </div>
@@ -327,7 +292,13 @@ export default function ChatProvider({
                             li: ({ node, ...props }) => (
                                 <li className="ml-2" {...props} />
                             ),
-                            // Add more custom components as needed
+                            a: ({ node, ...props }) => (
+                                <a
+                                    target="_blank"
+                                    className="text-blue-500 underline"
+                                    {...props}
+                                />
+                            ),
                         }}
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[

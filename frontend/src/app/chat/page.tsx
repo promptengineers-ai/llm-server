@@ -126,7 +126,7 @@ const Chat = () => {
             )}
 
             <div className="relative flex h-full max-w-full flex-1 flex-col overflow-hidden">
-                <div className="relative h-full w-full flex-1 overflow-autot transition-width">
+                <div className="relative h-full w-full flex-1 overflow-auto transition-width">
                     <div
                         role="presentation"
                         className="flex h-full flex-col position-relative"
@@ -145,7 +145,9 @@ const Chat = () => {
                             </div>
                         )}
                         <div
-                            className="flex-1 overflow-auto lg:px-48 xl:px-[28%] mt-16 mb-30 mb-[50px] pb-[50px] px-2"
+                            className={`flex-1 overflow-auto px-2 mt-16 lg:px-48 xl:px-[27%] pb-[60px] md:pb-[30px] ${
+                                isMobile && "mb-[50px]"
+                            }`}
                             ref={messagesContainerRef}
                         >
                             {messages.length === 0 ? (
@@ -157,7 +159,7 @@ const Chat = () => {
                                             width="100px"
                                         />
                                     </div>
-                                    <h1 className="text-3xl font-semibold text-center text-primary-200 dark:text-gray-600 mt-4 mb-56 sm:mb-16">
+                                    <h1 className="text-3xl font-semibold text-center text-primary-200 dark:text-gray-600 mt-4 mb-64 sm:mb-16">
                                         {theme.chatWindow.welcomeMessage}
                                     </h1>
                                 </div>
@@ -195,9 +197,7 @@ const Chat = () => {
                         </div>
                         <div
                             style={
-                                isMobile
-                                    ? mobileFixedBottomStyle
-                                    : undefined
+                                isMobile ? mobileFixedBottomStyle : undefined
                             }
                         >
                             <ChatSection />

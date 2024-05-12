@@ -134,9 +134,9 @@ export default function ChatSection() {
         <div className="w-full pt-2 md:pt-0 border-t md:border-t-0 bg-white md:!bg-transparent">
             <form className="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
                 <div className="relative flex h-full flex-1 items-stretch md:flex-col">
-                    <div className="h-full flex ml-1 md:w-full md:m-auto md:mb-4 gap-0 md:gap-2 justify-center">
-                        <div className="grow">
-                            {messages.length === 0 && (
+                    {messages.length === 0 && (
+                        <div className="h-full flex ml-1 md:w-full md:m-auto md:mb-4 gap-0 md:gap-2 justify-center">
+                            <div className="grow">
                                 <div className="absolute bottom-full left-0 mb-4 flex w-full grow gap-2 px-1 pb-1 sm:px-2 sm:pb-0 md:mb-0 md:max-w-none">
                                     <div className="grid w-full grid-flow-row grid-cols-1 md:grid-cols-2 gap-2">
                                         {SUGGESTIONS.map((suggestion) => (
@@ -150,9 +150,9 @@ export default function ChatSection() {
                                         ))}
                                     </div>
                                 </div>
-                            )}
+                            </div>
                         </div>
-                    </div>
+                    )}
                     <div className="flex w-full items-center">
                         <div className="shadow-custom overflow-hidden flex flex-col w-full flex-grow relative border border-black/10 bg-primary-300 rounded-xl shadow-xs">
                             {/* Images container */}
