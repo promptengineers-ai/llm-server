@@ -65,7 +65,8 @@ export default function ChatSection() {
         }
     };
 
-    const triggerFileInput = () => {
+    const triggerFileInput = (e: any) => {
+        e.preventDefault();
         fileInputRef.current?.click();
     };
 
