@@ -197,6 +197,31 @@ export default function ChatProvider({
                     <p style={userMessageTitleStyle}>
                         {constructBubbleMessage(conversationItem.role)}
                     </p>
+                    {conversationItem.images && (
+                        <div
+                            style={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                justifyContent: "flex-start",
+                                gap: "10px",
+                            }}
+                        >
+                            {conversationItem.images.map((image, index) => (
+                                <img
+                                    onClick={() => setSelectedImage(image)}
+                                    key={index}
+                                    src={image}
+                                    alt={image || "Conversation image"}
+                                    className="my-2"
+                                    style={{
+                                        maxWidth: "350px",
+                                        maxHeight: "450px",
+                                        borderRadius: "5px",
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    )}
                     <ReactMarkdown
                         components={{
                             h1: ({ node, ...props }) => (
@@ -305,31 +330,6 @@ export default function ChatProvider({
                     >
                         {conversationItem.content}
                     </ReactMarkdown>
-                    {conversationItem.images && (
-                        <div
-                            style={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                justifyContent: "flex-start",
-                                gap: "10px",
-                            }}
-                        >
-                            {conversationItem.images.map((image, index) => (
-                                <img
-                                    onClick={() => setSelectedImage(image)}
-                                    key={index}
-                                    src={image}
-                                    alt={image || "Conversation image"}
-                                    className="my-2"
-                                    style={{
-                                        maxWidth: "350px",
-                                        maxHeight: "450px",
-                                        borderRadius: "5px",
-                                    }}
-                                />
-                            ))}
-                        </div>
-                    )}
                 </div>
             );
         });

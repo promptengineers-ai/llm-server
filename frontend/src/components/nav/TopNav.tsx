@@ -132,7 +132,7 @@ const TopNav: React.FC = () => {
                                 <span>
                                     <div className="relative h-auto opacity-1">
                                         <div className="sticky top-0 z-[16] opacity-1">
-                                            <h3 className="h-9 pb-2 pt-3 px-3 text-xs text-gray-500 font-medium text-ellipsis overflow-hidden break-all bg-primary-800 gizmo:bg-white dark:bg-gray-900 gizmo:dark:bg-gray-800">
+                                            <h3 className="h-9 pb-2 pt-3 px-3 text-xs text-gray-500 font-medium text-ellipsis overflow-hidden break-all bg-primary-800 gizmo:bg-white bg:black gizmo:dark:bg-gray-800">
                                                 Today
                                             </h3>
                                         </div>

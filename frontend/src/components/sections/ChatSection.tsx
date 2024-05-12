@@ -1,9 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import FileIcon from "../icons/FileIcon";
 import SubmitIcon from "../icons/SubmitIcon";
 import { useChatContext } from "../../contexts/ChatContext";
 import { FcCancel } from "react-icons/fc";
+import { FaCog } from "react-icons/fa";
 import SuggestionButton from "../buttons/SuggestionButton";
+import ChatInputSelect from "../selects/ChatInputSelect";
 
 const SUGGESTIONS = [
     {
@@ -49,6 +51,7 @@ export default function ChatSection() {
     } = useChatContext();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [useCamera, setUseCamera] = useState(true);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -67,7 +70,17 @@ export default function ChatSection() {
 
     const triggerFileInput = (e: any) => {
         e.preventDefault();
+        if (useCamera) {
+            fileInputRef.current?.setAttribute("capture", "environment");
+        } else {
+            fileInputRef.current?.removeAttribute("capture");
+        }
         fileInputRef.current?.click();
+    };
+
+    const toggleCameraUse = (e: any) => {
+        e.preventDefault();
+        setUseCamera(!useCamera);
     };
 
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
@@ -164,7 +177,7 @@ export default function ChatSection() {
                     <div className="h-full flex ml-1 md:w-full md:m-auto md:mb-4 gap-0 md:gap-2 justify-center">
                         <div className="grow">
                             {messages.length === 0 && (
-                                <div className="absolute bottom-full left-0 mb-4 flex w-full grow gap-2 px-1 pb-1 sm:px-2 sm:pb-0 md:static md:mb-0 md:max-w-none">
+                                <div className="absolute bottom-full left-0 mb-4 flex w-full grow gap-2 px-1 pb-1 sm:px-2 sm:pb-0 md:mb-0 md:max-w-none">
                                     <div className="grid w-full grid-flow-row grid-cols-1 md:grid-cols-2 gap-2">
                                         {SUGGESTIONS.map((suggestion) => (
                                             <SuggestionButton
@@ -255,10 +268,11 @@ export default function ChatSection() {
                             ></textarea>
                             <div className="absolute bottom-2 md:bottom-3 left-2 md:left-4">
                                 <div className="flex">
+                                    {/* <ChatInputSelect /> */}
                                     <button
                                         className="btn relative p-0 text-black"
                                         aria-label="Attach files"
-                                        onClick={triggerFileInput} // Add the onClick handler
+                                        onClick={triggerFileInput}
                                     >
                                         <div className="flex w-full gap-2 items-center justify-center">
                                             <FileIcon />
@@ -267,9 +281,8 @@ export default function ChatSection() {
                                     <input
                                         type="file"
                                         ref={fileInputRef}
-                                        style={{ display: "none" }} // Hide the input element
+                                        style={{ display: "none" }}
                                         accept="image/*"
-                                        capture="environment" // Use this to hint that you want to use the camera
                                         onChange={handleFileChange}
                                     />
                                 </div>
