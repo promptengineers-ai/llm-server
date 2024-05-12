@@ -4,17 +4,18 @@ import { useChatContext } from "@/contexts/ChatContext";
 import { FaCog } from "react-icons/fa";
 import { FaCamera, FaGlobe } from "react-icons/fa";
 import FileIcon from "../icons/FileIcon";
+import { useAppContext } from "@/contexts/AppContext";
 
 const ChatInputSelect: React.FC = () => {
-    const { setImages } = useChatContext();
+    const { isMobile } = useAppContext();
+    const { setImages, adjustHeight } = useChatContext();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [useCamera, setUseCamera] = useState(true);
 
     const toggleMenu = (e: any) => {
         e.preventDefault();
-        console.log(!isMenuOpen);
+        !isMenuOpen ? adjustHeight(isMobile() ? "170px" : "145px") : adjustHeight();
         setIsMenuOpen(!isMenuOpen);
     };
 
@@ -35,11 +36,7 @@ const ChatInputSelect: React.FC = () => {
 
     const triggerFileInput = (e: any) => {
         e.preventDefault();
-        if (useCamera) {
-            fileInputRef.current?.setAttribute("capture", "environment");
-        } else {
-            fileInputRef.current?.removeAttribute("capture");
-        }
+        fileInputRef.current?.setAttribute("capture", "environment");
         fileInputRef.current?.click();
     };
 
@@ -78,7 +75,9 @@ const ChatInputSelect: React.FC = () => {
                 >
                     <div className="py-1" role="none">
                         <a
-                            onClick={() => alert("Will open Document Loader Modal")}
+                            onClick={() =>
+                                alert("Will open Document Loader Modal")
+                            }
                             href="#"
                             className={`flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100`}
                             role="menuitem"
@@ -99,23 +98,27 @@ const ChatInputSelect: React.FC = () => {
                             <FaGlobe fontSize={"20px"} />
                         </a>
 
-                        <a
-                            onClick={triggerFileInput}
-                            href="#"
-                            className={`flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100`}
-                            role="menuitem"
-                            tabIndex={-1}
-                        >
-                            <span className="mr-2">Camera</span>
-                            <FaCamera fontSize={"20px"} />
-                        </a>
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            style={{ display: "none" }}
-                            accept="image/*"
-                            onChange={handleFileChange}
-                        />
+                        {isMobile() && (
+                            <>
+                                <a
+                                    onClick={triggerFileInput}
+                                    href="#"
+                                    className={`flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100`}
+                                    role="menuitem"
+                                    tabIndex={-1}
+                                >
+                                    <span className="mr-2">Camera</span>
+                                    <FaCamera fontSize={"20px"} />
+                                </a>
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    style={{ display: "none" }}
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                />
+                            </>
+                        )}
                     </div>
                 </div>
             )}

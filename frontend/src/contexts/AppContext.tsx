@@ -13,7 +13,7 @@ export default function AppProvider({ children }: IContextProvider) {
 
         // Function to check window size and return isOpen state
         const getSize = () => {
-            return window.innerWidth > 768;
+            return window.innerWidth < 768;
         };
 
         return isClient ? getSize() : false;

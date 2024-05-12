@@ -1,28 +1,26 @@
-import { useEffect, useRef, useState } from "react";
-import FileIcon from "../icons/FileIcon";
+import { useEffect } from "react";
 import SubmitIcon from "../icons/SubmitIcon";
 import { useChatContext } from "../../contexts/ChatContext";
 import { FcCancel } from "react-icons/fc";
-import { FaCog } from "react-icons/fa";
 import SuggestionButton from "../buttons/SuggestionButton";
 import ChatInputSelect from "../selects/ChatInputSelect";
 
 const SUGGESTIONS = [
     {
         id: 1,
-        label: "Retro-Style Arcade Game",
-        description: "Come up with concepts for a retro-style arcade game",
+        label: "How to setup a FastAPI server",
+        description: "Step-by-step guide to set up a FastAPI server",
     },
     {
         id: 2,
-        label: "Non-Alcoholic Cocktail",
+        label: "What is Chain-of-Thought (CoT) reasoning?",
         description:
-            "Brainstorm names for a non-alcoholic cocktail with Coke and pomegranate syrup",
+            "Explain the concept of Chain-of-Thought reasoning in AI",
     },
     {
         id: 3,
-        label: "Storytelling Techniques",
-        description: "Compare storytelling techniques in novels and in films",
+        label: "Interview Tips",
+        description: "Tips to make a good first impression in an interview",
     },
     {
         id: 4,
@@ -48,40 +46,8 @@ export default function ChatSection() {
         selectedImage,
         setSelectedImage,
         handleImageClick,
+        adjustHeight,
     } = useChatContext();
-
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const [useCamera, setUseCamera] = useState(true);
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (files && files[0]) {
-            const file = files[0];
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImages((prevImages: any) => [
-                    ...prevImages,
-                    { id: Math.random(), src: reader.result as string },
-                ]);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const triggerFileInput = (e: any) => {
-        e.preventDefault();
-        if (useCamera) {
-            fileInputRef.current?.setAttribute("capture", "environment");
-        } else {
-            fileInputRef.current?.removeAttribute("capture");
-        }
-        fileInputRef.current?.click();
-    };
-
-    const toggleCameraUse = (e: any) => {
-        e.preventDefault();
-        setUseCamera(!useCamera);
-    };
 
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
         e.preventDefault(); // Prevent the default paste action
@@ -158,13 +124,6 @@ export default function ChatSection() {
         chatInputRef.current?.focus();
     };
 
-    const adjustHeight = () => {
-        const textarea = chatInputRef.current as unknown as HTMLTextAreaElement; // Type assertion
-        if (textarea) {
-            textarea.style.height = "auto";
-            textarea.style.height = `${textarea.scrollHeight}px`;
-        }
-    };
 
     useEffect(() => {
         adjustHeight();
@@ -266,25 +225,9 @@ export default function ChatSection() {
                                     borderRadius: "10px",
                                 }}
                             ></textarea>
-                            <div className="absolute bottom-2 md:bottom-3 left-2 md:left-4">
+                            <div className="absolute bottom-1 md:bottom-2 left-2 md:left-4">
                                 <div className="flex">
-                                    {/* <ChatInputSelect /> */}
-                                    <button
-                                        className="btn relative p-0 text-black"
-                                        aria-label="Attach files"
-                                        onClick={triggerFileInput}
-                                    >
-                                        <div className="flex w-full gap-2 items-center justify-center">
-                                            <FileIcon />
-                                        </div>
-                                    </button>
-                                    <input
-                                        type="file"
-                                        ref={fileInputRef}
-                                        style={{ display: "none" }}
-                                        accept="image/*"
-                                        onChange={handleFileChange}
-                                    />
+                                    <ChatInputSelect />
                                 </div>
                             </div>
                             <button

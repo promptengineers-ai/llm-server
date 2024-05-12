@@ -157,7 +157,7 @@ const Chat = () => {
                                             width="100px"
                                         />
                                     </div>
-                                    <h1 className="text-3xl font-semibold text-center text-primary-200 dark:text-gray-600 mt-4 mb-10 sm:mb-16">
+                                    <h1 className="text-3xl font-semibold text-center text-primary-200 dark:text-gray-600 mt-4 mb-56 sm:mb-16">
                                         {theme.chatWindow.welcomeMessage}
                                     </h1>
                                 </div>

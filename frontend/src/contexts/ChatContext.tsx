@@ -177,6 +177,14 @@ export default function ChatProvider({
         });
     };
 
+    const adjustHeight = (height?: string) => {
+        const textarea = chatInputRef.current as unknown as HTMLTextAreaElement; // Type assertion
+        if (textarea) {
+            textarea.style.height = "auto";
+            textarea.style.height = height ? height : `${textarea.scrollHeight}px`;
+        }
+    };
+
     const renderConversation = (messages: Message[]) => {
         let variants: { [key: string]: string } = {
             user: "primary",
@@ -520,6 +528,7 @@ export default function ChatProvider({
                     setSelectedImage,
                     handleImageClick,
                     fetchChats,
+                    adjustHeight,
                 };
             }, [
                 chats,
@@ -543,6 +552,7 @@ export default function ChatProvider({
                 setSelectedImage,
                 handleImageClick,
                 fetchChats,
+                adjustHeight,
             ])}
         >
             {children}

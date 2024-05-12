@@ -1,10 +1,16 @@
+import { useChatContext } from "@/contexts/ChatContext";
 
 
 export default function SuggestionButton({ title, description }: { title: string; description: string;}) {
+    const { setUserInput } = useChatContext();
     return (
         <span
             style={{
                 transform: "none",
+            }}
+            onClick={(e) => {
+                e.preventDefault();
+                setUserInput(description);
             }}
         >
             <button className="btn relative btn-neutral group w-full whitespace-nowrap rounded-xl text-left text-gray-700 dark:text-gray-300 md:whitespace-normal border-solid border-2 border-secondary-outline-dark">
@@ -14,7 +20,7 @@ export default function SuggestionButton({ title, description }: { title: string
                             <div className="truncate font-semibold text-black">
                                 {title}
                             </div>
-                            <div className="truncate text-gray-400">
+                            <div className="truncate text-gray-400 text-xs">
                                 {description}
                             </div>
                         </div>
