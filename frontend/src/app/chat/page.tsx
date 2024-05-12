@@ -69,7 +69,7 @@ const Chat = () => {
         if (element) {
             element.scrollTo({
                 top: element.scrollHeight,
-                behavior: "smooth",
+                // behavior: "smooth",
             });
             setIsUserScrolledUp(false);
         }
