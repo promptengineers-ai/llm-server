@@ -19,7 +19,6 @@ export type ChatContextType = {
     sendChatPayload: (event: any) => void;
     chatPayload: { query: string; history_id: string };
     setChatPayload: (payload: any) => void;
-    handleChatboxClick: (e: MouseEvent) => void;
     chatboxRefIsEmpty: boolean;
     setChatboxRefIsEmpty: (isEmpty: boolean) => void;
     resetChat: (event: any) => void;

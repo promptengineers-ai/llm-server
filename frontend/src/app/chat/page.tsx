@@ -151,7 +151,7 @@ const Chat = () => {
                             ref={messagesContainerRef}
                         >
                             {messages.length === 0 ? (
-                                <div className="flex h-full flex-col items-center justify-center">
+                                <div className="static flex h-full flex-col items-center justify-center">
                                     <div className="w-full pb-2 flex justify-center">
                                         <img
                                             src={theme.button.icon.src}

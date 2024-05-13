@@ -25,6 +25,9 @@ import { constructBubbleMessage } from "@/utils/chat";
 import { userMessageTitleStyle } from "@/config/message";
 import { API_URL } from "@/config/app";
 import CopyCodeButton from "@/components/buttons/CopyCodeButton";
+import CopyIcon from "@/components/icons/CopyIcon";
+import RegenerateIcon from "@/components/icons/RegenerateIcon";
+import ThumbDownIcon from "@/components/icons/ThumbDownIcon";
 
 const defaultChatContextValue: ChatContextType = {
     loading: false,
@@ -39,7 +42,6 @@ const defaultChatContextValue: ChatContextType = {
     sendChatPayload: () => {},
     chatPayload: { query: "", history_id: "" },
     setChatPayload: (event) => {},
-    handleChatboxClick: () => {},
     chatboxRefIsEmpty: true,
     setChatboxRefIsEmpty: () => {},
     resetChat: (event) => {},
@@ -185,6 +187,24 @@ export default function ChatProvider({
         }
     };
 
+    const handleRegenerateClick = (index: number) => {
+        if (index === 0) {
+            alert("Cannot regenerate from the first message.");
+            return;
+        }
+
+        // Update chatPayload with the content of the message just before the clicked one
+        const messageAtIndex = messages[index - 1];
+        const newMessages = messages.slice(0, index - 1);
+        setMessages(newMessages);
+
+        setTimeout(() => {
+            setMessages([...newMessages, messageAtIndex]);
+            setUserInput(messageAtIndex.content);
+            submitQuestionStream();
+        }, 500);
+    };
+
     const renderConversation = (messages: Message[]) => {
         let variants: { [key: string]: string } = {
             user: "primary",
@@ -309,6 +329,44 @@ export default function ChatProvider({
                     >
                         {conversationItem.content}
                     </ReactMarkdown>
+
+                    {conversationItem.role === "assistant" && (
+                        <div className="cursor-pointer ml-2 mb-4 flex items-center gap-2">
+                            <div
+                                className="flex items-center justify-center"
+                                onClick={() => {
+                                    const textToCopy =
+                                        conversationItem.content ||
+                                        "No content to copy";
+                                    navigator.clipboard
+                                        .writeText(textToCopy)
+                                        .then(() => {
+                                            alert("Copied to clipboard!");
+                                        })
+                                        .catch((err) => {
+                                            console.error(
+                                                "Failed to copy: ",
+                                                err
+                                            );
+                                        });
+                                }}
+                            >
+                                <CopyIcon />
+                            </div>
+                            <div
+                                className="flex items-center justify-center"
+                                onClick={() => handleRegenerateClick(i)}
+                            >
+                                <RegenerateIcon />
+                            </div>
+                            <div
+                                className="flex items-center justify-center"
+                                onClick={() => alert("Will downvote")}
+                            >
+                                <ThumbDownIcon />
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         });
@@ -388,31 +446,6 @@ export default function ChatProvider({
         fetchChats();
     }
 
-    function handleChatboxClick(e: MouseEvent) {
-        if ((e.target as HTMLElement).closest(".copy-btn")) {
-            // 2. Get the code content
-            const preElement = (e.target as HTMLElement).closest("pre");
-            const codeContent =
-                preElement?.querySelector("code")?.innerText || "";
-            log(
-                "contexts.ChatContext.handleChatboxClick",
-                codeContent,
-                "Code Content"
-            );
-            // 3. Use Clipboard API to copy
-            navigator.clipboard
-                .writeText(codeContent)
-                .then(() => {
-                    // Optional: Show a toast or feedback to user saying "Copied to clipboard!"
-                    alert("Copied to clipboard!");
-                    return;
-                })
-                .catch((err) => {
-                    console.error("Failed to copy: ", err);
-                });
-        }
-    }
-
     const shallowUrl = (url: string) => {
         window.history.replaceState(
             {
@@ -424,19 +457,6 @@ export default function ChatProvider({
             url
         );
     }
-
-    useEffect(() => {
-        // 1. Add an event listener on the chatbox
-        const chatbox = document.getElementById("chatbox");
-        chatbox?.addEventListener("click", handleChatboxClick);
-
-        userInputRef.current?.focus();
-
-        // Cleanup event listener
-        return () => {
-            chatbox?.removeEventListener("click", handleChatboxClick);
-        };
-    }, [messages, userInputRef]);
 
     useEffect(() => {
         response.length &&
@@ -491,7 +511,6 @@ export default function ChatProvider({
                     setLoading,
                     setChatPayload,
                     sendChatPayload,
-                    handleChatboxClick,
                     setChatboxRefIsEmpty,
                     deleteChat,
                     findChat,

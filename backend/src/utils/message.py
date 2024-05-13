@@ -29,7 +29,7 @@ def retrieve_chat_messages(body, use_class=False):
             content_list.append({"type": "text", "text": msg["content"]})
 
         # Capture images if present in the message
-        if 'images' in msg and isinstance(msg['images'], list):
+        if 'images' in msg and isinstance(msg['images'], list) and len(msg['images']) > 0:
             if body.model not in ACCEPTED_MULTIMODAL_MODELS:
                 raise ValueError(f"Model {body.model} does not support images.")
             for img in msg['images']:
