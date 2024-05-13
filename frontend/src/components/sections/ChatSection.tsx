@@ -5,6 +5,7 @@ import { FcCancel } from "react-icons/fc";
 import SuggestionButton from "../buttons/SuggestionButton";
 import ChatInputSelect from "../selects/ChatInputSelect";
 import { multiModalModels } from "@/types/llm";
+import DocumentIcon from "../icons/DocumentIcon";
 
 const SUGGESTIONS = [
     {
@@ -74,6 +75,7 @@ export default function ChatSection() {
                             {
                                 id: Math.random(),
                                 src: reader.result as string,
+                                type: blob.type,
                             },
                         ]); // Update the state with the new image
                     };
@@ -175,36 +177,94 @@ export default function ChatSection() {
                                             />
                                         </div>
                                     )}
-                                    {images.map((image: any) => (
+                                    {images.map((file: any) => (
                                         <div
-                                            key={image.id}
-                                            className="relative"
+                                            key={file.id}
+                                            className="group relative inline-block text-sm text-token-text-primary"
                                         >
-                                            <img
-                                                src={image.src}
-                                                alt={`Pasted content ${image.id}`}
-                                                onClick={() =>
-                                                    handleImageClick(image.src)
-                                                }
-                                                style={{
-                                                    maxWidth: "50px",
-                                                    maxHeight: "50px",
-                                                    cursor: "pointer",
-                                                    borderRadius: "7px",
-                                                }}
-                                            />
-                                            <button
-                                                onClick={() =>
-                                                    removeImage(image.id)
-                                                }
-                                                className="absolute"
-                                                style={{
-                                                    bottom: 0,
-                                                    right: 0,
-                                                }}
-                                            >
-                                                <FcCancel />
-                                            </button>
+                                            {file.type.startsWith("image/") ? (
+                                                <div
+                                                    key={file.id}
+                                                    className="relative"
+                                                >
+                                                    <img
+                                                        src={file.src}
+                                                        alt={`Pasted content ${file.id}`}
+                                                        onClick={() =>
+                                                            handleImageClick(
+                                                                file.src
+                                                            )
+                                                        }
+                                                        style={{
+                                                            maxWidth: "50px",
+                                                            maxHeight: "50px",
+                                                            cursor: "pointer",
+                                                            borderRadius: "7px",
+                                                        }}
+                                                    />
+                                                    <button
+                                                        onClick={() =>
+                                                            removeImage(file.id)
+                                                        }
+                                                        className="absolute"
+                                                        style={{
+                                                            bottom: 0,
+                                                            right: 0,
+                                                        }}
+                                                    >
+                                                        <FcCancel />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <div className="relative overflow-hidden rounded-xl border border-token-border-light bg-token-main-surface-primary">
+                                                        <div className="p-2 w-48">
+                                                            <div className="flex flex-row items-center gap-2">
+                                                                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md">
+                                                                    <DocumentIcon />
+                                                                </div>
+                                                                <div className="overflow-hidden">
+                                                                    <div className="truncate font-medium">
+                                                                        {
+                                                                            file.name
+                                                                        }
+                                                                    </div>
+                                                                    <div className="truncate text-token-text-tertiary">
+                                                                        {file.type
+                                                                            .split(
+                                                                                "/"
+                                                                            )[1]
+                                                                            .toUpperCase()}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        onClick={() =>
+                                                            removeImage(file.id)
+                                                        }
+                                                        className="absolute right-1 top-1 -translate-y-1/2 translate-x-1/2 rounded-full border border-token-border-heavy bg-token-main-surface-secondary p-0.5 text-token-text-primary transition-colors hover:opacity-100 group-hover:opacity-100 md:opacity-0"
+                                                    >
+                                                        <svg
+                                                            width="24"
+                                                            height="24"
+                                                            viewBox="0 0 24 24"
+                                                            fill="none"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            className="icon-sm"
+                                                        >
+                                                            <path
+                                                                d="M6.34315 6.34338L17.6569 17.6571M17.6569 6.34338L6.34315 17.6571"
+                                                                stroke="currentColor"
+                                                                strokeWidth="2"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                            ></path>
+                                                        </svg>
+                                                    </button>
+                                                </>
+                                            )}
                                         </div>
                                     ))}
                                 </div>

@@ -13,25 +13,37 @@ const ChatInputSelect: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const documentInputRef = useRef<HTMLInputElement>(null);
 
-    const toggleMenu = (e: any) => {
-        e.preventDefault();
+    const toggleMenu = (e?: any) => {
+        if (e) e.preventDefault();
         !isMenuOpen ? adjustHeight((isMobile() && chatPayload.model in multiModalModels) ? "170px" : "145px") : adjustHeight();
         setIsMenuOpen(!isMenuOpen);
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
-        if (files && files[0]) {
-            const file = files[0];
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImages((prevImages: any) => [
-                    ...prevImages,
-                    { id: Math.random(), src: reader.result as string },
-                ]);
-            };
-            reader.readAsDataURL(file);
+        if (files) {
+            Array.from(files).forEach((file) => {
+                const reader = new FileReader();
+                const fileType = file.type; // Capture the MIME type of the file
+                const fileName = file.name; // Capture the file name
+
+                reader.onloadend = () => {
+                    setImages((prevImages: any) => [
+                        ...prevImages,
+                        {
+                            id: Math.random(),
+                            src: reader.result as string,
+                            type: fileType,
+                            name: fileName,
+                        },
+                    ]); // Update the state with the new file information
+                };
+                reader.readAsDataURL(file);
+            });
+            adjustHeight();
+            toggleMenu();
         }
     };
 
@@ -39,6 +51,11 @@ const ChatInputSelect: React.FC = () => {
         e.preventDefault();
         fileInputRef.current?.setAttribute("capture", "environment");
         fileInputRef.current?.click();
+    };
+
+    const triggerDocumentInput = (e: any) => {
+        e.preventDefault();
+        documentInputRef.current?.click();
     };
 
     useEffect(() => {
@@ -76,9 +93,7 @@ const ChatInputSelect: React.FC = () => {
                 >
                     <div className="py-1" role="none">
                         <a
-                            onClick={() =>
-                                alert("Will open Document Loader Modal")
-                            }
+                            onClick={triggerDocumentInput}
                             href="#"
                             className={`flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100`}
                             role="menuitem"
@@ -87,6 +102,14 @@ const ChatInputSelect: React.FC = () => {
                             <span className="mr-2">Document</span>
                             <FileIcon />
                         </a>
+                        <input
+                            type="file"
+                            ref={documentInputRef}
+                            style={{ display: "none" }}
+                            accept=".doc,.docx,.pdf,.csv,.txt,.html"
+                            multiple
+                            onChange={handleFileChange}
+                        />
 
                         <a
                             onClick={() => alert("Will open Web Loader Modal")}
@@ -99,27 +122,28 @@ const ChatInputSelect: React.FC = () => {
                             <FaGlobe fontSize={"20px"} />
                         </a>
 
-                        {isMobile() && chatPayload.model in multiModalModels && (
-                            <>
-                                <a
-                                    onClick={triggerFileInput}
-                                    href="#"
-                                    className={`flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100`}
-                                    role="menuitem"
-                                    tabIndex={-1}
-                                >
-                                    <span className="mr-2">Camera</span>
-                                    <FaCamera fontSize={"20px"} />
-                                </a>
-                                <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    style={{ display: "none" }}
-                                    accept="image/*"
-                                    onChange={handleFileChange}
-                                />
-                            </>
-                        )}
+                        {isMobile() &&
+                            chatPayload.model in multiModalModels && (
+                                <>
+                                    <a
+                                        onClick={triggerFileInput}
+                                        href="#"
+                                        className={`flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100`}
+                                        role="menuitem"
+                                        tabIndex={-1}
+                                    >
+                                        <span className="mr-2">Camera</span>
+                                        <FaCamera fontSize={"20px"} />
+                                    </a>
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        style={{ display: "none" }}
+                                        accept="image/*"
+                                        onChange={handleFileChange}
+                                    />
+                                </>
+                            )}
                     </div>
                 </div>
             )}
