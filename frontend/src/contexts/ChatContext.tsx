@@ -14,7 +14,6 @@ import { IContextProvider } from "../interfaces/provider";
 import { log } from "../utils/log";
 import { ChatPayload } from "@/types/chat";
 import { ModelType, SearchProvider, SearchType } from "@/types/llm";
-import { FiClipboard } from "react-icons/fi";
 import { useSearchParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import rehypeSanitize from "rehype-sanitize";
@@ -24,7 +23,6 @@ import rehypeHighlight from "rehype-highlight";
 import { SSE } from "sse.js";
 import { constructBubbleMessage } from "@/utils/chat";
 import { userMessageTitleStyle } from "@/config/message";
-import Image from "next/image";
 import { API_URL } from "@/config/app";
 import CopyCodeButton from "@/components/buttons/CopyCodeButton";
 
@@ -78,6 +76,7 @@ export default function ChatProvider({
     const [chats, setChats] = useState<any[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
     const [images, setImages] = useState<any[]>([]);
+    const [files, setFiles] = useState<any[]>([]);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     const responseRef = useRef("");
@@ -483,6 +482,8 @@ export default function ChatProvider({
                     chatboxRefIsEmpty,
                     userInput,
                     selectedImage,
+                    files,
+                    setFiles,
                     resetChat,
                     setChats,
                     setMessages,
@@ -514,6 +515,7 @@ export default function ChatProvider({
                 chatPayload,
                 chatboxRefIsEmpty,
                 selectedImage,
+                files,
                 resetChat,
                 sendChatPayload,
                 deleteChat,
@@ -525,6 +527,7 @@ export default function ChatProvider({
                 handleImageClick,
                 fetchChats,
                 adjustHeight,
+                setFiles,
             ])}
         >
             {children}

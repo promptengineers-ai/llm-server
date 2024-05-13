@@ -9,7 +9,7 @@ import { multiModalModels } from "@/types/llm";
 
 const ChatInputSelect: React.FC = () => {
     const { isMobile } = useAppContext();
-    const { setImages, adjustHeight, chatPayload } = useChatContext();
+    const { setFiles, adjustHeight, chatPayload } = useChatContext();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -30,8 +30,8 @@ const ChatInputSelect: React.FC = () => {
                 const fileName = file.name; // Capture the file name
 
                 reader.onloadend = () => {
-                    setImages((prevImages: any) => [
-                        ...prevImages,
+                    setFiles((prev: any) => [
+                        ...prev,
                         {
                             id: Math.random(),
                             src: reader.result as string,

@@ -41,6 +41,8 @@ export default function ChatSection() {
         sendChatPayload,
         resetChat,
         images,
+        files,
+        setFiles,
         setImages,
         userInput,
         setUserInput,
@@ -101,9 +103,8 @@ export default function ChatSection() {
     };
 
     const removeImage = (id: number) => {
-        setImages((prevImages: any) =>
-            prevImages.filter((image: any) => image.id !== id)
-        );
+        setImages((prev: any) => prev.filter((image: any) => image.id !== id));
+        setFiles((prev: any) => prev.filter((image: any) => image.id !== id));
     };
 
     useEffect(() => {
@@ -132,6 +133,8 @@ export default function ChatSection() {
         adjustHeight();
     }, [userInput]);
 
+    const selectedFiles = [...images, ...files]
+
     return (
         <div className="w-full pt-2 md:pt-0 border-t md:border-t-0 bg-white md:!bg-transparent">
             <form className="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
@@ -158,7 +161,7 @@ export default function ChatSection() {
                     <div className="flex w-full items-center">
                         <div className="shadow-custom overflow-hidden flex flex-col w-full flex-grow relative border border-black/10 bg-primary-300 rounded-xl shadow-xs">
                             {/* Images container */}
-                            {images.length > 0 && (
+                            {selectedFiles.length > 0 && (
                                 <div className="flex w-full flex-row flex-wrap items-center justify-start gap-2 p-2">
                                     {/* Enlarged Image Preview Overlay */}
                                     {selectedImage && (
@@ -177,7 +180,7 @@ export default function ChatSection() {
                                             />
                                         </div>
                                     )}
-                                    {images.map((file: any) => (
+                                    {selectedFiles.map((file: any) => (
                                         <div
                                             key={file.id}
                                             className="group relative inline-block text-sm text-token-text-primary"
@@ -241,9 +244,12 @@ export default function ChatSection() {
                                                         </div>
                                                     </div>
                                                     <button
-                                                        onClick={() =>
-                                                            removeImage(file.id)
-                                                        }
+                                                        onClick={(e) =>{
+                                                            e.preventDefault();
+                                                            removeImage(
+                                                                file.id
+                                                            );
+                                                        }}
                                                         className="absolute right-1 top-1 -translate-y-1/2 translate-x-1/2 rounded-full border border-token-border-heavy bg-token-main-surface-secondary p-0.5 text-token-text-primary transition-colors hover:opacity-100 group-hover:opacity-100 md:opacity-0"
                                                     >
                                                         <svg
