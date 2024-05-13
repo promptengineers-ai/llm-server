@@ -8,6 +8,7 @@ import { multiModalModels } from "@/types/llm";
 import DocumentIcon from "../icons/DocumentIcon";
 import { FaFileUpload } from "react-icons/fa";
 import { generateRandomNumber } from "@/utils/random";
+import { ChatClient } from "@/utils/api";
 
 const SUGGESTIONS = [
     {
@@ -308,9 +309,12 @@ export default function ChatSection() {
                             </div>
                             {files.length > 0 ? (
                                 <button
-                                    onClick={(e) => {
+                                    onClick={async (e) => {
                                         e.preventDefault();
-                                        console.log(files)
+                                        const chatClient = new ChatClient();
+                                        const docs = await chatClient.createDocuments({data: files});
+                                        const upsert = await chatClient.upsert({documents: docs['documents'], history_id: chatPayload.history_id});
+                                        console.log(upsert);
                                     }}
                                     disabled={loading}
                                     className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-1 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"

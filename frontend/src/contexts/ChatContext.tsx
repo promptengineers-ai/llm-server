@@ -65,8 +65,8 @@ export default function ChatProvider({
         temperature: 0.5,
         tools: [],
         retrieval: {
-            provider: SearchProvider.REDIS,
-            index_name: "",
+            provider: SearchProvider.PINECONE,
+            index_name: "7f43ef4a-7344-4d9a-b6bb-08a26ba39111",
             search_type: SearchType.MMR,
             search_kwargs: {
                 k: 10,

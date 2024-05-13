@@ -8,7 +8,7 @@
 			"module": "uvicorn",
 			"args": [
 				"src.api:app",
-				"--port=8080",
+				"--port=8000",
 				"--log-level",
 				"debug"
 			],

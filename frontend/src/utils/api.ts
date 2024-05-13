@@ -6,6 +6,7 @@ import {
 import { log } from "../utils/log";
 import { Message } from "../types";
 import { API_URL } from "@/config/app";
+import { generateRandomNumber } from "./random";
 
 /**----------------------------------------------------------
  * Send a message to the server and get a response
@@ -27,6 +28,64 @@ export class ChatClient extends Client {
 
     constructor(_apiUrl?: string, _botId?: string, _theme?: any) {
         super(_apiUrl);
+    }
+
+    public async createDocuments(payload: { data: any[] }) {
+        try {
+            const response = await fetch(`${this.apiUrl}/api/v1/documents`, {
+                method: "POST",
+                headers: {
+                    accept: "application/json",
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify({
+                    task_id: generateRandomNumber().toString(),
+                    loaders: [
+                        {
+                            type: "base64",
+                            data: payload.data,
+                        },
+                    ],
+                    splitter: {
+                        type: "recursive",
+                        chunk_size: 1000,
+                        chunk_overlap: 100,
+                    },
+                }),
+            });
+
+            const data = await response.json();
+            return data; // This will return the response data from the server
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error: " + error);
+        }
+    }
+
+    public async upsert(payload: {documents: any[], history_id: string}) {
+        try {
+            const response = await fetch(`${this.apiUrl}/api/v1/documents/upsert`, {
+                method: "POST",
+                headers: {
+                    accept: "application/json",
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify({
+                    provider: "pinecone",
+                    index_name: payload.history_id,
+                    embedding: "text-embedding-3-small",
+                    documents: payload.documents,
+                }),
+            });
+
+            const data = await response.json();
+            return data; // This will return the response data from the server
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error: " + error);
+        }
     }
 
     public async list() {

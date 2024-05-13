@@ -44,21 +44,21 @@ qa_prompt = ChatPromptTemplate.from_messages(
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory, ConfigurableFieldSpec
 
-def retrieval_chain(body: Retrieval or Agent): # type: ignore
+def retrieval_chain(body: Retrieval or Agent, user_id = None): # type: ignore
 	vectorstore = None
 	if body.retrieval.provider and body.retrieval.index_name:
 		embedding = EmbeddingFactory(body.model, OPENAI_API_KEY)
 		if body.retrieval.provider == 'redis':
 			provider_keys={
 				'redis_url': REDIS_URL,
-				'index_name': body.retrieval.index_name,
+				'namespace': f"{user_id}::{body.retrieval.index_name}" if user_id else body.retrieval.index_name,
 			}
 		elif body.retrieval.provider == 'pinecone':
 			provider_keys = {
 				'api_key': PINECONE_API_KEY,
 				'env': PINECONE_ENV,
 				'index_name': PINECONE_INDEX,
-				'namespace': body.retrieval.index_name,
+				'namespace': f"{user_id}::{body.retrieval.index_name}" if user_id else body.retrieval.index_name,
 			}
 		else:
 			raise ValueError(f"Invalid retrieval provider {body.retrieval.provider}")
