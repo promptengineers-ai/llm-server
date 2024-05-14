@@ -218,7 +218,7 @@ export default function ChatProvider({
         return filteredConvo.map((conversationItem, i) => {
             return (
                 <div
-                    style={{ fontSize: "14px" }}
+                    className="pl-2 text-sm mb-3"
                     key={
                         variants[
                             conversationItem.role as keyof typeof variants
@@ -264,7 +264,7 @@ export default function ChatProvider({
                             ),
                             p: ({ node, ...props }) => (
                                 <p
-                                    className={`py-2 px-2 text-gray-700 `}
+                                    className={`py-1 text-gray-700 `}
                                     {...props}
                                 />
                             ),
@@ -334,7 +334,7 @@ export default function ChatProvider({
                     </ReactMarkdown>
 
                     {conversationItem.role === "assistant" && (
-                        <div className="cursor-pointer ml-2 mb-4 flex items-center gap-2">
+                        <div className="cursor-pointer mt-2 flex items-center gap-3">
                             <div
                                 className="flex items-center justify-center"
                                 onClick={() => {
