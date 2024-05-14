@@ -17,7 +17,7 @@ const TopNav: React.FC = () => {
     const router = useRouter();
     const { toggleDrawer, closeDrawer, isDrawerOpen } = useAppContext();
     const { logout } = useAuthContext();
-    const { chats } = useChatContext();
+    const { chats, setDone, resetChat } = useChatContext();
 
     return (
         <>
@@ -63,6 +63,7 @@ const TopNav: React.FC = () => {
                             onClick={(event) => {
                                 event.preventDefault();
                                 router.push("/chat");
+                                resetChat(event);
                             }}
                             className="flex px-3 min-h-[44px] py-1 items-center gap-3 transition-colors duration-200 cursor-pointer text-sm rounded-md border-solid border-2 border-secondary-outline-dark dark:border-white/20 hover:bg-gray-500/10 h-11 gizmo:rounded-lg bg-primary-800 dark:bg-transparent flex-grow overflow-hidden"
                         >

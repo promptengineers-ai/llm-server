@@ -182,6 +182,7 @@ export default function ChatProvider({
                 index_name: "",
             },
         });
+        setDone(true);
     };
 
     const adjustHeight = (height?: string) => {
