@@ -50,7 +50,7 @@ const ChatContext = createContext(defaultChatContextValue);
 export default function ChatProvider({
     children,
 }: IContextProvider) {
-    const {setLoading} = useAppContext();
+    const {setLoading, loading} = useAppContext();
     const searchParams = useSearchParams();
     const chatClient = new ChatClient();
     const chatInputRef = useRef<HTMLInputElement | null>(null);
@@ -83,6 +83,8 @@ export default function ChatProvider({
     const responseRef = useRef("");
     const [userInput, setUserInput] = useState("");
     const [response, setResponse] = useState("");
+    const [done, setDone] = useState(true);
+
 
     const fetchChats = async () => {
         try {
@@ -228,6 +230,16 @@ export default function ChatProvider({
                     <h2 style={userMessageTitleStyle}>
                         {constructBubbleMessage(conversationItem.role)}
                     </h2>
+                    {conversationItem.role === "assistant" && loading ? (
+                        <div className="flex items-center">
+                            <img
+                                className="w-5 h-5 animate-spin mt-2 ml-1"
+                                src="https://www.svgrepo.com/show/491270/loading-spinner.svg"
+                                alt="Loading icon"
+                            />
+                            <span className="ml-2">Processing...</span>
+                        </div>
+                    ) : null}
                     {conversationItem.images && (
                         <div
                             style={{
@@ -339,7 +351,7 @@ export default function ChatProvider({
                         {conversationItem.content}
                     </ReactMarkdown>
 
-                    {conversationItem.role === "assistant" && (
+                    {conversationItem.role === "assistant" && !loading && (
                         <div className="cursor-pointer mt-2 flex items-center gap-3">
                             <div
                                 className="flex items-center justify-center"
@@ -381,14 +393,25 @@ export default function ChatProvider({
         });
     };
 
+
     const submitQuestionStream = async () => {
+        setDone(false);
         setLoading(true);
         responseRef.current = "";
         setResponse("");
         setUserInput("");
+
+        const tempAssistantMessage = {
+            role: "assistant",
+            content: "",
+        };
+        const updatedMessages = [...messages, tempAssistantMessage];
+        setMessages(updatedMessages);
+        const tempIndex = updatedMessages.length - 1;
+
         const config = {
             model: chatPayload.model,
-            messages: !messages.length ? combinePrompts() : messages,
+            messages: !messages.length ? combinePrompts() : updatedMessages,
             tools: chatPayload.tools,
             retrieval: chatPayload.retrieval,
             temperature: chatPayload.temperature,
@@ -402,39 +425,40 @@ export default function ChatProvider({
             },
             payload: JSON.stringify(config),
         });
+
         source.addEventListener("message", (e: any) => {
             const jsonObjectsRegExp = /{[\s\S]+?}(?=data:|$)/g;
             const jsonObjectsMatches = e.data.match(jsonObjectsRegExp);
 
             if (jsonObjectsMatches) {
-                // Parse the JSON objects and store them in an array
                 const objectsArray = jsonObjectsMatches.map((json: any) =>
                     JSON.parse(json)
                 );
 
                 if (objectsArray) {
-                    
-                    // Stream and End messages
                     if (
                         objectsArray[0].type === "stream" ||
                         objectsArray[0].type === "end"
                     ) {
-                        responseRef.current += objectsArray[0].message; // Accumulate response
-                        setResponse(responseRef.current); // Set the full response
+                        responseRef.current += objectsArray[0].message;
+                        setLoading(false);
+                        setResponse(responseRef.current);
                         if (objectsArray[0].type === "end") {
-                            // Check if it's the final message
-                            setLoading(false);
-                            updateMessages([
-                                ...messages,
-                                {
-                                    role: "assistant",
-                                    content: responseRef.current,
-                                },
-                            ]);
+                            
+
+                            // Replace the temporary message with the actual response
+                            const finalMessages = [...updatedMessages];
+                            finalMessages[tempIndex] = {
+                                role: "assistant",
+                                content: responseRef.current,
+                            };
+                            setMessages(finalMessages);
+
+                            updateMessages(finalMessages);
+                            setDone(true);
                         }
                     }
 
-                    // Document messages
                     if (objectsArray[0].type === "doc") {
                         console.log(objectsArray[0].message);
                     }
@@ -442,10 +466,14 @@ export default function ChatProvider({
             } else {
                 source.close();
                 setLoading(false);
+                setDone(true);
             }
         });
+
         source.stream();
     };
+
+
 
     async function updateMessages(messages: Message[]) {
         if (!chatPayload.history_id) {
@@ -529,6 +557,7 @@ export default function ChatProvider({
                     userInput,
                     selectedImage,
                     files,
+                    done,
                     setFiles,
                     resetChat,
                     setChats,
@@ -546,9 +575,11 @@ export default function ChatProvider({
                     handleImageClick,
                     fetchChats,
                     adjustHeight,
+                    setDone,
                 };
             }, [
                 chats,
+                done,
                 userInput,
                 chatboxRef,
                 chatInputRef,
@@ -560,6 +591,7 @@ export default function ChatProvider({
                 selectedImage,
                 files,
                 resetChat,
+                setDone,
                 sendChatPayload,
                 deleteChat,
                 findChat,

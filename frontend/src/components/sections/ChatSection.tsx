@@ -37,7 +37,7 @@ const SUGGESTIONS = [
 
 export default function ChatSection() {
     const {
-        loading,
+        done,
         chatInputRef,
         chatPayload,
         setChatPayload,
@@ -328,7 +328,6 @@ export default function ChatSection() {
                                             alert("Error uploading the file");
                                         }
                                     }}
-                                    disabled={loading}
                                     className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-1 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"
                                 >
                                     <span className="">
@@ -347,7 +346,7 @@ export default function ChatSection() {
                                         };
                                         
                                     }}
-                                    disabled={loading}
+                                    disabled={!done}
                                     className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-0.5 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"
                                 >
                                     <span className="">
