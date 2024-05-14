@@ -204,7 +204,7 @@ export default function ChatProvider({
         setTimeout(() => {
             setMessages([...newMessages, messageAtIndex]);
             setUserInput(messageAtIndex.content);
-            submitQuestionStream();
+            // submitQuestionStream();
         }, 500);
     };
 
