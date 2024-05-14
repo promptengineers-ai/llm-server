@@ -225,9 +225,9 @@ export default function ChatProvider({
                         ] + i
                     }
                 >
-                    <p style={userMessageTitleStyle}>
+                    <h2 style={userMessageTitleStyle}>
                         {constructBubbleMessage(conversationItem.role)}
-                    </p>
+                    </h2>
                     {conversationItem.images && (
                         <div
                             style={{
@@ -259,6 +259,12 @@ export default function ChatProvider({
                             h1: ({ node, ...props }) => (
                                 <h1
                                     className="text-2xl font-bold my-4"
+                                    {...props}
+                                />
+                            ),
+                            h3: ({ node, ...props }) => (
+                                <h3
+                                    className="text-base font-bold my-2"
                                     {...props}
                                 />
                             ),
