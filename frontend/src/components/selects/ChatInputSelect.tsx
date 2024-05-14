@@ -10,7 +10,7 @@ import { generateRandomNumber } from "@/utils/random";
 
 const ChatInputSelect: React.FC = () => {
     const { isMobile } = useAppContext();
-    const { setFiles, adjustHeight, chatPayload } = useChatContext();
+    const { setFiles, setImages, adjustHeight, chatPayload } = useChatContext();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -27,19 +27,22 @@ const ChatInputSelect: React.FC = () => {
         if (files) {
             Array.from(files).forEach((file) => {
                 const reader = new FileReader();
-                const fileType = file.type; // Capture the MIME type of the file
-                const fileName = file.name; // Capture the file name
+                const fileType = file.type;
+                const fileName = file.name;
 
                 reader.onloadend = () => {
-                    setFiles((prev: any) => [
-                        ...prev,
-                        {
-                            id: generateRandomNumber(),
-                            src: reader.result as string,
-                            type: fileType,
-                            name: fileName,
-                        },
-                    ]); // Update the state with the new file information
+                    const fileData = {
+                        id: generateRandomNumber(),
+                        src: reader.result as string,
+                        type: fileType,
+                        name: fileName,
+                    };
+
+                    if (fileType.startsWith("image/")) {
+                        setImages((prev: any) => [...prev, fileData]);
+                    } else {
+                        setFiles((prev: any) => [...prev, fileData]);
+                    }
                 };
                 reader.readAsDataURL(file);
             });

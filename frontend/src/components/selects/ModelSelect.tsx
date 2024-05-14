@@ -23,14 +23,21 @@ const ModelSelect: React.FC = () => {
             ...prev,
             model: model,
         }));
+        localStorage.setItem("model", model);
     };
 
     useEffect(() => {
-        const queryModel = searchParams.get('model') || chatPayload.model;
+        const queryModel =
+            searchParams.get("model") ||
+            localStorage.getItem("model") ||
+            chatPayload.model;
         setChatPayload((prev: any) => ({
             ...prev,
             model: queryModel as ModelType,
         }));
+        if (queryModel) {
+            router.push(`?model=${queryModel}`);
+        }
     }, []);
 
     useEffect(() => {
