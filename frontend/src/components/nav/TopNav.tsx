@@ -52,7 +52,7 @@ const TopNav: React.FC = () => {
             <div
                 id="drawer" // Add an ID here for the drawer
                 style={{ padding: "0px", width: "65%" }}
-                className={`fixed top-0 z-50 h-full w-65 transform bg-black p-4 text-gray-100 shadow-md transition-transform shadow-xl ${
+                className={`z-50 fixed top-0 z-50 h-full w-65 transform bg-black p-4 text-gray-100 shadow-md transition-transform shadow-xl ${
                     isDrawerOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
             >

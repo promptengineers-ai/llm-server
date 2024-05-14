@@ -186,9 +186,8 @@ const Chat = () => {
                                         <div className="flex items-center justify-center">
                                             <button
                                                 onClick={scrollToBottom}
-                                                className="fixed bottom-24 p-2 rounded-full bg-gray-200 shadow-lg"
+                                                className="fixed bottom-24 p-2 rounded-full bg-gray-200 shadow-lg z-30"
                                                 aria-label="Scroll to bottom"
-                                                style={{ zIndex: 1050 }}
                                             >
                                                 <MdKeyboardArrowDown size="20" />
                                             </button>
