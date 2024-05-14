@@ -219,6 +219,7 @@ export default function ChatProvider({
         const filteredConvo = messages.filter((item) => item.role !== "system");
 
         return filteredConvo.map((conversationItem, i) => {
+            const isLastMessage = i === filteredConvo.length - 1;
             return (
                 <div
                     className="pl-2 text-sm mb-3"
@@ -231,7 +232,9 @@ export default function ChatProvider({
                     <h2 style={userMessageTitleStyle}>
                         {constructBubbleMessage(conversationItem.role)}
                     </h2>
-                    {conversationItem.role === "assistant" && loading ? (
+                    {conversationItem.role === "assistant" &&
+                    loading &&
+                    isLastMessage ? (
                         <div className="flex items-center">
                             <img
                                 className="w-5 h-5 animate-spin mt-2 ml-1"
