@@ -7,8 +7,6 @@ export type Message = {
 };
 
 export type ChatContextType = {
-    loading: boolean;
-    setLoading: (loading: boolean) => void;
     chatboxRef: React.MutableRefObject<HTMLInputElement | null>;
     chatInputRef: React.MutableRefObject<HTMLInputElement | null>;
     userInputRef: React.MutableRefObject<HTMLInputElement | null>;

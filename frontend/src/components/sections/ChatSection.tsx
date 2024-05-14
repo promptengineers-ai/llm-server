@@ -310,11 +310,24 @@ export default function ChatSection() {
                             {files.length > 0 ? (
                                 <button
                                     onClick={async (e) => {
-                                        e.preventDefault();
-                                        const chatClient = new ChatClient();
-                                        const docs = await chatClient.createDocuments({data: files});
-                                        const upsert = await chatClient.upsert({documents: docs['documents'], history_id: chatPayload.history_id});
-                                        console.log(upsert);
+                                        try {
+                                            e.preventDefault();
+                                            const chatClient = new ChatClient();
+                                            const docs = await chatClient.createDocuments({data: files});
+                                            const upsert =  await chatClient.upsert({documents: docs['documents'], history_id: chatPayload.history_id});
+                                            setChatPayload((prev: any) => ({
+                                                ...prev,
+                                                retrieval: {
+                                                    ...prev.retrieval,
+                                                    index_name: chatPayload.history_id
+                                                }
+                                            }));
+                                            alert(upsert.message);
+                                            setFiles([]);
+                                        } catch (error) {
+                                            console.error(error);
+                                            alert("Error uploading the file");
+                                        }
                                     }}
                                     disabled={loading}
                                     className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-1 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"

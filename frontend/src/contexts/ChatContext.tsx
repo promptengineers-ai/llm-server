@@ -28,10 +28,9 @@ import CopyCodeButton from "@/components/buttons/CopyCodeButton";
 import CopyIcon from "@/components/icons/CopyIcon";
 import RegenerateIcon from "@/components/icons/RegenerateIcon";
 import ThumbDownIcon from "@/components/icons/ThumbDownIcon";
+import { useAppContext } from "./AppContext";
 
 const defaultChatContextValue: ChatContextType = {
-    loading: false,
-    setLoading: () => {},
     chatboxRef: { current: null },
     chatInputRef: { current: null },
     userInputRef: { current: null },
@@ -51,13 +50,13 @@ const ChatContext = createContext(defaultChatContextValue);
 export default function ChatProvider({
     children,
 }: IContextProvider) {
+    const {setLoading} = useAppContext();
     const searchParams = useSearchParams();
     const chatClient = new ChatClient();
     const chatInputRef = useRef<HTMLInputElement | null>(null);
     const chatboxRef = useRef<HTMLInputElement | null>(null);
     const [chatboxRefIsEmpty, setChatboxRefIsEmpty] = useState(true);
     const userInputRef = useRef<HTMLInputElement | null>(null);
-    const [loading, setLoading] = useState(false);
     const [chatPayload, setChatPayload] = useState<ChatPayload>({
         query: "",
         history_id: "",
@@ -66,7 +65,7 @@ export default function ChatProvider({
         tools: [],
         retrieval: {
             provider: SearchProvider.PINECONE,
-            index_name: "7f43ef4a-7344-4d9a-b6bb-08a26ba39111",
+            index_name: "",
             search_type: SearchType.MMR,
             search_kwargs: {
                 k: 10,
@@ -176,6 +175,10 @@ export default function ChatProvider({
             ...chatPayload,
             query: "",
             history_id: "",
+            retrieval: {
+                ...chatPayload.retrieval,
+                index_name: "",
+            },
         });
     };
 
@@ -404,17 +407,35 @@ export default function ChatProvider({
                 );
 
                 if (objectsArray) {
-                    responseRef.current += objectsArray[0].message; // Accumulate response
-                    setResponse(responseRef.current); // Set the full response
-                    if (objectsArray[0].type === "end") {
-                        // Check if it's the final message
-                        setLoading(false);
-                        updateMessages([...messages, { role: "assistant", content: responseRef.current }]);
+                    
+                    // Stream and End messages
+                    if (
+                        objectsArray[0].type === "stream" ||
+                        objectsArray[0].type === "end"
+                    ) {
+                        responseRef.current += objectsArray[0].message; // Accumulate response
+                        setResponse(responseRef.current); // Set the full response
+                        if (objectsArray[0].type === "end") {
+                            // Check if it's the final message
+                            setLoading(false);
+                            updateMessages([
+                                ...messages,
+                                {
+                                    role: "assistant",
+                                    content: responseRef.current,
+                                },
+                            ]);
+                        }
+                    }
+
+                    // Document messages
+                    if (objectsArray[0].type === "doc") {
+                        console.log(objectsArray[0].message);
                     }
                 }
-                
             } else {
                 source.close();
+                setLoading(false);
             }
         });
         source.stream();
@@ -491,7 +512,6 @@ export default function ChatProvider({
         <ChatContext.Provider
             value={useMemo(() => {
                 return {
-                    loading,
                     chatboxRef,
                     chatInputRef,
                     userInputRef,
@@ -508,7 +528,6 @@ export default function ChatProvider({
                     setChats,
                     setMessages,
                     setImages,
-                    setLoading,
                     setChatPayload,
                     sendChatPayload,
                     setChatboxRefIsEmpty,
@@ -525,7 +544,6 @@ export default function ChatProvider({
             }, [
                 chats,
                 userInput,
-                loading,
                 chatboxRef,
                 chatInputRef,
                 userInputRef,
