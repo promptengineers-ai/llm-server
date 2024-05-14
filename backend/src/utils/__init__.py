@@ -20,12 +20,12 @@ async def chain_stream(chain: Runnable, query, config: dict = {}):
             kind = event["event"]
             if kind == "on_chat_model_start":
                 print(event)
-            if kind == "on_chat_model_stream":
+            elif kind == "on_chat_model_stream":
                 content = event["data"]["chunk"].content
                 if content:
                     yield token_stream(token=content)
             elif kind == "on_chat_model_end":
-                print(event)
+                yield token_stream()
             # elif kind == "on_chain_start":    
             #     print(event)
             # elif kind == "on_chain_stream":

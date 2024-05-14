@@ -1,11 +1,11 @@
 
 
-export default function CopyIcon() {
+export default function CopyIcon({size = '22'}: {size?: string}) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
+            width={`${size}`}
+            height={`${size}`}
             fill="none"
             viewBox="0 0 24 24"
             className="icon-sm"

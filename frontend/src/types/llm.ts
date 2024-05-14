@@ -1,9 +1,10 @@
 export enum ModelType {
     OPENAI_GPT_3_5_TURBO_16K = "openai-gpt-3.5-turbo-16k",
-    OPENAI_GPT_4_TURBO_PREVIEW = "openai-gpt-4-turbo-preview",
-    OPENAI_GPT_4_VISION_PREVIEW = "openai-gpt-4-vision-preview",
+    // OPENAI_GPT_4_TURBO_PREVIEW = "openai-gpt-4-turbo-preview",
+    // OPENAI_GPT_4_VISION_PREVIEW = "openai-gpt-4-vision-preview",
+    OPENAI_GPT_4_OMNI= "openai-gpt-4o",
     OLLAMA_LLAVA = "ollama-llava",
-    OLLAMA_BAKLLAVA = 'ollama-bakllava',
+    OLLAMA_BAKLLAVA = "ollama-bakllava",
     OLLAMA_MISTRAL = "ollama-mistral",
     // OLLAMA_LLAMA_2 = "ollama-llama2",
     OLLAMA_LLAMA_2_CHAT = "ollama_chat-llama2",
@@ -19,8 +20,9 @@ export enum ModelType {
 
 export const modelLabels: { [key in ModelType]: string } = {
     [ModelType.OPENAI_GPT_3_5_TURBO_16K]: "GPT-3.5 Turbo",
-    [ModelType.OPENAI_GPT_4_TURBO_PREVIEW]: "GPT-4 Turbo",
-    [ModelType.OPENAI_GPT_4_VISION_PREVIEW]: "GPT-4 Vision",
+    // [ModelType.OPENAI_GPT_4_TURBO_PREVIEW]: "GPT-4 Turbo",
+    // [ModelType.OPENAI_GPT_4_VISION_PREVIEW]: "GPT-4 Vision",
+    [ModelType.OPENAI_GPT_4_OMNI]: "GPT-4 Omni",
     [ModelType.OLLAMA_LLAVA]: "Ollama - LLaVA",
     [ModelType.OLLAMA_BAKLLAVA]: "Ollama - BakLLaVA",
     [ModelType.OLLAMA_MISTRAL]: "Ollama - Mistral",
@@ -39,7 +41,8 @@ export const modelLabels: { [key in ModelType]: string } = {
 export const multiModalModels = {
     [ModelType.OLLAMA_LLAVA]: "Ollama - LLaVA",
     [ModelType.OLLAMA_BAKLLAVA]: "Ollama - BakLLaVA",
-    [ModelType.OPENAI_GPT_4_VISION_PREVIEW]: "GPT-4 Vision",
+    // [ModelType.OPENAI_GPT_4_VISION_PREVIEW]: "GPT-4 Vision",
+    [ModelType.OPENAI_GPT_4_OMNI]: "OpenAI - GPT-4 Omni",
     [ModelType.ANTHROPIC_OPUS]: "Anthropic - Opus",
 };
 

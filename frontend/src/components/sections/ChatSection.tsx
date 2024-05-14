@@ -6,6 +6,9 @@ import SuggestionButton from "../buttons/SuggestionButton";
 import ChatInputSelect from "../selects/ChatInputSelect";
 import { multiModalModels } from "@/types/llm";
 import DocumentIcon from "../icons/DocumentIcon";
+import { FaFileUpload } from "react-icons/fa";
+import { generateRandomNumber } from "@/utils/random";
+import { ChatClient } from "@/utils/api";
 
 const SUGGESTIONS = [
     {
@@ -75,7 +78,7 @@ export default function ChatSection() {
                         setImages((prevImages: any) => [
                             ...prevImages,
                             {
-                                id: Math.random(),
+                                id: generateRandomNumber(),
                                 src: reader.result as string,
                                 type: blob.type,
                             },
@@ -244,7 +247,7 @@ export default function ChatSection() {
                                                         </div>
                                                     </div>
                                                     <button
-                                                        onClick={(e) =>{
+                                                        onClick={(e) => {
                                                             e.preventDefault();
                                                             removeImage(
                                                                 file.id
@@ -285,11 +288,18 @@ export default function ChatSection() {
                                 tabIndex={0}
                                 data-id="root"
                                 rows={1}
-                                placeholder="Acting as a expert at..."
+                                disabled={files.length > 0}
+                                placeholder={
+                                    files.length > 0
+                                        ? `Upload ${files.length} files`
+                                        : "Acting as a expert at..."
+                                }
                                 className="m-0 w-full resize-none border-0 bg-transparent py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] max-h-52 placeholder-black/50 pl-10 md:pl-[55px] focus:outline-none"
                                 style={{
                                     overflowY: "auto",
                                     borderRadius: "10px",
+                                    // backgroundColor:
+                                    //     files.length > 0 ? "#F9F9F9" : "",
                                 }}
                             ></textarea>
                             <div className="absolute bottom-1 md:bottom-2 left-2 md:left-4">
@@ -297,15 +307,55 @@ export default function ChatSection() {
                                     <ChatInputSelect />
                                 </div>
                             </div>
-                            <button
-                                onClick={(e) => sendChatPayload(e)}
-                                disabled={loading}
-                                className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-0.5 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"
-                            >
-                                <span className="">
-                                    <SubmitIcon />
-                                </span>
-                            </button>
+                            {files.length > 0 ? (
+                                <button
+                                    onClick={async (e) => {
+                                        try {
+                                            e.preventDefault();
+                                            const chatClient = new ChatClient();
+                                            const docs = await chatClient.createDocuments({data: files});
+                                            const upsert =  await chatClient.upsert({documents: docs['documents'], history_id: chatPayload.history_id});
+                                            setChatPayload((prev: any) => ({
+                                                ...prev,
+                                                retrieval: {
+                                                    ...prev.retrieval,
+                                                    index_name: chatPayload.history_id
+                                                }
+                                            }));
+                                            alert(upsert.message);
+                                            setFiles([]);
+                                        } catch (error) {
+                                            console.error(error);
+                                            alert("Error uploading the file");
+                                        }
+                                    }}
+                                    disabled={loading}
+                                    className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-1 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"
+                                >
+                                    <span className="">
+                                        <FaFileUpload fontSize={22} />
+                                    </span>
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={(e) => {
+                                        if (userInput === "") {
+                                            e.preventDefault();
+                                            alert("Please enter a message");
+                                            return;
+                                        } else {
+                                            sendChatPayload(e);
+                                        };
+                                        
+                                    }}
+                                    disabled={loading}
+                                    className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-0.5 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"
+                                >
+                                    <span className="">
+                                        <SubmitIcon />
+                                    </span>
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>

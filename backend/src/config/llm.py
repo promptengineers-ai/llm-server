@@ -11,6 +11,7 @@ class OpenAIModels(Enum):
     GPT_4_32K_MARCH = 'gpt-4-32k-0314'
     GPT_4_TURBO = 'gpt-4-0125-preview'
     GPT_4_VISION = 'gpt-4-vision-preview'
+    GPT_4_OMNI = 'gpt-4o'
     EMBED_ADA = 'text-embedding-ada-002'
     TEXT_EMBED_3_SMALL = 'text-embedding-3-small'
     TEXT_EMBED_3_LARGE = 'text-embedding-3-large'
@@ -26,6 +27,7 @@ class ModelType(str, Enum):
     OPENAI_GPT_3_5_TURBO_16K = 'openai-gpt-3.5-turbo-16k'
     OPENAI_GPT_4_TURBO_PREVIEW = 'openai-gpt-4-turbo-preview'
     OPENAI_GPT_4_VISION_PREVIEW = 'openai-gpt-4-vision-preview'
+    OPENAI_GPT_4_OMNI = 'openai-gpt-4o'
     OLLAMA_LLAVA = 'ollama-llava'
     OLLAMA_BAKLLAVA = 'ollama-bakllava'
     OLLAMA_MISTRAL = 'ollama-mistral'
@@ -44,6 +46,7 @@ ACCEPTED_MULTIMODAL_MODELS = {
     ModelType.OLLAMA_BAKLLAVA.value,
     ModelType.OLLAMA_LLAVA.value,
     ModelType.OPENAI_GPT_4_VISION_PREVIEW.value,
+    ModelType.OPENAI_GPT_4_OMNI.value,
     ModelType.ANTHROPIC_OPUS.value,
 }
 
@@ -60,6 +63,7 @@ ACCEPTED_OPENAI_MODELS = {
     ModelType.OPENAI_GPT_3_5_TURBO_16K.value,
     ModelType.OPENAI_GPT_4_VISION_PREVIEW.value,
     ModelType.OPENAI_GPT_4_TURBO_PREVIEW.value,
+    ModelType.OPENAI_GPT_4_OMNI.value,
 }
 
 ACCEPTED_OLLAMA_MODELS = {
@@ -109,6 +113,13 @@ MODEL_LIST = [
 		"model_name": ModelType.OPENAI_GPT_4_TURBO_PREVIEW,
 		"litellm_params": {
 			"model": "openai/gpt-4-turbo-preview",
+			"api_key": OPENAI_API_KEY
+		},
+	},
+ 	{
+		"model_name": ModelType.OPENAI_GPT_4_OMNI,
+		"litellm_params": {
+			"model": "openai/gpt-4o",
 			"api_key": OPENAI_API_KEY
 		},
 	},

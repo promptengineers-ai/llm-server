@@ -6,6 +6,7 @@ import { FaCamera, FaGlobe } from "react-icons/fa";
 import FileIcon from "../icons/FileIcon";
 import { useAppContext } from "@/contexts/AppContext";
 import { multiModalModels } from "@/types/llm";
+import { generateRandomNumber } from "@/utils/random";
 
 const ChatInputSelect: React.FC = () => {
     const { isMobile } = useAppContext();
@@ -33,7 +34,7 @@ const ChatInputSelect: React.FC = () => {
                     setFiles((prev: any) => [
                         ...prev,
                         {
-                            id: Math.random(),
+                            id: generateRandomNumber(),
                             src: reader.result as string,
                             type: fileType,
                             name: fileName,

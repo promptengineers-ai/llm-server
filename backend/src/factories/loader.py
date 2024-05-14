@@ -6,7 +6,7 @@ from langchain_community.document_loaders import (CSVLoader, DirectoryLoader, Gi
 										UnstructuredURLLoader, WebBaseLoader,
 										YoutubeLoader, SitemapLoader, BlockchainDocumentLoader)
 
-from src.loaders import CopyPasteLoader
+from src.loaders import Base64Loader, CopyPasteLoader
 
 # nest_asyncio.apply()
 
@@ -30,6 +30,7 @@ class LoaderFactory:
         'json': JSONLoader,
         'pandas': DataFrameLoader,              # Requires `pandas`
         'readthedocs': ReadTheDocsLoader,       # Requires `beautifulsoup4`
+        'base64': Base64Loader
     }
 
     @staticmethod
@@ -75,6 +76,10 @@ class LoaderFactory:
                                 jq_schema=loader_config.get('jq_schema'),
                                 text_content=loader_config.get('text_content'),
                                 json_lines=loader_config.get('json_lines'))
+            
+        if loader_type == 'base64':
+            files = loader_config.get('data', [])
+            return loader_class(files)
 
         # Handling for file-based loaders
         return loader_class(loader_config.get('file_path'))

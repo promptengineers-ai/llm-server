@@ -28,7 +28,7 @@ const CopyCodeButton = () => {
             {isCopied ? (
                 <FiCheck fontSize={"16px"} />
             ) : (
-                <CopyIcon />
+                <CopyIcon size="18" />
             )}
             {isCopied ? "Copied" : "Copy code"}
         </button>

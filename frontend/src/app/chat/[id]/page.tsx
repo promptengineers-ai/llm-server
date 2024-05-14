@@ -145,7 +145,7 @@ const Chat = () => {
                             </div>
                         )}
                         <div
-                            className={`flex-1 overflow-auto px-2 mt-16 lg:px-48 xl:px-[27%] pb-[60px] md:pb-[30px] ${
+                            className={`flex-1 overflow-auto px-2 mt-16 lg:px-48 xl:px-[27%] pb-[40px] md:pb-[30px] ${
                                 isMobile && "mb-[50px]"
                             }`}
                             ref={messagesContainerRef}

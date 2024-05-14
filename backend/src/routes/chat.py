@@ -38,10 +38,10 @@ retrieval_service = RetrievalService()
 		}
 	}
 )
-async def chat(body: Agent):
+async def chat(request: Request, body: Agent):
 	try:     
 		if not body.tools and body.retrieval.provider and body.retrieval.index_name:
-			chain = retrieval_chain(body)
+			chain = retrieval_chain(body, request.state.user_id)
 			query = {'input': body.messages[-1]['content']}
 		else:
 			chain, filtered_messages = agent_chain(body)
