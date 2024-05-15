@@ -66,11 +66,11 @@ export default function ChatProvider({
         retrieval: {
             provider: SearchProvider.PINECONE,
             index_name: "",
-            search_type: SearchType.MMR,
+            search_type: SearchType.SIMILARITY,
             search_kwargs: {
                 k: 10,
-                fetch_k: 20,
-                score_threshold: 0.9,
+                fetch_k: null,
+                score_threshold: null,
             },
         },
     });
@@ -152,7 +152,7 @@ export default function ChatProvider({
             initialUserInput,
         ]);
 
-        return [sysPrompt, initialUserInput];
+        return [sysPrompt, ...messages];
     };
 
     const sendChatPayload = async (event: any) => {
@@ -405,6 +405,15 @@ export default function ChatProvider({
         setResponse("");
         setUserInput("");
 
+        const config = {
+            model: chatPayload.model,
+            messages: combinePrompts(),
+            tools: chatPayload.tools,
+            retrieval: chatPayload.retrieval,
+            temperature: chatPayload.temperature,
+            streaming: true,
+        };
+
         const tempAssistantMessage = {
             role: "assistant",
             content: "",
@@ -412,15 +421,6 @@ export default function ChatProvider({
         const updatedMessages = [...messages, tempAssistantMessage];
         setMessages(updatedMessages);
         const tempIndex = updatedMessages.length - 1;
-
-        const config = {
-            model: chatPayload.model,
-            messages: !messages.length ? combinePrompts() : updatedMessages,
-            tools: chatPayload.tools,
-            retrieval: chatPayload.retrieval,
-            temperature: chatPayload.temperature,
-            streaming: true,
-        };
 
         const source = new SSE(API_URL + "/api/v1/chat", {
             headers: {

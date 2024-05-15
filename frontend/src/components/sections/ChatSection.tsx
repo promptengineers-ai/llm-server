@@ -6,9 +6,10 @@ import SuggestionButton from "../buttons/SuggestionButton";
 import ChatInputSelect from "../selects/ChatInputSelect";
 import { multiModalModels } from "@/types/llm";
 import DocumentIcon from "../icons/DocumentIcon";
-import { FaFileUpload } from "react-icons/fa";
+import { FaFileUpload, FaSpinner } from "react-icons/fa";
 import { generateRandomNumber } from "@/utils/random";
 import { ChatClient } from "@/utils/api";
+import { useAppContext } from "@/contexts/AppContext";
 
 const SUGGESTIONS = [
     {
@@ -36,6 +37,7 @@ const SUGGESTIONS = [
 
 
 export default function ChatSection() {
+    const { loading, setLoading } = useAppContext();
     const {
         done,
         chatInputRef,
@@ -110,15 +112,50 @@ export default function ChatSection() {
         setFiles((prev: any) => prev.filter((image: any) => image.id !== id));
     };
 
-    useEffect(() => {
-        localStorage.removeItem("chatbox");
-    }, []);
+    const createIndex = async (e: any) => {
+        e.preventDefault();
+        if (!userInput && !chatPayload.retrieval.index_name) {
+            alert("Please enter an index name");
+            return;
+        }
+        setLoading(true);
+
+        const index_name = chatPayload.retrieval.index_name || userInput;
+
+        try {
+            e.preventDefault();
+            const chatClient = new ChatClient();
+            const docs = await chatClient.createDocuments({ data: files });
+            const upsert = await chatClient.upsert({
+                documents: docs.documents,
+                index_name: index_name,
+            });
+            setChatPayload((prev: any) => ({
+                ...prev,
+                retrieval: {
+                    ...prev.retrieval,
+                    index_name: index_name,
+                },
+            }));
+            alert(upsert.message);
+            setFiles([]);
+            setUserInput("");
+        } catch (error) {
+            console.error(error);
+            alert("Error uploading the file");
+        }
+    };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
+        
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            sendChatPayload(e);
-            submitCleanUp();
+            if (files.length > 0) {
+                createIndex(e);
+            } else {
+                sendChatPayload(e);
+                submitCleanUp();
+            }
         }
         if (e.altKey && e.key === "n") {
             e.preventDefault();
@@ -287,10 +324,11 @@ export default function ChatSection() {
                                 tabIndex={0}
                                 data-id="root"
                                 rows={1}
-                                disabled={files.length > 0}
+                                // disabled={files.length > 0}
                                 placeholder={
                                     files.length > 0
-                                        ? `Upload ${files.length} files`
+                                        ? // ? `Upload ${files.length} files`
+                                          "Enter an Index Name..."
                                         : "Acting as a expert at..."
                                 }
                                 className="m-0 w-full resize-none border-0 bg-transparent py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] max-h-52 placeholder-black/50 pl-10 md:pl-[55px] focus:outline-none"
@@ -308,30 +346,18 @@ export default function ChatSection() {
                             </div>
                             {files.length > 0 ? (
                                 <button
-                                    onClick={async (e) => {
-                                        try {
-                                            e.preventDefault();
-                                            const chatClient = new ChatClient();
-                                            const docs = await chatClient.createDocuments({data: files});
-                                            const upsert =  await chatClient.upsert({documents: docs['documents'], history_id: chatPayload.history_id});
-                                            setChatPayload((prev: any) => ({
-                                                ...prev,
-                                                retrieval: {
-                                                    ...prev.retrieval,
-                                                    index_name: chatPayload.history_id
-                                                }
-                                            }));
-                                            alert(upsert.message);
-                                            setFiles([]);
-                                        } catch (error) {
-                                            console.error(error);
-                                            alert("Error uploading the file");
-                                        }
-                                    }}
+                                    onClick={createIndex}
                                     className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-1 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"
                                 >
                                     <span className="">
-                                        <FaFileUpload fontSize={22} />
+                                        {loading ? (
+                                            <FaSpinner
+                                                className="animate-spin"
+                                                fontSize={22}
+                                            />
+                                        ) : (
+                                            <FaFileUpload fontSize={22} />
+                                        )}
                                     </span>
                                 </button>
                             ) : (
@@ -343,8 +369,7 @@ export default function ChatSection() {
                                             return;
                                         } else {
                                             sendChatPayload(e);
-                                        };
-                                        
+                                        }
                                     }}
                                     disabled={!done}
                                     className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-0.5 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"

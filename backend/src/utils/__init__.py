@@ -14,6 +14,7 @@ async def chain_stream(chain: Runnable, query, config: dict = {}):
                 content = event.get('answer', None)
                 if content:
                     yield token_stream(token=content)
+        yield token_stream()
     else:
         runnable = chain.astream_events(query, config=config, version='v1')
         async for event in runnable:

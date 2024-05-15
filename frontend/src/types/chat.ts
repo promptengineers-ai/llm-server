@@ -12,8 +12,8 @@ export type ChatPayload = {
         search_type: SearchType;
         search_kwargs: {
             k: number;
-            fetch_k: number;
-            score_threshold: number;
+            fetch_k: number | null;
+            score_threshold: number | null;
         };
     };
 };

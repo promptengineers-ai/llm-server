@@ -63,22 +63,27 @@ export class ChatClient extends Client {
         }
     }
 
-    public async upsert(payload: {documents: any[], history_id: string}) {
+    public async upsert(payload: { documents: any[]; index_name: string }) {
         try {
-            const response = await fetch(`${this.apiUrl}/api/v1/documents/upsert`, {
-                method: "POST",
-                headers: {
-                    accept: "application/json",
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: JSON.stringify({
-                    provider: "pinecone",
-                    index_name: payload.history_id,
-                    embedding: "text-embedding-3-small",
-                    documents: payload.documents,
-                }),
-            });
+            const response = await fetch(
+                `${this.apiUrl}/api/v1/documents/upsert`,
+                {
+                    method: "POST",
+                    headers: {
+                        accept: "application/json",
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                    body: JSON.stringify({
+                        provider: "pinecone",
+                        index_name: payload.index_name,
+                        embedding: "text-embedding-3-small",
+                        documents: payload.documents,
+                    }),
+                }
+            );
 
             const data = await response.json();
             return data; // This will return the response data from the server
