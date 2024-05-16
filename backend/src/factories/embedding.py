@@ -4,10 +4,10 @@ from typing import Any
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.embeddings import OllamaEmbeddings
 
-from src.config.llm import ACCEPTED_OLLAMA_MODELS, ACCEPTED_OPENAI_MODELS
+from src.config.llm import ACCEPTED_EMBEDDING_MODELS, ACCEPTED_OLLAMA_MODELS
 
 class EmbeddingFactory:
-    def __init__(self, llm: str, token: str = None, base_url: str = None):
+    def __init__(self, llm: str = "text-embedding-3-small", token: str = None, base_url: str = None):
         """
         Initializes the EmbeddingFactory with specified parameters.
 
@@ -16,7 +16,7 @@ class EmbeddingFactory:
         :param base_url: The base URL for the language model service.
         :raises ValueError: If the language model is not supported.
         """
-        if llm not in ACCEPTED_OPENAI_MODELS and llm not in ACCEPTED_OLLAMA_MODELS:
+        if llm not in ACCEPTED_EMBEDDING_MODELS:
             raise ValueError(f"Invalid embedding model {llm}")
 
         self.llm = llm
@@ -42,14 +42,12 @@ class EmbeddingFactory:
         :return: An instance of OpenAIEmbeddings or OllamaEmbeddings.
         :raises ValueError: If the language model is not supported.
         """
-        if llm in ACCEPTED_OPENAI_MODELS:
-            return OpenAIEmbeddings(model="text-embedding-3-small", 
+        if llm in ACCEPTED_OLLAMA_MODELS:
+            return OllamaEmbeddings(model=llm, base_url=base_url or 'http://127.0.0.1:11434')
+        else:
+            return OpenAIEmbeddings(model=llm, 
                                     openai_api_key=token, 
                                     disallowed_special=())
-        elif llm in ACCEPTED_OLLAMA_MODELS:
-            return OllamaEmbeddings(base_url=base_url or 'http://127.0.0.1:11434')
-        else:
-            raise ValueError(f"Invalid embedding model {llm}")
 
     @classmethod
     def create_for_model(cls, llm: str, token: str = None, base_url: str = None) -> Any:

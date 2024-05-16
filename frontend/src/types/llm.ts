@@ -38,6 +38,13 @@ export const modelLabels: { [key in ModelType]: string } = {
     [ModelType.ANTHROPIC_SONNET]: "Anthropic - Sonnet",
 };
 
+export const acceptRagSystemMessage = new Set<string>([
+    ModelType.OPENAI_GPT_3_5_TURBO_16K,
+    // ModelType.OPENAI_GPT_4_TURBO_PREVIEW,
+    // ModelType.OPENAI_GPT_4_VISION_PREVIEW,
+    ModelType.OPENAI_GPT_4_OMNI, 
+]);
+
 export const multiModalModels = {
     [ModelType.OLLAMA_LLAVA]: "Ollama - LLaVA",
     [ModelType.OLLAMA_BAKLLAVA]: "Ollama - BakLLaVA",

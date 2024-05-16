@@ -123,7 +123,6 @@ export default function ChatSection() {
         const index_name = chatPayload.retrieval.index_name || userInput;
 
         try {
-            e.preventDefault();
             const chatClient = new ChatClient();
             const docs = await chatClient.createDocuments({ data: files });
             const upsert = await chatClient.upsert({

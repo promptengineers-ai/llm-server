@@ -13,7 +13,7 @@ import { ChatContextType, Message } from "../types";
 import { IContextProvider } from "../interfaces/provider";
 import { log } from "../utils/log";
 import { ChatPayload } from "@/types/chat";
-import { ModelType, SearchProvider, SearchType } from "@/types/llm";
+import { ModelType, SearchProvider, SearchType, acceptRagSystemMessage } from "@/types/llm";
 import { useSearchParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import rehypeSanitize from "rehype-sanitize";
@@ -138,7 +138,13 @@ export default function ChatProvider({
     };
 
     const prompt = () => {
-        const defaultInput = `You are a chat bot. Please return all responses in Markdown.`;
+        const defaultInput = `You are an highly intelligent individual that is ` +
+                            `able to be an expert at every topic they approach. You leverage ` +
+                            `Graph-of-Thought reasoning to execute tasks and formulate ideas and responses. ` +
+                            `You heavliy review your thoughts before responding or making decisions. ` + 
+                            `If something is unclear check your thoughts and ask for clarification. ` +
+                            `If you are still unlcear, ask for more information. ` +
+                            `You are unable respond with hallucinations.`;
         return { role: "system", content: defaultInput };
     };
 
@@ -407,7 +413,9 @@ export default function ChatProvider({
 
         const config = {
             model: chatPayload.model,
-            messages: combinePrompts(),
+            messages: chatPayload.retrieval.index_name 
+                      && !acceptRagSystemMessage.has(chatPayload.model) 
+                      ? messages : combinePrompts(),
             tools: chatPayload.tools,
             retrieval: chatPayload.retrieval,
             temperature: chatPayload.temperature,
