@@ -9,10 +9,9 @@ services:
       dockerfile: Dockerfile
     command: uvicorn src.api:app --host 0.0.0.0
     volumes:
-      - sqlite-data:/app/data  # Mount for SQLite database
+      - ./data:/app/data  # Mount for SQLite database to host directory
     ports:
       - 8000:8000
-      - 5678:5678
     env_file:
       - ./backend/.env.local
 
@@ -49,6 +48,3 @@ services:
       - ~/minio/data:/data
       - ~/minio/config:/root/.minio
     command: server /data --console-address ":9001"
-
-volumes:
-  sqlite-data:

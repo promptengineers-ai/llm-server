@@ -5,7 +5,7 @@ client
 config.json
 Dockerfile
 Dockerfile.alpine
-test/
+test
 requirements-dev.txt
 data
 env
@@ -32,3 +32,4 @@ Changelog.md
 .env*
 .dockerignore
 lint.py
+vercel.json
