@@ -2,6 +2,7 @@
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext"; // Make sure to import the theme context
 import { useState } from "react";
+import { FaGithub } from "react-icons/fa";
 
 const LoginForm = () => {
     const { theme } = useTheme(); // This will give us the current theme
@@ -107,14 +108,14 @@ const LoginForm = () => {
                                 >
                                     Password
                                 </label>
-                                <div className="text-sm">
+                                {/* <div className="text-sm">
                                     <a
                                         href="#"
                                         className={`font-semibold ${themeClasses.link}`}
                                     >
                                         Forgot password?
                                     </a>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="mt-2">
                                 <input
@@ -141,7 +142,7 @@ const LoginForm = () => {
                         </div>
                     </form>
 
-                    <p
+                    {/* <p
                         className={`mt-10 text-center text-sm ${themeClasses.text}`}
                     >
                         Not a member?{" "}
@@ -151,7 +152,7 @@ const LoginForm = () => {
                         >
                             Start a 14 day free trial
                         </a>
-                    </p>
+                    </p> */}
                 </div>
             </div>
         </>
