@@ -1,37 +1,25 @@
 <h1 align="center">
   🤖 Prompt Engineers AI - LLM Server 
 </h1>
+
 <p align="center">
 Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
 </p>
+
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/View%20Documentation-Docs-yellow"></a>
-  <a href="https://promptengineersai.slack.com/ssb/redirect"><img src="https://img.shields.io/badge/Join%20our%20community-Slack-blue"></a>
-  <!-- <a href="https://pepy.tech/project/prompttools" target="_blank"><img src="https://static.pepy.tech/badge/prompttools" alt="Total Downloads"/></a> -->
-  <!-- <a href="https://github.com/promptengineers-ai/llm-server">
-      <img src="https://img.shields.io/github/stars/promptengineers-ai/llm-server" />
-  </a> -->
-  <!-- <a href="https://www.youtube.com/@promptengineersai"><img src="https://img.shields.io/youtube/channel/views/UCpGq31VRTZ9JzosUFA_HWzw?label=@promptengineersai
-"></a> -->
+  <a href="https://promptengineers-ai.gitbook.io/documentation/open-source"><img src="https://img.shields.io/badge/View%20Documentation-Docs-yellow"></a>
+  <a href="https://join.slack.com/t/promptengineersai/shared_invite/zt-21upjsftv-gX~gNjTCU~2HfbeM_ZwTEQ"><img src="https://img.shields.io/badge/Join%20our%20community-Slack-blue"></a>
 </p>
-<!-- <p align="center">
-  <video autoplay loop muted playsinline>
-    <source src="https://github.com/promptengineers-ai/llm-server/blob/development/static/demos/chat-ui-demo.mp4?raw=true" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-</p> -->
 
-<!-- <p align="center">
-  <img src="https://github.com/promptengineers-ai/llm-server/blob/development/static/demos/llm-server.gif?raw=true" />
-</p> -->
+<p align="center">
+  <img src="https://github.com/promptengineers-ai/llm-server/blob/master/backend/static/llm-server.gif?raw=true" width="600px" />
+</p>
 
-### Useful Links
-- [Deploying FastAPI to Vercel](https://blog.logrocket.com/deploying-fastapi-applications-to-vercel/)
-- [Demo of AI Assistant Chat Client UI](https://www.loom.com/share/a697426952e94d95957773e973759693?sid=5014613d-4785-4a79-840c-4bcb45d969dd)
-
-
-## 🛠️ Server Setup and Usage
+## 🛠️ Setup API Server
 ```bash
+### Change into Backend directory
+cd backend
+
 ### Setup Virtual Env
 python3 -m venv .venv
 
@@ -48,19 +36,16 @@ pip install -r requirements.txt
 bash scripts/dev.sh
 ```
 
-## 🛠️ Client Setup and Usage
+## 🛠️ Setup Client 
 ```bash
-### Navigate to client folder
-cd client
+### Change into Backend directory
+cd frontend
 
-### Install Dependencies
+### Install node_modules
 npm install
 
-### Run Development Environment
-npm start
-
-### Build Production Start App (Optional)
-bash scripts/client.sh
+### Start Development Server
+npm run dev
 ```
 
 ### Environment Variables
@@ -71,14 +56,24 @@ bash scripts/client.sh
     <th>Description</th>
   </tr>
   <tr>
-    <td>APP_SUPER_ADMIN_KEY</td>
-    <td>this-is-a-secret-key</td>
-    <td>Custom `x-api-key` header</td>
+    <td>APP_ENV</td>
+    <td>'local'</td>
+    <td>Environment where the application is running</td>
   </tr>
   <tr>
-    <td>USER_admin</td>
-    <td>password</td>
-    <td>Basic Authentication</td>
+    <td>PINECONE_API_KEY</td>
+    <td></td>
+    <td>API key for Pinecone services</td>
+  </tr>
+  <tr>
+    <td>PINECONE_ENV</td>
+    <td>us-east1-gcp</td>
+    <td>Pinecone environment configuration</td>
+  </tr>
+  <tr>
+    <td>PINECONE_INDEX</td>
+    <td>default</td>
+    <td>Default Pinecone index used</td>
   </tr>
   <tr>
     <td>OPENAI_API_KEY</td>
@@ -86,14 +81,39 @@ bash scripts/client.sh
     <td>Default LLM OpenAI key</td>
   </tr>
   <tr>
-    <td>MONGO_CONNECTION</td>
-    <td>mongodb://localhost:27017</td>
-    <td>Mongo database server host</td>
+    <td>GROQ_API_KEY</td>
+    <td></td>
+    <td>API key for accessing GROQ services</td>
   </tr>
   <tr>
-    <td>MONGO_DB_NAME</td>
-    <td>promptengineers-llm-server</td>
-    <td>Application database</td>
+    <td>ANTHROPIC_API_KEY</td>
+    <td></td>
+    <td>API key for accessing Anthropic services</td>
+  </tr>
+  <tr>
+    <td>MINIO_HOST</td>
+    <td>localhost:9000</td>
+    <td>URL to the Object storage</td>
+  </tr>
+  <tr>
+    <td>BUCKET</td>
+    <td>my-documents</td>
+    <td>Name of Minio or S3 bucket</td>
+  </tr>
+  <tr>
+    <td>ACCESS_KEY_ID</td>
+    <td>AKIAIOSFODNN7EXAMPLE</td>
+    <td>IAM User Access Key ID &#40;Optional&#41;</td>
+  </tr>
+  <tr>
+    <td>ACCESS_SECRET_KEY</td>
+    <td>wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</td>
+    <td>Secret IAM Key &#40;Optional&#41;</td>
+  </tr>
+  <tr>
+    <td>S3_REGION</td>
+    <td>us-east-1</td>
+    <td>Region where the S3 bucket exists &#40;Optional&#41;</td>
   </tr>
 </table>
 

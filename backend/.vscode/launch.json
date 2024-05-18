@@ -1,0 +1,47 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Python: FastAPI",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "uvicorn",
+			"args": [
+				"src.api:app",
+				"--port=8000",
+				"--log-level",
+				"debug"
+			],
+			"jinja": true,
+			"justMyCode": false,
+			"envFile": "${workspaceFolder}/.env.local"
+		},
+		{
+			"name": "Debug Single Test",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "pytest",
+			"args": [
+				"-s",
+				"test/unit/repositories/test_chat.py"
+			],
+			"envFile": "${workspaceFolder}/.env.local",
+		},
+		{
+            "name": "Python: Run Script",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/examples/self-crag.py",
+            "console": "integratedTerminal"
+        },
+		{
+			"name": "Python: Seeder",
+			"type": "debugpy",
+			"request": "launch",
+			"module": "src.seeds.documents",
+			"args": ["3"],
+			"envFile": "${workspaceFolder}/.env.local",
+			"console": "integratedTerminal"
+		}
+	]
+}

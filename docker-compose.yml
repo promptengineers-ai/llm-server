@@ -2,19 +2,37 @@ version: '3'
 
 services:
   # API
-  # api:
-  #   container_name: api
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   command: uvicorn server.api:app --host 0.0.0.0 --reload
-  #   volumes:
-  #     - ./:/app
-  #   ports:
-  #     - 8000:8000
-  #     - 5678:5678
-  #   env_file:
-  #     - .env.local
+  api:
+    container_name: api
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: uvicorn src.api:app --host 0.0.0.0
+    volumes:
+      - ./data:/app/data  # Mount for SQLite database to host directory
+    ports:
+      - 8000:8000
+    env_file:
+      - ./backend/.env.local
+
+  # Proxy (Nginx)
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - api
+
+  # Redis (Cache / Broker / Vector Index / Stream)
+  redis:
+    container_name: redis
+    image: redis/redis-stack-server:latest
+    ports:
+      - 6379:6379
 
   # Minio (File Storage)
   minio:
@@ -24,66 +42,9 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: default
+      MINIO_ROOT_USER: CHANGEME
       MINIO_ROOT_PASSWORD: CHANGEME
     volumes:
       - ~/minio/data:/data
       - ~/minio/config:/root/.minio
     command: server /data --console-address ":9001"
-
-  # Mongo
-  mongo:
-    container_name: mongo
-    image: mongo:4.2
-    restart: unless-stopped
-    volumes:
-      - "~/data/db:/data/db"
-    ports:
-      - "27017:27017"
-
-  # Redis (Cache / Broker / Vector Index / Stream)
-  redis:
-    container_name: redis
-    image: redis/redis-stack-server:latest
-    ports:
-      - 6379:6379
-
-  # Ollama (On-Demand Model Server)
-#   ollama:
-#     image: ollama/ollama
-#     container_name: ollama
-#     ports:
-#       - "11434:11434"
-#     volumes:
-#       - ollama:/root/.ollama
-
-# volumes:
-#   ollama:
-
-############################################################
-## Pull Model
-############################################################
-# curl -X POST http://localhost:11434/api/pull -d '{
-#   "name": "llama2"
-# }'
-
-############################################################
-## Get Model
-############################################################
-# curl http://localhost:11434/api/tags
-
-############################################################
-## Vector Embeddings
-############################################################
-# curl -X POST http://localhost:11434/api/embeddings -d '{
-#   "model": "llama2",
-#   "prompt": "Here is an article about llamas..."
-# }'
-
-############################################################
-## Query the model
-############################################################
-# curl -X POST http://localhost:11434/api/generate -d '{
-#   "model": "llama2",
-#   "prompt":"Who won the 2001 world series"
-# }'

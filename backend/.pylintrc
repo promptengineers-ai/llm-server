@@ -1,0 +1,5 @@
+[MASTER]
+extension-pkg-whitelist=pydantic
+
+[MESSAGES CONTROL]
+disable=C0114,C0115,C0116,R0903,C0301,I1101,E1101,mixed-indentation,bad-indentation
