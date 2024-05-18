@@ -29,6 +29,7 @@ import CopyIcon from "@/components/icons/CopyIcon";
 import RegenerateIcon from "@/components/icons/RegenerateIcon";
 import ThumbDownIcon from "@/components/icons/ThumbDownIcon";
 import { useAppContext } from "./AppContext";
+import DocumentIcon from "@/components/icons/DocumentIcon";
 
 const defaultChatContextValue: ChatContextType = {
     chatboxRef: { current: null },
@@ -170,6 +171,10 @@ export default function ChatProvider({
             messageContent.images = images.map((image) => image.src);
         }
 
+        if (files.length > 0) {
+            messageContent.documents = files.map((file) => file);
+        }
+
         setMessages([...messages, messageContent]);
         setImages([]);
     };
@@ -274,6 +279,40 @@ export default function ChatProvider({
                                     }}
                                 />
                             ))}
+                        </div>
+                    )}
+                    {conversationItem.documents && (
+                        <div
+                            style={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                justifyContent: "flex-start",
+                                gap: "10px",
+                            }}
+                        >
+                            {conversationItem.documents.map(
+                                (document) => (
+                                    <div key={document.id} className="relative overflow-hidden rounded-xl border border-token-border-dark bg-white my-2">
+                                        <div className="p-2 w-48">
+                                            <div className="flex flex-row items-center gap-2">
+                                                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md">
+                                                    <DocumentIcon />
+                                                </div>
+                                                <div className="overflow-hidden">
+                                                    <div className="truncate font-medium">
+                                                        {document.name}
+                                                    </div>
+                                                    <div className="truncate text-token-text-tertiary">
+                                                        {document.type
+                                                            .split("/")[1]
+                                                            .toUpperCase()}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            )}
                         </div>
                     )}
                     <ReactMarkdown
