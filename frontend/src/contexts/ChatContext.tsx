@@ -83,6 +83,7 @@ export default function ChatProvider({
     const [selectedDocument, setSelectedDocument] = useState<string | null>(
         null
     );
+    const [csvContent, setCsvContent] = useState<string[][] | null>(null);
 
     const responseRef = useRef("");
     const [userInput, setUserInput] = useState("");
@@ -225,6 +226,11 @@ export default function ChatProvider({
         }, 500);
     };
 
+    const parseCSV = (text: string) => {
+        const rows = text.split("\n").map((row) => row.split(","));
+        return rows;
+    };
+
     const handleDocumentClick = async (src: string, type: string) => {
         if (type === "text/plain") {
             try {
@@ -233,11 +239,23 @@ export default function ChatProvider({
                 const blob = new Blob([text], { type: "text/plain" });
                 const blobUrl = URL.createObjectURL(blob);
                 setSelectedDocument(blobUrl);
+                setCsvContent(null);
             } catch (error) {
                 console.error("Failed to fetch text content:", error);
             }
+        } else if (type === "text/csv") {
+            try {
+                const response = await fetch(src);
+                const text = await response.text();
+                const parsedCSV = parseCSV(text);
+                setCsvContent(parsedCSV);
+                setSelectedDocument(null);
+            } catch (error) {
+                console.error("Failed to fetch CSV content:", error);
+            }
         } else {
             setSelectedDocument(src);
+            setCsvContent(null);
         }
     };
 
@@ -674,6 +692,8 @@ export default function ChatProvider({
                     files,
                     done,
                     selectedDocument,
+                    csvContent,
+                    setCsvContent,
                     setFiles,
                     resetChat,
                     setChats,
@@ -708,6 +728,8 @@ export default function ChatProvider({
                 selectedImage,
                 files,
                 selectedDocument,
+                csvContent,
+                setCsvContent,
                 resetChat,
                 setDone,
                 sendChatPayload,

@@ -9,7 +9,7 @@ import theme from "@/config/theme";
 import { useAppContext } from "@/contexts/AppContext";
 import { useChatContext } from "@/contexts/ChatContext";
 import { withAuth } from "@/middleware/AuthMiddleware";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, AwaitedReactNode, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from "react";
 import {
     MdKeyboardArrowDown,
     MdOutlineArrowBackIosNew,
@@ -52,8 +52,8 @@ const Chat = () => {
         fetchChats,
         selectedDocument,
         setSelectedDocument,
-        setSelectedTextContent,
-        selectedTextContent,
+        setCsvContent,
+        csvContent,
     } = useChatContext();
     const isMobile = window.innerWidth < 768;
 
@@ -224,6 +224,71 @@ const Chat = () => {
                                                     borderRadius: "10px",
                                                 }}
                                             ></iframe>
+                                        </div>
+                                    )}
+                                    {csvContent && (
+                                        <div
+                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 cursor-pointer"
+                                            style={{ zIndex: 1000 }}
+                                            onClick={() => setCsvContent(null)}
+                                        >
+                                            <div className="bg-white rounded-lg max-w-full max-h-full overflow-auto">
+                                                <table className="table-auto w-full border-collapse border border-gray-400">
+                                                    <thead>
+                                                        <tr>
+                                                            {csvContent[0].map(
+                                                                (
+                                                                    header: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined,
+                                                                    index: Key | null | undefined
+                                                                ) => (
+                                                                    <th
+                                                                        key={
+                                                                            index
+                                                                        }
+                                                                        className="border border-gray-300 px-1 py-1"
+                                                                    >
+                                                                        {header}
+                                                                    </th>
+                                                                )
+                                                            )}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {csvContent
+                                                            .slice(1)
+                                                            .map(
+                                                                (
+                                                                    row: any[],
+                                                                    rowIndex: Key | null | undefined
+                                                                ) => (
+                                                                    <tr
+                                                                        key={
+                                                                            rowIndex
+                                                                        }
+                                                                    >
+                                                                        {row.map(
+                                                                            (
+                                                                                cell,
+                                                                                cellIndex
+                                                                            ) => (
+                                                                                <td
+                                                                                    key={
+                                                                                        cellIndex
+                                                                                    }
+                                                                                    className="border border-gray-300 px-2 py-1"
+                                                                                >
+                                                                                    {
+                                                                                        cell
+                                                                                    }
+                                                                                </td>
+                                                                            )
+                                                                        )}
+                                                                    </tr>
+                                                                )
+                                                            )}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     )}
                                     {showScrollButton && (
