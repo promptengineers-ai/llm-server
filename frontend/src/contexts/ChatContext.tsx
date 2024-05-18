@@ -29,6 +29,7 @@ import CopyIcon from "@/components/icons/CopyIcon";
 import RegenerateIcon from "@/components/icons/RegenerateIcon";
 import ThumbDownIcon from "@/components/icons/ThumbDownIcon";
 import { useAppContext } from "./AppContext";
+import DocumentIcon from "@/components/icons/DocumentIcon";
 
 const defaultChatContextValue: ChatContextType = {
     chatboxRef: { current: null },
@@ -79,6 +80,10 @@ export default function ChatProvider({
     const [images, setImages] = useState<any[]>([]);
     const [files, setFiles] = useState<any[]>([]);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [selectedDocument, setSelectedDocument] = useState<string | null>(
+        null
+    );
+    const [csvContent, setCsvContent] = useState<string[][] | null>(null);
 
     const responseRef = useRef("");
     const [userInput, setUserInput] = useState("");
@@ -170,6 +175,10 @@ export default function ChatProvider({
             messageContent.images = images.map((image) => image.src);
         }
 
+        if (files.length > 0) {
+            messageContent.documents = files.map((file) => file);
+        }
+
         setMessages([...messages, messageContent]);
         setImages([]);
     };
@@ -215,6 +224,39 @@ export default function ChatProvider({
             setUserInput(messageAtIndex.content);
             // submitQuestionStream();
         }, 500);
+    };
+
+    const parseCSV = (text: string) => {
+        const rows = text.split("\n").map((row) => row.split(","));
+        return rows;
+    };
+
+    const handleDocumentClick = async (src: string, type: string) => {
+        if (type === "text/plain") {
+            try {
+                const response = await fetch(src);
+                const text = await response.text();
+                const blob = new Blob([text], { type: "text/plain" });
+                const blobUrl = URL.createObjectURL(blob);
+                setSelectedDocument(blobUrl);
+                setCsvContent(null);
+            } catch (error) {
+                console.error("Failed to fetch text content:", error);
+            }
+        } else if (type === "text/csv") {
+            try {
+                const response = await fetch(src);
+                const text = await response.text();
+                const parsedCSV = parseCSV(text);
+                setCsvContent(parsedCSV);
+                setSelectedDocument(null);
+            } catch (error) {
+                console.error("Failed to fetch CSV content:", error);
+            }
+        } else {
+            setSelectedDocument(src);
+            setCsvContent(null);
+        }
     };
 
     const renderConversation = (messages: Message[]) => {
@@ -273,6 +315,45 @@ export default function ChatProvider({
                                         borderRadius: "5px",
                                     }}
                                 />
+                            ))}
+                        </div>
+                    )}
+                    {conversationItem.documents && (
+                        <div
+                            style={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                justifyContent: "flex-start",
+                                gap: "10px",
+                            }}
+                            className="my-2"
+                        >
+                            {conversationItem.documents.map((document) => (
+                                <div
+                                    key={document.id}
+                                    className="relative overflow-hidden rounded-xl border border-token-border-dark bg-white"
+                                    onClick={() =>
+                                        handleDocumentClick(document.src, document.type)
+                                    }
+                                >
+                                    <div className="p-2 w-48">
+                                        <div className="flex flex-row items-center gap-2">
+                                            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md">
+                                                <DocumentIcon />
+                                            </div>
+                                            <div className="overflow-hidden">
+                                                <div className="truncate font-medium">
+                                                    {document.name}
+                                                </div>
+                                                <div className="truncate text-token-text-tertiary">
+                                                    {document.type
+                                                        .split("/")[1]
+                                                        .toUpperCase()}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             ))}
                         </div>
                     )}
@@ -610,6 +691,9 @@ export default function ChatProvider({
                     selectedImage,
                     files,
                     done,
+                    selectedDocument,
+                    csvContent,
+                    setCsvContent,
                     setFiles,
                     resetChat,
                     setChats,
@@ -628,6 +712,7 @@ export default function ChatProvider({
                     fetchChats,
                     adjustHeight,
                     setDone,
+                    setSelectedDocument,
                 };
             }, [
                 chats,
@@ -642,6 +727,9 @@ export default function ChatProvider({
                 chatboxRefIsEmpty,
                 selectedImage,
                 files,
+                selectedDocument,
+                csvContent,
+                setCsvContent,
                 resetChat,
                 setDone,
                 sendChatPayload,
@@ -655,6 +743,7 @@ export default function ChatProvider({
                 fetchChats,
                 adjustHeight,
                 setFiles,
+                setSelectedDocument,
             ])}
         >
             {children}
