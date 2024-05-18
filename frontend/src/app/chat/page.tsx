@@ -50,6 +50,10 @@ const Chat = () => {
         selectedImage,
         setSelectedImage,
         fetchChats,
+        selectedDocument,
+        setSelectedDocument,
+        setSelectedTextContent,
+        selectedTextContent,
     } = useChatContext();
     const isMobile = window.innerWidth < 768;
 
@@ -180,6 +184,46 @@ const Chat = () => {
                                                 className="max-w-full max-h-full"
                                                 style={{ borderRadius: "10px" }}
                                             />
+                                        </div>
+                                    )}
+                                    {/* {selectedDocument && (
+                                        <div
+                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4"
+                                            style={{ zIndex: 1000 }}
+                                            onClick={() =>
+                                                setSelectedDocument(null)
+                                            }
+                                        >
+                                            <iframe
+                                                src={selectedDocument}
+                                                title="Selected Document"
+                                                className="max-w-full max-h-full"
+                                                style={{
+                                                    border: "none",
+                                                    borderRadius: "10px",
+                                                }}
+                                            ></iframe>
+                                        </div>
+                                    )} */}
+                                    {selectedDocument && (
+                                        <div
+                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 cursor-pointer"
+                                            style={{ zIndex: 1000 }}
+                                            onClick={() =>
+                                                setSelectedDocument(null)
+                                            }
+                                        >
+                                            <iframe
+                                                src={selectedDocument}
+                                                // sandbox=""
+                                                title="Selected Document"
+                                                className="w-full h-full md:w-3/4 md:h-3/4"
+                                                style={{
+                                                    background: "#fff", // Ensure white background for text files
+                                                    border: "none",
+                                                    borderRadius: "10px",
+                                                }}
+                                            ></iframe>
                                         </div>
                                     )}
                                     {showScrollButton && (
