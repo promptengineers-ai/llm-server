@@ -436,7 +436,11 @@ export default function ChatProvider({
     };
 
 
-
+    const submitCleanUp = () => {
+        setChatPayload({ ...chatPayload, query: "" });
+        setUserInput("");
+        chatInputRef.current?.focus();
+    };
 
 
     const submitQuestionStream = async () => {
@@ -444,7 +448,7 @@ export default function ChatProvider({
         setLoading(true);
         responseRef.current = "";
         setResponse("");
-        setUserInput("");
+        submitCleanUp();
 
         const config = {
             model: chatPayload.model,

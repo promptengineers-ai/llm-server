@@ -112,61 +112,90 @@ export default function ChatSection() {
         setFiles((prev: any) => prev.filter((image: any) => image.id !== id));
     };
 
-    const createIndex = async (e: any) => {
-        e.preventDefault();
-        if (!userInput && !chatPayload.retrieval.index_name) {
-            alert("Please enter an index name");
-            return;
-        }
-        setLoading(true);
+    // const createIndex = async (e: any) => {
+    //     e.preventDefault();
 
-        const index_name = chatPayload.retrieval.index_name || userInput;
+    //     const index_name = chatPayload.retrieval.index_name || generateRandomNumber().toString();
 
-        try {
-            const chatClient = new ChatClient();
-            const docs = await chatClient.createDocuments({ data: files });
-            const upsert = await chatClient.upsert({
-                documents: docs.documents,
-                index_name: index_name,
-            });
-            setChatPayload((prev: any) => ({
-                ...prev,
-                retrieval: {
-                    ...prev.retrieval,
+    //     try {
+    //         const chatClient = new ChatClient();
+    //         const docs = await chatClient.createDocuments({ data: files });
+    //         const upsert = await chatClient.upsert({
+    //             documents: docs.documents,
+    //             index_name: index_name,
+    //         });
+    //         setChatPayload((prev: any) => ({
+    //             ...prev,
+    //             retrieval: {
+    //                 ...prev.retrieval,
+    //                 index_name: index_name,
+    //             },
+    //         }));
+    //         alert(upsert.message);
+    //         setFiles([]);
+    //         setUserInput("");
+    //     } catch (error) {
+    //         console.error(error);
+    //         alert("Error uploading the file");
+    //     }
+    // };
+
+    const createIndex = (e: any) => {
+        return new Promise<void>(async (resolve, reject) => {
+            e.preventDefault();
+
+            // If index exists, use it, otherwise generate a random number
+            const index_name =
+                chatPayload.retrieval.index_name ||
+                generateRandomNumber().toString();
+
+            try {
+                const chatClient = new ChatClient();
+                const docs = await chatClient.createDocuments({ data: files });
+                await chatClient.upsert({
+                    documents: docs.documents,
                     index_name: index_name,
-                },
-            }));
-            alert(upsert.message);
-            setFiles([]);
-            setUserInput("");
-        } catch (error) {
-            console.error(error);
-            alert("Error uploading the file");
-        }
+                });
+                setChatPayload((prev: any) => ({
+                    ...prev,
+                    retrieval: {
+                        ...prev.retrieval,
+                        index_name: index_name,
+                    },
+                }));
+                setFiles([]);
+                resolve();
+            } catch (error) {
+                console.error(error);
+                alert("Error uploading the file");
+                reject(error);
+            }
+        });
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleSubmitChat = async (e: any) => {
+        if (userInput === "") {
+            e.preventDefault();
+            alert("Please enter a message");
+            return;
+        } else {
+            if (files.length > 0) {
+                await createIndex(e);
+            }
+            sendChatPayload(e);
+        }
+    }
+
+    const handleKeyDown = async (e: React.KeyboardEvent) => {
         
         if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            if (files.length > 0) {
-                createIndex(e);
-            } else {
-                sendChatPayload(e);
-                submitCleanUp();
-            }
+            handleSubmitChat(e);
         }
         if (e.altKey && e.key === "n") {
             e.preventDefault();
             resetChat();
         }
     };
-
-    const submitCleanUp = () => {
-        setChatPayload({ ...chatPayload, query: "" });
-        chatInputRef.current?.focus();
-    };
-
 
     useEffect(() => {
         adjustHeight();
@@ -343,7 +372,7 @@ export default function ChatSection() {
                                     <ChatInputSelect />
                                 </div>
                             </div>
-                            {files.length > 0 ? (
+                            {/* {files.length > 0 ? (
                                 <button
                                     onClick={createIndex}
                                     className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-1 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"
@@ -359,25 +388,17 @@ export default function ChatSection() {
                                         )}
                                     </span>
                                 </button>
-                            ) : (
-                                <button
-                                    onClick={(e) => {
-                                        if (userInput === "") {
-                                            e.preventDefault();
-                                            alert("Please enter a message");
-                                            return;
-                                        } else {
-                                            sendChatPayload(e);
-                                        }
-                                    }}
-                                    disabled={!done}
-                                    className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-0.5 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"
-                                >
-                                    <span className="">
-                                        <SubmitIcon />
-                                    </span>
-                                </button>
-                            )}
+                            ) : ( */}
+                            <button
+                                onClick={handleSubmitChat}
+                                disabled={!done}
+                                className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-0.5 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"
+                            >
+                                <span className="">
+                                    <SubmitIcon />
+                                </span>
+                            </button>
+                            {/* )}   */}
                         </div>
                     </div>
                 </div>
