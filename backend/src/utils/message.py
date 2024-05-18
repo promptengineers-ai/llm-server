@@ -18,10 +18,18 @@ def retrieve_system_message(messages, use_class=False):
 #         (msg["content"]) for msg in messages if msg["role"] in ["user", "assistant"]
 #     ]
 
+def _move_system_to_front(messages):
+    """Move system messages to the front of the message list."""
+    system_messages = [msg for msg in messages if msg['role'] == 'system']
+    non_system_messages = [msg for msg in messages if msg['role'] != 'system']
+    return system_messages + non_system_messages
+
 def retrieve_chat_messages(body, use_class=False):
     """Retrieve chat messages and wrap them in HumanMessage or AIMessage based on the sender."""
+    messages = _move_system_to_front(body.messages)
     result = []
-    for msg in body.messages:
+
+    for msg in messages:
         content_list = []  # This will hold all content items (text and image)
 
         # Capture text content directly
@@ -49,15 +57,23 @@ def retrieve_chat_messages(body, use_class=False):
 
         # Create message object based on role and append to result
         if content_list:
+            content = " ".join([c["text"] for c in content_list if c["type"] == "text"])
             if msg["role"] == "system":
-                result.append(SystemMessage(content_list))
-            if msg["role"] == "user":
-                result.append(HumanMessage(content_list))
+                if use_class:
+                    result.append(SystemMessage(content))
+                else:
+                    result.append(('system', content))
+            elif msg["role"] == "user":
+                if use_class:
+                    result.append(HumanMessage(content))
+                else:
+                    result.append(('human', content))
             elif msg["role"] == "assistant":
-                if msg.get('content'):
-                    if use_class:
-                        result.append(AIMessage(content_list))
-                    else:
-                        result.append(('ai', msg["content"]))
+                if use_class:
+                    result.append(AIMessage(content))
+                else:
+                    result.append(('ai', content))
 
     return result
+
+

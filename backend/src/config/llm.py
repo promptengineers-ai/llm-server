@@ -36,7 +36,7 @@ class ModelType(str, Enum):
     OLLAMA_LLAMA_3 = 'ollama-llama3'
     OLLAMA_LLAMA_3_CHAT = 'ollama_chat-llama3'
     GROQ_MIXTRAL = 'groq-mixtral'
-    GROQ_LLAMA_2_70B = 'groq-llama2-70b'
+    GROQ_GEMMA_7B_IT = 'groq-gemma-7b-it'
     GROQ_LLAMA_3_70B = 'groq-llama3-70b'
     ANTHROPIC_HAIKU = 'anthorpic-claude-3-sonnet'
     ANTHROPIC_OPUS = 'anthorpic-claude-3-opus'
@@ -80,7 +80,7 @@ ACCEPTED_OLLAMA_MODELS = {
     ModelType.OLLAMA_LLAMA_2_CHAT.value,
     ModelType.OLLAMA_LLAMA_3_CHAT.value,
     ModelType.GROQ_MIXTRAL.value,
-    ModelType.GROQ_LLAMA_2_70B.value,
+    ModelType.GROQ_GEMMA_7B_IT.value,
     ModelType.GROQ_LLAMA_3_70B.value,
 }
 
@@ -180,9 +180,9 @@ MODEL_LIST = [
 		},
 	},
     {
-		"model_name": ModelType.GROQ_LLAMA_2_70B,
+		"model_name": ModelType.GROQ_GEMMA_7B_IT,
 		"litellm_params": {
-			"model": "groq/llama2-70b-4096",
+			"model": "groq/gemma-7b-it",
 			"api_key": GROQ_API_KEY
 		},
 	},
@@ -190,13 +190,6 @@ MODEL_LIST = [
 		"model_name": ModelType.GROQ_LLAMA_3_70B,
 		"litellm_params": {
 			"model": "groq/llama3-70b-8192",
-			"api_key": GROQ_API_KEY
-		},
-	},
-    {
-		"model_name": ModelType.GROQ_LLAMA_2_70B,
-		"litellm_params": {
-			"model": "groq/llama2-70b-4096",
 			"api_key": GROQ_API_KEY
 		},
 	},
