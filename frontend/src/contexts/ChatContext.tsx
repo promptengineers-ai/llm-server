@@ -350,6 +350,38 @@ export default function ChatProvider({
                                     {...props}
                                 />
                             ),
+                            table: ({ node, ...props }) => (
+                                <div className="overflow-x-auto">
+                                    <table
+                                        className="min-w-full bg-white border border-gray-300"
+                                        {...props}
+                                    />
+                                </div>
+                            ),
+                            thead: ({ node, ...props }) => (
+                                <thead className="bg-gray-200" {...props} />
+                            ),
+                            tbody: ({ node, ...props }) => (
+                                <tbody className="bg-white" {...props} />
+                            ),
+                            tr: ({ node, ...props }) => (
+                                <tr
+                                    className="whitespace-nowrap border-b border-gray-200"
+                                    {...props}
+                                />
+                            ),
+                            th: ({ node, ...props }) => (
+                                <th
+                                    className="px-6 py-2 text-xs text-gray-500 border-r border-gray-200"
+                                    {...props}
+                                />
+                            ),
+                            td: ({ node, ...props }) => (
+                                <td
+                                    className="px-6 py-4 text-sm text-gray-900 border-r border-gray-200"
+                                    {...props}
+                                />
+                            ),
                         }}
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[
@@ -404,6 +436,9 @@ export default function ChatProvider({
     };
 
 
+
+
+
     const submitQuestionStream = async () => {
         setDone(false);
         setLoading(true);
@@ -413,9 +448,10 @@ export default function ChatProvider({
 
         const config = {
             model: chatPayload.model,
-            messages: chatPayload.retrieval.index_name 
-                      && !acceptRagSystemMessage.has(chatPayload.model) 
+            messages: chatPayload.retrieval.index_name
+                      && !acceptRagSystemMessage.has(chatPayload.model)
                       ? messages : combinePrompts(),
+            // messages: combinePrompts(),
             tools: chatPayload.tools,
             retrieval: chatPayload.retrieval,
             temperature: chatPayload.temperature,
