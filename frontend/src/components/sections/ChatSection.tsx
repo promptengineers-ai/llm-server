@@ -37,7 +37,6 @@ const SUGGESTIONS = [
 
 
 export default function ChatSection() {
-    const { loading, setLoading } = useAppContext();
     const {
         done,
         chatInputRef,
@@ -111,34 +110,6 @@ export default function ChatSection() {
         setImages((prev: any) => prev.filter((image: any) => image.id !== id));
         setFiles((prev: any) => prev.filter((image: any) => image.id !== id));
     };
-
-    // const createIndex = async (e: any) => {
-    //     e.preventDefault();
-
-    //     const index_name = chatPayload.retrieval.index_name || generateRandomNumber().toString();
-
-    //     try {
-    //         const chatClient = new ChatClient();
-    //         const docs = await chatClient.createDocuments({ data: files });
-    //         const upsert = await chatClient.upsert({
-    //             documents: docs.documents,
-    //             index_name: index_name,
-    //         });
-    //         setChatPayload((prev: any) => ({
-    //             ...prev,
-    //             retrieval: {
-    //                 ...prev.retrieval,
-    //                 index_name: index_name,
-    //             },
-    //         }));
-    //         alert(upsert.message);
-    //         setFiles([]);
-    //         setUserInput("");
-    //     } catch (error) {
-    //         console.error(error);
-    //         alert("Error uploading the file");
-    //     }
-    // };
 
     const createIndex = (e: any) => {
         return new Promise<void>(async (resolve, reject) => {
@@ -359,7 +330,7 @@ export default function ChatSection() {
                                           "Enter an Index Name..."
                                         : "Acting as a expert at..."
                                 }
-                                className="m-0 w-full resize-none border-0 bg-transparent py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] max-h-52 placeholder-black/50 pl-10 md:pl-[55px] focus:outline-none"
+                                className="m-0 w-full resize-none border-0 bg-white py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] max-h-52 placeholder-black/50 pl-10 md:pl-[55px] focus:outline-none"
                                 style={{
                                     overflowY: "auto",
                                     borderRadius: "10px",

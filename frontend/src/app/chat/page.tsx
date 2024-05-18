@@ -9,7 +9,7 @@ import theme from "@/config/theme";
 import { useAppContext } from "@/contexts/AppContext";
 import { useChatContext } from "@/contexts/ChatContext";
 import { withAuth } from "@/middleware/AuthMiddleware";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, AwaitedReactNode, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from "react";
 import {
     MdKeyboardArrowDown,
     MdOutlineArrowBackIosNew,
@@ -50,6 +50,10 @@ const Chat = () => {
         selectedImage,
         setSelectedImage,
         fetchChats,
+        selectedDocument,
+        setSelectedDocument,
+        setCsvContent,
+        csvContent,
     } = useChatContext();
     const isMobile = window.innerWidth < 768;
 
@@ -180,6 +184,111 @@ const Chat = () => {
                                                 className="max-w-full max-h-full"
                                                 style={{ borderRadius: "10px" }}
                                             />
+                                        </div>
+                                    )}
+                                    {/* {selectedDocument && (
+                                        <div
+                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4"
+                                            style={{ zIndex: 1000 }}
+                                            onClick={() =>
+                                                setSelectedDocument(null)
+                                            }
+                                        >
+                                            <iframe
+                                                src={selectedDocument}
+                                                title="Selected Document"
+                                                className="max-w-full max-h-full"
+                                                style={{
+                                                    border: "none",
+                                                    borderRadius: "10px",
+                                                }}
+                                            ></iframe>
+                                        </div>
+                                    )} */}
+                                    {selectedDocument && (
+                                        <div
+                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 cursor-pointer"
+                                            style={{ zIndex: 1000 }}
+                                            onClick={() =>
+                                                setSelectedDocument(null)
+                                            }
+                                        >
+                                            <iframe
+                                                src={selectedDocument}
+                                                // sandbox=""
+                                                title="Selected Document"
+                                                className="w-full h-full md:w-3/4 md:h-3/4"
+                                                style={{
+                                                    background: "#fff", // Ensure white background for text files
+                                                    border: "none",
+                                                    borderRadius: "10px",
+                                                }}
+                                            ></iframe>
+                                        </div>
+                                    )}
+                                    {csvContent && (
+                                        <div
+                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 cursor-pointer"
+                                            style={{ zIndex: 1000 }}
+                                            onClick={() => setCsvContent(null)}
+                                        >
+                                            <div className="bg-white rounded-lg max-w-full max-h-full overflow-auto">
+                                                <table className="table-auto w-full border-collapse border border-gray-400">
+                                                    <thead>
+                                                        <tr>
+                                                            {csvContent[0].map(
+                                                                (
+                                                                    header: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined,
+                                                                    index: Key | null | undefined
+                                                                ) => (
+                                                                    <th
+                                                                        key={
+                                                                            index
+                                                                        }
+                                                                        className="border border-gray-300 px-1 py-1"
+                                                                    >
+                                                                        {header}
+                                                                    </th>
+                                                                )
+                                                            )}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {csvContent
+                                                            .slice(1)
+                                                            .map(
+                                                                (
+                                                                    row: any[],
+                                                                    rowIndex: Key | null | undefined
+                                                                ) => (
+                                                                    <tr
+                                                                        key={
+                                                                            rowIndex
+                                                                        }
+                                                                    >
+                                                                        {row.map(
+                                                                            (
+                                                                                cell,
+                                                                                cellIndex
+                                                                            ) => (
+                                                                                <td
+                                                                                    key={
+                                                                                        cellIndex
+                                                                                    }
+                                                                                    className="border border-gray-300 px-2 py-1"
+                                                                                >
+                                                                                    {
+                                                                                        cell
+                                                                                    }
+                                                                                </td>
+                                                                            )
+                                                                        )}
+                                                                    </tr>
+                                                                )
+                                                            )}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     )}
                                     {showScrollButton && (
