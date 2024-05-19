@@ -123,15 +123,15 @@ export default function ChatSection() {
             try {
                 const chatClient = new ChatClient();
                 const docs = await chatClient.createDocuments({ data: files });
-                await chatClient.upsert({
+                const index = await chatClient.upsert({
                     documents: docs.documents,
-                    index_name: index_name,
+                    // index_name: index_name,
                 });
                 setChatPayload((prev: any) => ({
                     ...prev,
                     retrieval: {
                         ...prev.retrieval,
-                        index_name: index_name,
+                        index_name: index.id,
                     },
                 }));
                 setFiles([]);

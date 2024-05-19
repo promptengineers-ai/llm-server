@@ -68,6 +68,11 @@ class FetchDocuments(BaseModel):
 	loaders: List[Any]
 	splitter: Splitter
  
+class RequestDocuments(BaseModel):
+	provider: Union[Literal['pinecone', 'redis']] = Field(...)
+	embedding: Annotated[str, Field(...)]
+	documents: List[Document] = Field(...)
+ 
 class UpsertDocuments(BaseModel):
 	provider: Union[Literal['pinecone', 'redis']] = Field(...)
 	index_name: str = Field(...)

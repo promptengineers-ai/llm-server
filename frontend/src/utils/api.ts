@@ -63,7 +63,7 @@ export class ChatClient extends Client {
         }
     }
 
-    public async upsert(payload: { documents: any[]; index_name: string }) {
+    public async upsert(payload: { documents: any[]; index_name?: string }) {
         try {
             const response = await fetch(
                 `${this.apiUrl}/api/v1/documents/upsert`,

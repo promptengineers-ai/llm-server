@@ -17,7 +17,6 @@ class Chat(Base):
 
     # Relationship to messages
     messages = relationship('Message', back_populates='chat', passive_deletes=True, cascade="all, delete, delete-orphan")
-    index = relationship('Index', back_populates='chat', uselist=False, cascade='all, delete-orphan', passive_deletes=True)
 
     def soft_delete(self):
         self.deleted_at = datetime.datetime.now()
@@ -36,7 +35,7 @@ class Message(Base):
 
     # Relationship to chat
     chat = relationship("Chat", back_populates="messages")
-    documents = relationship("Document", back_populates="message")
+    sources = relationship("Source", back_populates="message")
     images = relationship("Image", back_populates="message")
 
     def soft_delete(self):
@@ -46,12 +45,18 @@ class Index(Base):
     __tablename__ = 'indexes'
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    chat_id = Column(String(36), ForeignKey('chats.id', ondelete='CASCADE'), nullable=False, unique=True)
-    index_name = Column(Integer, nullable=False)
+    user_id = Column(Integer, nullable=False)
+    organization_id = Column(Integer, nullable=True)
+    index_name = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.now)
     updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
     deleted_at = Column(DateTime, nullable=True)
-    chat = relationship('Chat', back_populates='index')
+    sources = relationship('Source', back_populates='index')
+    
+    def soft_delete(self):
+        self.deleted_at = datetime.datetime.now()
+        for source in self.sources:
+            source.soft_delete()
         
 class Image(Base):
     __tablename__ = 'images'
@@ -61,11 +66,19 @@ class Image(Base):
     content = Column(Text, nullable=False)
     message = relationship("Message", back_populates="images")
 
-class Document(Base):
-    __tablename__ = 'documents'
+class Source(Base):
+    __tablename__ = 'sources'
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(Integer, nullable=False)
+    organization_id = Column(Integer, nullable=True)
     message_id = Column(String(36), ForeignKey('messages.id', ondelete='CASCADE'), nullable=False)
-    page_content = Column(Text, nullable=False)
-    document_metadata = Column(JSON, nullable=True)  # Using the SQLAlchemy JSON column type
-    message = relationship('Message', back_populates='documents')
+    index_id = Column(String(36), ForeignKey('indexes.id', ondelete='CASCADE'), nullable=False)
+    type = Column(String(50), nullable=False)
+    name = Column(Text, nullable=True)
+    src = Column(JSON, nullable=False)
+    created_at = Column(DateTime, default=datetime.datetime.now)
+    updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
+    deleted_at = Column(DateTime, nullable=True)
+    message = relationship('Message', back_populates='sources')
+    index = relationship('Index', back_populates='sources')

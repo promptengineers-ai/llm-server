@@ -5,16 +5,20 @@ import traceback
 from typing import List
 from pathlib import Path as PathLib
 
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import UJSONResponse
-from fastapi import HTTPException, Request, status, Body, Query, File, UploadFile, Form
+from fastapi import HTTPException, Request, status, Body, Query, File, UploadFile, Form, Depends
 
 
+from src.repositories.index import IndexRepository
 from src.config import REDIS_URL, retrieve_defaults
-from src.models import FetchDocuments, UpsertDocuments, Splitter, FileLoaderType
+from src.models import FetchDocuments, UpsertDocuments, Splitter, FileLoaderType, RequestDocuments
 
+from src.services.db import get_db
 from src.services.cache import CacheService
 from src.services.document import DocumentService
 from src.utils.retrieval import fetch_links
+from src.utils.exception import NotFoundException
  
 def loader_file_config(file, tmpdirname):
 	_, file_extension = os.path.splitext(file.filename)
@@ -31,6 +35,17 @@ def loader_file_config(file, tmpdirname):
 	
 	return {'type': file_extension_cleaned, 'file_path': file_path}
 
+def get_repo(request: Request, db: AsyncSession = Depends(get_db)) -> IndexRepository:
+	try:
+		return IndexRepository(request=request, db=db)
+	except NotFoundException as e:
+		# Handle specific NotFoundException with a custom message or logging
+		logging.warn(f"Failed to initialize ChatRepository: {str(e)}")
+		raise HTTPException(status_code=404, detail=f"Initialization failed: {str(e)}") from e
+	except Exception as e:
+		# Catch all other exceptions
+		logging.error(f"Unexpected error initializing ChatRepository: {str(e)}")
+		raise HTTPException(status_code=500, detail="Internal server error") from e
 
 cache = CacheService(REDIS_URL)
 
@@ -146,7 +161,7 @@ class LoaderController:
 	async def upsert_documents(
 		self,
 		request: Request,
-		body: UpsertDocuments = Body(...)
+		body: RequestDocuments = Body(...)
 	):
 		try:
 			# Initialize the set for excluded keys
@@ -167,14 +182,20 @@ class LoaderController:
 
 			tokens = retrieve_defaults(keys)
 
+			db_gen = get_db()  # Get the generator
+			db = await db_gen.__anext__()
+			index_repo = IndexRepository(user_id=request.state.user_id, db=db)
+			index = await index_repo.create()
+			data = UpsertDocuments(**body.dict(), index_name=index.get('id'))
 			result = await DocumentService.upsert(
-				body, 
+				data, 
 				tokens, 
 				keys,
 				request.state.user_id
     		)
+			
 			return UJSONResponse(
-				content={'message': f'Documents upserted to [{body.index_name}] successfully.'},
+				content={'id': index.get('id')},
 				media_type='application/json',
 				status_code=status.HTTP_200_OK
 			)
@@ -188,3 +209,5 @@ class LoaderController:
 				status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
 				detail=f"An unexpected error occurred. {str(err)}"
 			) from err
+   
+   
