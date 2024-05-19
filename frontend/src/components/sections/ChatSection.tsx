@@ -6,10 +6,8 @@ import SuggestionButton from "../buttons/SuggestionButton";
 import ChatInputSelect from "../selects/ChatInputSelect";
 import { multiModalModels } from "@/types/llm";
 import DocumentIcon from "../icons/DocumentIcon";
-import { FaFileUpload, FaSpinner } from "react-icons/fa";
 import { generateRandomNumber } from "@/utils/random";
 import { ChatClient } from "@/utils/api";
-import { useAppContext } from "@/contexts/AppContext";
 
 const SUGGESTIONS = [
     {
@@ -326,8 +324,7 @@ export default function ChatSection() {
                                 // disabled={files.length > 0}
                                 placeholder={
                                     files.length > 0
-                                        ? // ? `Upload ${files.length} files`
-                                          "Enter an Index Name..."
+                                        ? "List 5 key takeaways..."
                                         : "Acting as a expert at..."
                                 }
                                 className="m-0 w-full resize-none border-0 bg-white py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] max-h-52 placeholder-black/50 pl-10 md:pl-[55px] focus:outline-none"
