@@ -102,13 +102,14 @@ def retrieve_chat_messages(body, use_class=False):
         # Create message object based on role and append to result
         if content_list:
             if msg["role"] == "system":
-                result.append(SystemMessage(content_list))
+                content = " ".join([c["text"] for c in content_list if c["type"] == "text"])
+                result.append(SystemMessage(content))
             if msg["role"] == "user":
                 result.append(HumanMessage(content_list))
             elif msg["role"] == "assistant":
                 if msg.get('content'):
                     if use_class:
-                        result.append(AIMessage(content_list))
+                        result.append(AIMessage(msg["content"]))
                     else:
                         result.append(('ai', msg["content"]))
 
