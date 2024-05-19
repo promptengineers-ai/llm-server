@@ -1,6 +1,6 @@
 import datetime
 import uuid
-from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, JSON, String, Index
+from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, String, Index
 from sqlalchemy.orm import relationship, declarative_base
 
 Base = declarative_base()
@@ -23,8 +23,6 @@ class Chat(Base):
         self.deleted_at = datetime.datetime.now()
         for message in self.messages:
             message.soft_delete()
-
-    __table_args__ = (Index('ix_chats_user_id', 'user_id'),)
             
 class Message(Base):
     __tablename__ = 'messages'
@@ -47,8 +45,6 @@ class Message(Base):
             source.soft_delete()
         for image in self.images:
             image.soft_delete()
-
-    __table_args__ = (Index('ix_messages_chat_id', 'chat_id'),)
             
 class Index(Base):
     __tablename__ = 'indexes'
@@ -60,8 +56,6 @@ class Index(Base):
     updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
     deleted_at = Column(DateTime, nullable=True)
     chat = relationship('Chat', back_populates='index')
-
-    __table_args__ = (Index('ix_indexes_chat_id', 'chat_id'),)
         
 class Image(Base):
     __tablename__ = 'images'
@@ -74,8 +68,6 @@ class Image(Base):
 
     def soft_delete(self):
         self.deleted_at = datetime.datetime.now()
-
-    __table_args__ = (Index('ix_images_message_id', 'message_id'),)
 
 class Source(Base):
     __tablename__ = 'sources'
@@ -91,8 +83,3 @@ class Source(Base):
 
     def soft_delete(self):
         self.deleted_at = datetime.datetime.now()
-
-    __table_args__ = (
-        Index('ix_sources_message_id', 'message_id'),
-        Index('ix_sources_index_id', 'index_id'),
-    )
