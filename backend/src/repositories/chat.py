@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
 from src.models import Chat as ChatBody
-from src.models.sql.chat import Chat, Image, Message
+from src.models.sql.chat import Chat, Image, Message, Source
 
 class ChatRepository:
     def __init__(self, request, db):
@@ -52,17 +52,31 @@ class ChatRepository:
                 await self.db.flush()
 
                 for message in chat.messages:
-                    images = message.get("images", [])
+                    
                     new_message = Message(chat_id=new_chat.id, 
                                           role=message["role"], 
                                           content=message["content"], 
                                           created_at=datetime.utcnow())
                     self.db.add(new_message)
                     await self.db.flush()
+                    
+                    images = message.get("images", [])
                     for image in images:
-                        new_image = Image(message_id=new_message.id, 
-                                        content=image)
+                        new_image = Image(
+                            message_id=new_message.id, 
+                            content=image
+                        )
                         self.db.add(new_image)
+                        
+                    sources = message.get("sources", [])
+                    for source in sources:
+                        new_source = Source(
+                            message_id=new_message.id,
+                            name=source.get("name"), 
+                            type=source.get("type"),
+                            src=source.get("src"),
+                        )
+                        self.db.add(new_source)
                     
                     
                 return {"id": new_chat.id}
@@ -75,7 +89,8 @@ class ChatRepository:
         stmt = (
             select(Chat)
             .options(
-                joinedload(Chat.messages).joinedload(Message.images)  # Load images for each message
+                joinedload(Chat.messages).joinedload(Message.images),
+                joinedload(Chat.messages).joinedload(Message.sources)
             )
             .where(Chat.id == chat_id, Chat.user_id == self.user_id)
         )
@@ -90,7 +105,16 @@ class ChatRepository:
                         "content": message.content,
                         "images": [
                             image.content for image in message.images
-                        ]
+                        ],
+                        "sources": [
+                            {
+                                "name": source.name,
+                                "type": source.type,
+                                "src": source.src
+                            }
+                            for source in message.sources
+                        ],
+                        "created_at": message.created_at.isoformat()
                     }
                     for message in chat.messages
                 ],
