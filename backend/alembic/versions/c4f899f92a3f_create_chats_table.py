@@ -27,7 +27,6 @@ def upgrade() -> None:
         sa.Column('organization_id', sa.INTEGER(), nullable=True),
         sa.Column('created_at', sa.DATETIME(), nullable=False),
         sa.Column('updated_at', sa.DATETIME(), nullable=False),
-        sa.Column('deleted_at', sa.DATETIME(), nullable=True),
     )
     
     op.create_table('indexes',
@@ -36,7 +35,6 @@ def upgrade() -> None:
         sa.Column('index_name', sa.INTEGER(), nullable=False),
         sa.Column('created_at', sa.DATETIME(), nullable=False),
         sa.Column('updated_at', sa.DATETIME(), nullable=False),
-        sa.Column('deleted_at', sa.DATETIME(), nullable=True),
         sa.ForeignKeyConstraint(['chat_id'], ['chats.id'], ondelete='CASCADE'),
     )
 
@@ -46,7 +44,6 @@ def upgrade() -> None:
         sa.Column('role', sa.TEXT(), nullable=False),
         sa.Column('content', sa.TEXT(), nullable=False),
         sa.Column('created_at', sa.DATETIME(), nullable=False),
-        sa.Column('deleted_at', sa.DATETIME(), nullable=True),
         sa.ForeignKeyConstraint(['chat_id'], ['chats.id'], ondelete='CASCADE'),
     )
     

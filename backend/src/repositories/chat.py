@@ -10,7 +10,6 @@ class ChatRepository:
     def __init__(self, request, db):
         self.db = db
         self.user_id = request.state.user_id
-        self.soft_delete = True
     
     async def list(self):
         stmt = (
@@ -20,10 +19,7 @@ class ChatRepository:
             .order_by(Chat.updated_at.desc())
         )
 
-        if self.soft_delete:
-            stmt = stmt.where(Chat.deleted_at.is_(None))
-
-        print(str(stmt.compile(compile_kwargs={"literal_binds": True})))
+        # print(str(stmt.compile(compile_kwargs={"literal_binds": True})))
         result = await self.db.execute(stmt)
         chats = result.unique().scalars().all()
 
@@ -150,26 +146,24 @@ class ChatRepository:
                                                   created_at=datetime.utcnow())
                             self.db.add(new_message)
                             await self.db.flush()
-                            if new_message.id is None:
-                                raise ValueError("Failed to generate message ID.")
 
-                            # images = message.get("images", [])
-                            # for image in images:
-                            #     new_image = Image(
-                            #         message_id=new_message.id, 
-                            #         content=image
-                            #     )
-                            #     self.db.add(new_image)
+                            images = message_data.get("images", [])
+                            for image in images:
+                                new_image = Image(
+                                    message_id=new_message.id, 
+                                    content=image
+                                )
+                                self.db.add(new_image)
 
-                            # sources = message.get("sources", [])
-                            # for source in sources:
-                            #     new_source = Source(
-                            #         message_id=new_message.id,
-                            #         name=source.get("name"), 
-                            #         type=source.get("type"),
-                            #         src=source.get("src"),
-                            #     )
-                            #     self.db.add(new_source)
+                            sources = message_data.get("sources", [])
+                            for source in sources:
+                                new_source = Source(
+                                    message_id=new_message.id,
+                                    name=source.get("name"), 
+                                    type=source.get("type"),
+                                    src=source.get("src"),
+                                )
+                                self.db.add(new_source)
 
                     # Return the updated chat information
                     return {"id": chat.id, "updated_at": chat.updated_at.isoformat()}
@@ -179,18 +173,10 @@ class ChatRepository:
 
     async def delete(self, chat_id: int):
         async with self.db.begin():
-            stmt = select(Chat).options(joinedload(Chat.messages)).where(Chat.id == chat_id, 
-                                                                         Chat.user_id == self.user_id)
+            stmt = select(Chat).where(Chat.id == chat_id, Chat.user_id == self.user_id)
             result = await self.db.execute(stmt)
             chat = result.scalars().first()
             if chat:
-                if self.soft_delete:
-                    ## Soft delete of chat and associated messages
-                    chat.deleted_at = datetime.utcnow()
-                    for message in chat.messages:
-                        message.deleted_at = datetime.utcnow()
-                else:
-                    ## Full delete of chat and associated messages
-                    await self.db.delete(chat)
+                await self.db.delete(chat)
                 return True
             return None
