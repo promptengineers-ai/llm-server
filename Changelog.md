@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v0.0.1
 ### Changed 
+  - feature/29-ability-to-store-sources (2024-05-19)
   - feature/27-files-to-be-shown-in-thread (2024-05-18)
   - feature/1-add-storage-and-db-services
   - development
