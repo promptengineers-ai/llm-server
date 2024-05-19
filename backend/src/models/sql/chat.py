@@ -70,5 +70,4 @@ class Source(Base):
     name = Column(String(100), nullable=False)
     type = Column(String(100), nullable=False)
     src = Column(Text, nullable=False)
-    deleted_at = Column(DateTime, nullable=True)
     message = relationship('Message', back_populates='sources')

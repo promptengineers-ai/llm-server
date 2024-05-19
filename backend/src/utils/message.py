@@ -24,12 +24,10 @@ def _move_system_to_front(messages):
     non_system_messages = [msg for msg in messages if msg['role'] != 'system']
     return system_messages + non_system_messages
 
-def retrieve_chat_messages(body, use_class=False):
+def retrieve_chat_messages(body, use_class=True):
     """Retrieve chat messages and wrap them in HumanMessage or AIMessage based on the sender."""
-    messages = _move_system_to_front(body.messages)
     result = []
-
-    for msg in messages:
+    for msg in body.messages:
         content_list = []  # This will hold all content items (text and image)
 
         # Capture text content directly
@@ -57,22 +55,22 @@ def retrieve_chat_messages(body, use_class=False):
 
         # Create message object based on role and append to result
         if content_list:
-            content = " ".join([c["text"] for c in content_list if c["type"] == "text"])
-            if msg["role"] == "system":
-                if use_class:
-                    result.append(SystemMessage(content))
-                else:
-                    result.append(('system', content))
-            elif msg["role"] == "user":
-                if use_class:
-                    result.append(HumanMessage(content))
-                else:
-                    result.append(('human', content))
-            elif msg["role"] == "assistant":
-                if use_class:
-                    result.append(AIMessage(content))
-                else:
-                    result.append(('ai', content))
+            if use_class:
+                if msg["role"] == "system":
+                    result.append(SystemMessage(content_list))
+                elif msg["role"] == "user":
+                    result.append(HumanMessage(content_list))
+                elif msg["role"] == "assistant":
+                    result.append(AIMessage(content_list))
+            else:
+                content = " ".join([c["text"] for c in content_list if c["type"] == "text"])
+                images = [c["image_url"] for c in content_list if c["type"] == "image_url"]
+                if msg["role"] == "system":
+                    result.append(('system', content, images))
+                elif msg["role"] == "user":
+                    result.append(('human', content, images))
+                elif msg["role"] == "assistant":
+                    result.append(('ai', content, images))
 
     return result
 
