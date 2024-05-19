@@ -176,7 +176,7 @@ export default function ChatProvider({
         }
 
         if (files.length > 0) {
-            messageContent.documents = files.map((file) => file);
+            messageContent.sources = files.map((file) => file);
         }
 
         setMessages([...messages, messageContent]);
@@ -318,7 +318,7 @@ export default function ChatProvider({
                             ))}
                         </div>
                     )}
-                    {conversationItem.documents && (
+                    {conversationItem.sources && (
                         <div
                             style={{
                                 display: "flex",
@@ -328,12 +328,15 @@ export default function ChatProvider({
                             }}
                             className="my-2"
                         >
-                            {conversationItem.documents.map((document) => (
+                            {conversationItem.sources.map((source) => (
                                 <div
-                                    key={document.id}
+                                    key={source.id}
                                     className="relative overflow-hidden rounded-xl border border-token-border-dark bg-white"
                                     onClick={() =>
-                                        handleDocumentClick(document.src, document.type)
+                                        handleDocumentClick(
+                                            source.src,
+                                            source.type
+                                        )
                                     }
                                 >
                                     <div className="p-2 w-48">
@@ -343,10 +346,10 @@ export default function ChatProvider({
                                             </div>
                                             <div className="overflow-hidden">
                                                 <div className="truncate font-medium">
-                                                    {document.name}
+                                                    {source.name}
                                                 </div>
                                                 <div className="truncate text-token-text-tertiary">
-                                                    {document.type
+                                                    {source.type
                                                         .split("/")[1]
                                                         .toUpperCase()}
                                                 </div>

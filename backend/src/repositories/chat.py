@@ -125,46 +125,57 @@ class ChatRepository:
         return None
     
     async def update(self, chat_id: int, updates: ChatBody):
-        try:
-            async with self.db.begin():
+        async with self.db.begin() as transaction:
+            try:
                 # Fetch the chat and its messages
-                stmt = select(Chat).options(joinedload(Chat.messages)).where(Chat.id == chat_id, 
-                                                                             Chat.user_id == self.user_id)
+                stmt = select(Chat).options(joinedload(Chat.messages)).where(Chat.id == chat_id, Chat.user_id == self.user_id)
                 result = await self.db.execute(stmt)
                 chat = result.scalars().first()
 
                 if chat:
-                    
-                    ## This makes it work like mongo db
-                    ## was added as type of placeholder. Simplifies 
-                    ## messages to work more like a document
-                    if True: 
-                        # Delete all current messages
-                        for message in chat.messages:
-                            await self.db.delete(message)
+                    # Soft delete all current messages
+                    for message in chat.messages:
+                        await self.db.delete(message)
 
                     # Set the updated_at field
                     chat.updated_at = datetime.utcnow()
 
-                    messages = updates.messages
                     # Add new messages
+                    messages = updates.messages
                     if messages:
-                         for message in messages:
+                        for message_data in messages:
                             new_message = Message(chat_id=chat_id, 
-                                                role=message["role"], 
-                                                content=message["content"], 
-                                                created_at=datetime.utcnow())
+                                                  role=message_data["role"], 
+                                                  content=message_data["content"], 
+                                                  created_at=datetime.utcnow())
                             self.db.add(new_message)
+                            await self.db.flush()
+                            if new_message.id is None:
+                                raise ValueError("Failed to generate message ID.")
+
+                            # images = message.get("images", [])
+                            # for image in images:
+                            #     new_image = Image(
+                            #         message_id=new_message.id, 
+                            #         content=image
+                            #     )
+                            #     self.db.add(new_image)
+
+                            # sources = message.get("sources", [])
+                            # for source in sources:
+                            #     new_source = Source(
+                            #         message_id=new_message.id,
+                            #         name=source.get("name"), 
+                            #         type=source.get("type"),
+                            #         src=source.get("src"),
+                            #     )
+                            #     self.db.add(new_source)
 
                     # Return the updated chat information
                     return {"id": chat.id, "updated_at": chat.updated_at.isoformat()}
-
-        except Exception as e:
-            await self.db.rollback()  # Rollback in case of exception
-            raise
-        finally:
-            if self.db.is_active:
-                await self.db.rollback()
+            except Exception as e:
+                await transaction.rollback()
+                raise e
 
     async def delete(self, chat_id: int):
         async with self.db.begin():
