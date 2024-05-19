@@ -36,7 +36,7 @@ class Message(Base):
 
     # Relationship to chat
     chat = relationship("Chat", back_populates="messages")
-    documents = relationship("Document", back_populates="message")
+    sources = relationship("Source", back_populates="message")
     images = relationship("Image", back_populates="message")
 
     def soft_delete(self):
@@ -61,11 +61,14 @@ class Image(Base):
     content = Column(Text, nullable=False)
     message = relationship("Message", back_populates="images")
 
-class Document(Base):
-    __tablename__ = 'documents'
+class Source(Base):
+    __tablename__ = 'sources'
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     message_id = Column(String(36), ForeignKey('messages.id', ondelete='CASCADE'), nullable=False)
-    page_content = Column(Text, nullable=False)
-    document_metadata = Column(JSON, nullable=True)  # Using the SQLAlchemy JSON column type
-    message = relationship('Message', back_populates='documents')
+    index_id = Column(String(36), ForeignKey('indexes.id'), nullable=True)
+    name = Column(String(100), nullable=False)
+    type = Column(String(100), nullable=False)
+    src = Column(Text, nullable=False)
+    deleted_at = Column(DateTime, nullable=True)
+    message = relationship('Message', back_populates='sources')
