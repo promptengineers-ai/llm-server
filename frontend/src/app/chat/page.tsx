@@ -207,7 +207,7 @@ const Chat = () => {
                                     )} */}
                                     {selectedDocument && (
                                         <div
-                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 cursor-pointer"
+                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-2 cursor-pointer"
                                             style={{ zIndex: 1000 }}
                                             onClick={() =>
                                                 setSelectedDocument(null)
@@ -217,7 +217,7 @@ const Chat = () => {
                                                 src={selectedDocument}
                                                 // sandbox=""
                                                 title="Selected Document"
-                                                className="w-full h-full md:w-3/4 md:h-3/4"
+                                                className="w-full h-5/6 md:w-3/4 md:h-3/4"
                                                 style={{
                                                     background: "#fff", // Ensure white background for text files
                                                     border: "none",
@@ -228,24 +228,24 @@ const Chat = () => {
                                     )}
                                     {csvContent && (
                                         <div
-                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 cursor-pointer"
+                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-2 cursor-pointer"
                                             style={{ zIndex: 1000 }}
                                             onClick={() => setCsvContent(null)}
                                         >
-                                            <div className="bg-white rounded-lg max-w-full max-h-full overflow-auto">
-                                                <table className="table-auto w-full border-collapse border border-gray-400">
+                                            <div className="bg-white rounded-lg max-w-full h-5/6 overflow-auto">
+                                                <table className="table-auto w-full border-collapse border border-gray-400 text-sm">
                                                     <thead>
                                                         <tr>
                                                             {csvContent[0].map(
                                                                 (
-                                                                    header: string | number | bigint | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<AwaitedReactNode> | null | undefined,
-                                                                    index: Key | null | undefined
+                                                                    header: string,
+                                                                    index: number
                                                                 ) => (
                                                                     <th
                                                                         key={
                                                                             index
                                                                         }
-                                                                        className="border border-gray-300 px-1 py-1"
+                                                                        className="border border-gray-300 px-1 py-0.5"
                                                                     >
                                                                         {header}
                                                                     </th>
@@ -258,8 +258,8 @@ const Chat = () => {
                                                             .slice(1)
                                                             .map(
                                                                 (
-                                                                    row: any[],
-                                                                    rowIndex: Key | null | undefined
+                                                                    row: any,
+                                                                    rowIndex: number
                                                                 ) => (
                                                                     <tr
                                                                         key={
@@ -268,14 +268,14 @@ const Chat = () => {
                                                                     >
                                                                         {row.map(
                                                                             (
-                                                                                cell,
-                                                                                cellIndex
+                                                                                cell: any,
+                                                                                cellIndex: number
                                                                             ) => (
                                                                                 <td
                                                                                     key={
                                                                                         cellIndex
                                                                                     }
-                                                                                    className="border border-gray-300 px-2 py-1"
+                                                                                    className="border border-gray-300 px-1 py-0.5"
                                                                                 >
                                                                                     {
                                                                                         cell
