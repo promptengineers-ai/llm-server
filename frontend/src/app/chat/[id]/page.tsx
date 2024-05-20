@@ -217,7 +217,7 @@ const Chat = () => {
                                     )} */}
                                     {selectedDocument && (
                                         <div
-                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 cursor-pointer"
+                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-2 cursor-pointer"
                                             style={{ zIndex: 1000 }}
                                             onClick={() =>
                                                 setSelectedDocument(null)
@@ -227,7 +227,7 @@ const Chat = () => {
                                                 src={selectedDocument}
                                                 // sandbox=""
                                                 title="Selected Document"
-                                                className="w-full h-full md:w-3/4 md:h-3/4"
+                                                className="w-full h-5/6 md:w-3/4 md:h-3/4"
                                                 style={{
                                                     background: "#fff", // Ensure white background for text files
                                                     border: "none",
@@ -238,11 +238,11 @@ const Chat = () => {
                                     )}
                                     {csvContent && (
                                         <div
-                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 cursor-pointer"
+                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-2 cursor-pointer"
                                             style={{ zIndex: 1000 }}
                                             onClick={() => setCsvContent(null)}
                                         >
-                                            <div className="bg-white rounded-lg max-w-full max-h-full overflow-auto">
+                                            <div className="bg-white rounded-lg max-w-full h-5/6 overflow-auto">
                                                 <table className="table-auto w-full border-collapse border border-gray-400 text-sm">
                                                     <thead>
                                                         <tr>
