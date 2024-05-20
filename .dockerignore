@@ -33,3 +33,4 @@ backend/.env*
 backend/.dockerignore
 backend/lint.py
 backend/vercel.json
+backend/__pycache__

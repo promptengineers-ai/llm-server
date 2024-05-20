@@ -6,7 +6,7 @@ APP_VERSION = os.environ.get("APP_VERSION", "0.0.1")
 APP_SECRET = os.environ.get("APP_SECRET", "my-super-secret-key")
 
 ## DB
-DATABASE_URL = os.environ.get("DATABASE_URL", 'sqlite+aiosqlite:///./test.sqlite')
+DATABASE_URL = os.environ.get("DATABASE_URL", 'sqlite+aiosqlite:///./data/test.sqlite')
 REDIS_URL = os.environ.get("REDIS_URL", 'redis://localhost:6379')
 PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
 PINECONE_ENV = os.environ.get('PINECONE_ENV', 'us-east1-gcp')
