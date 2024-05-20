@@ -9,7 +9,7 @@ class Chat(Base):
     __tablename__ = 'chats'
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    user_id = Column(Integer, nullable=False)
+    user_id = Column(String(36))
     organization_id = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.now)
     updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
@@ -23,8 +23,9 @@ class Message(Base):
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     chat_id = Column(String(36), ForeignKey('chats.id', ondelete='CASCADE'), nullable=True)  # Cascade deletes to chat
-    role = Column(Text, nullable=False)
+    role = Column(String(20), nullable=False)
     content = Column(Text, nullable=False)
+    model = Column(String(50), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.now)
 
     chat = relationship("Chat", back_populates="messages")
