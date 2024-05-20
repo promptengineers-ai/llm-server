@@ -1,9 +1,12 @@
+import { ModelType } from "./llm";
+
 export type Message = {
     role: string;
     content: string;
     actions?: any[];
-    documents?: any[];
+    sources?: any[];
     images?: string[];
+    model?: ModelType;
 };
 
 export type ChatContextType = {

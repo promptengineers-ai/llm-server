@@ -18,7 +18,7 @@ def current_user(
         if not user_id:
             raise HTTPException(status_code=403, detail="Invalid JWT token")
         
-        request.state.user_id = int(user_id)
+        request.state.user_id = user_id
         request.state.user = payload
     except JWTError as e:
         logging.error("JWT Error: %s", e)

@@ -1,11 +1,12 @@
-from sqlalchemy import Column, Integer, String
+import uuid
 
+from sqlalchemy import Column, Integer, String
 from src.models.sql import Base
 
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     full_name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
     username = Column(String, unique=True, index=True)

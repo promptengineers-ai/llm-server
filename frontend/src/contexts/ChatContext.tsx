@@ -176,7 +176,7 @@ export default function ChatProvider({
         }
 
         if (files.length > 0) {
-            messageContent.documents = files.map((file) => file);
+            messageContent.sources = files.map((file) => file);
         }
 
         setMessages([...messages, messageContent]);
@@ -265,9 +265,11 @@ export default function ChatProvider({
             assistant: "secondary",
         };
         const filteredConvo = messages.filter((item) => item.role !== "system");
-
+        
         return filteredConvo.map((conversationItem, i) => {
             const isLastMessage = i === filteredConvo.length - 1;
+            const images = conversationItem.images || [];
+            const sources = conversationItem.sources || [];
             return (
                 <div
                     className="pl-2 text-sm mb-3"
@@ -292,7 +294,7 @@ export default function ChatProvider({
                             <span className="ml-2">Processing...</span>
                         </div>
                     ) : null}
-                    {conversationItem.images && (
+                    {images.length > 0 && (
                         <div
                             style={{
                                 display: "flex",
@@ -301,7 +303,7 @@ export default function ChatProvider({
                                 gap: "10px",
                             }}
                         >
-                            {conversationItem.images.map((image, index) => (
+                            {images.map((image, index) => (
                                 <img
                                     onClick={() => setSelectedImage(image)}
                                     key={index}
@@ -318,7 +320,7 @@ export default function ChatProvider({
                             ))}
                         </div>
                     )}
-                    {conversationItem.documents && (
+                    {sources.length > 0 && (
                         <div
                             style={{
                                 display: "flex",
@@ -328,12 +330,15 @@ export default function ChatProvider({
                             }}
                             className="my-2"
                         >
-                            {conversationItem.documents.map((document) => (
+                            {sources.map((source) => (
                                 <div
-                                    key={document.id}
+                                    key={source.id}
                                     className="relative overflow-hidden rounded-xl border border-token-border-dark bg-white"
                                     onClick={() =>
-                                        handleDocumentClick(document.src, document.type)
+                                        handleDocumentClick(
+                                            source.src,
+                                            source.type
+                                        )
                                     }
                                 >
                                     <div className="p-2 w-48">
@@ -343,10 +348,10 @@ export default function ChatProvider({
                                             </div>
                                             <div className="overflow-hidden">
                                                 <div className="truncate font-medium">
-                                                    {document.name}
+                                                    {source.name}
                                                 </div>
                                                 <div className="truncate text-token-text-tertiary">
-                                                    {document.type
+                                                    {source.type
                                                         .split("/")[1]
                                                         .toUpperCase()}
                                                 </div>
@@ -509,6 +514,11 @@ export default function ChatProvider({
                             >
                                 <ThumbDownIcon />
                             </div>
+                            {conversationItem.model && (
+                                <div className="flex items-center justify-center bg-black text-white px-1 rounded">
+                                    <small>{conversationItem.model}</small>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
@@ -546,6 +556,7 @@ export default function ChatProvider({
         const tempAssistantMessage = {
             role: "assistant",
             content: "",
+            model: chatPayload.model,
         };
         const updatedMessages = [...messages, tempAssistantMessage];
         setMessages(updatedMessages);
@@ -584,6 +595,7 @@ export default function ChatProvider({
                             finalMessages[tempIndex] = {
                                 role: "assistant",
                                 content: responseRef.current,
+                                model: chatPayload.model,
                             };
                             setMessages(finalMessages);
 
@@ -656,14 +668,14 @@ export default function ChatProvider({
                     // Update the last message from the assistant with the new content
                     return prevConversationContext.map((item, index) =>
                         index === prevConversationContext.length - 1
-                            ? { role: "assistant", content: response }
+                            ? { role: "assistant", content: response, model: chatPayload.model }
                             : item
                     );
                 } else {
                     // If the last message is not from the server, add a new server message
                     return [
                         ...prevConversationContext,
-                        { role: "assistant", content: response },
+                        { role: "assistant", content: response, model: chatPayload.model },
                     ];
                 }
             });

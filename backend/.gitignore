@@ -7,3 +7,4 @@ __pycache__*
 test.sqlite
 alembic.ini
 vercel.json
+data/

@@ -1,3 +1,4 @@
+import uuid
 from typing import ClassVar
 from pydantic import BaseModel, ConfigDict
 
@@ -11,5 +12,5 @@ class UserCreate(UserBase):
     pass
 
 class UserRead(UserBase):
-    id: int
+    id: uuid.UUID
     Config: ClassVar[ConfigDict] = ConfigDict(arbitrary_types_allowed=True)
