@@ -32,6 +32,12 @@ pip install -r requirements.txt -r requirements-dev.txt
 ### Install Runtime Dependencies
 pip install -r requirements.txt
 
+### Migrate Database Schema
+alembic upgrade head
+
+### Seed Database Users
+python3 -m src.seeds.users 3
+
 ### Run Application on local machine
 bash scripts/dev.sh
 ```
