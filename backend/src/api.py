@@ -12,7 +12,11 @@ from src.routes.retrieval import router as retrieval_router
 from src.routes.storage import router as storage_router
 from src.services import ClientService
 
-app = FastAPI()
+app = FastAPI(
+    title="Prompt Engineers AI - LLM server", 
+    version="0.0.1", 
+    description="<a href='https://github.com/promptengineers-ai/llm-server' target='_blank'>Github</a>",
+)
 app.add_middleware(
 	CORSMiddleware,
 	allow_origins=["*"],

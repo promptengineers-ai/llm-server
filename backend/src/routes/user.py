@@ -29,8 +29,16 @@ async def read_user_details(request: Request, db: AsyncSession = Depends(get_db)
 
 @router.post("/auth/register", tags=[TAG], response_model=UserRead)
 async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
+    # Check for existing user with the same email or username
+    existing_user = await db.execute(select(User).where((User.email == user.email) | (User.username == user.username)))
+    existing_user = existing_user.scalars().first()
+    
+    if existing_user:
+        raise HTTPException(status_code=409, detail="User with this email or username already exists")
+    
     # Hash the password with salt and pepper
     password_hash, salt = hash_password(user.password)
+    
     # Create a new user instance
     new_user = User(
         full_name=user.full_name, 
@@ -39,6 +47,7 @@ async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
         password=password_hash,
         salt=salt
     )
+    
     # Add the new user to the database
     db.add(new_user)
     await db.commit()
