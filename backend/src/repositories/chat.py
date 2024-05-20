@@ -14,7 +14,7 @@ class ChatRepository:
     async def list(self):
         stmt = (
             select(Chat)
-            .options(joinedload(Chat.messages).load_only(Message.id, Message.role, Message.content, Message.created_at))
+            .options(joinedload(Chat.messages).load_only(Message.id, Message.role, Message.content, Message.model, Message.created_at))
             .where(Chat.user_id == self.user_id)
             .order_by(Chat.updated_at.desc())
         )
@@ -27,7 +27,7 @@ class ChatRepository:
             {
                 "id": chat.id,
                 "messages": [
-                    {"role": message.role, "content": message.content, "created_at": message.created_at.isoformat()}
+                    {"role": message.role, "content": message.content, "model": message.model, "created_at": message.created_at.isoformat()}
                     for message in sorted(chat.messages, key=lambda m: m.created_at)  # Sort messages here if not sorted in model
                 ],
                 "created_at": chat.created_at.isoformat(),
@@ -51,7 +51,8 @@ class ChatRepository:
                     
                     new_message = Message(chat_id=new_chat.id, 
                                           role=message["role"], 
-                                          content=message["content"], 
+                                          content=message["content"],
+                                          model=message.get("model"), 
                                           created_at=datetime.utcnow())
                     self.db.add(new_message)
                     await self.db.flush()
@@ -99,6 +100,7 @@ class ChatRepository:
                     {
                         "role": message.role, 
                         "content": message.content,
+                        "model": message.model or None,
                         "images": [
                             image.content for image in message.images
                         ],
@@ -143,6 +145,7 @@ class ChatRepository:
                             new_message = Message(chat_id=chat_id, 
                                                   role=message_data["role"], 
                                                   content=message_data["content"], 
+                                                  model=message_data.get("model"), 
                                                   created_at=datetime.utcnow())
                             self.db.add(new_message)
                             await self.db.flush()
