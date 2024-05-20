@@ -23,9 +23,9 @@ export const constructBubbleMessage = (
     };
 
     if (sender === "user")
-        return `${src ? image(src) : "👨‍💻 "} ${label ? label : "You:"}`;
+        return `${src ? image(src) : "👨‍💻 "} ${label ? label : "You"}`;
 
-    return `${src ? image(src) : "🤖 "} ${label ? label : "Assistant:"}`;
+    return `${src ? image(src) : "🤖 "} ${label ? label : "Assistant"}`;
 };
 
 export const getLastUserIndex = (messages: Message[]): number => {

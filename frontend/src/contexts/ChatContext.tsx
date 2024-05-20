@@ -668,14 +668,14 @@ export default function ChatProvider({
                     // Update the last message from the assistant with the new content
                     return prevConversationContext.map((item, index) =>
                         index === prevConversationContext.length - 1
-                            ? { role: "assistant", content: response }
+                            ? { role: "assistant", content: response, model: chatPayload.model }
                             : item
                     );
                 } else {
                     // If the last message is not from the server, add a new server message
                     return [
                         ...prevConversationContext,
-                        { role: "assistant", content: response },
+                        { role: "assistant", content: response, model: chatPayload.model },
                     ];
                 }
             });
