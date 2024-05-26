@@ -65,7 +65,7 @@ export default function ChatProvider({
         temperature: 0.5,
         tools: [],
         retrieval: {
-            provider: SearchProvider.PINECONE,
+            provider: SearchProvider.REDIS,
             index_name: "",
             search_type: SearchType.SIMILARITY,
             search_kwargs: {

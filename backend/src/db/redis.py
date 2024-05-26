@@ -38,7 +38,7 @@ class RedisDB:
 	):
 		return self.client.from_existing_index(
 			index_name=self.index_name,
-			embedding=self.embeddings,
+			embedding=self.embeddings[0],
 			redis_url=self.redis_url,
 			schema=schema
 		)
