@@ -14,7 +14,7 @@
 			],
 			"jinja": true,
 			"justMyCode": false,
-			"envFile": "${workspaceFolder}/.env.local"
+			"envFile": "${workspaceFolder}/.env"
 		},
 		{
 			"name": "Debug Single Test",
@@ -25,7 +25,7 @@
 				"-s",
 				"test/unit/repositories/test_chat.py"
 			],
-			"envFile": "${workspaceFolder}/.env.local",
+			"envFile": "${workspaceFolder}/.env",
 		},
 		{
             "name": "Python: Run Script",
@@ -40,7 +40,7 @@
 			"request": "launch",
 			"module": "src.seeds.documents",
 			"args": ["3"],
-			"envFile": "${workspaceFolder}/.env.local",
+			"envFile": "${workspaceFolder}/.env",
 			"console": "integratedTerminal"
 		}
 	]

@@ -48,7 +48,7 @@ class RetrievalFactory:
     def _create_redis_strategy(self) -> RedisStrategy:
         """ Creates a RedisStrategy with the appropriate configuration. """
         return RedisStrategy(
-            redis_url=self.provider_keys['redis_url'],
+            redis_url=self.provider_keys.get('redis_url', 'redis://redis:6379/0'),
             index_name=self.provider_keys['index_name'],
             embeddings=self.embeddings,
         )

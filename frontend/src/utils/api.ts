@@ -7,6 +7,7 @@ import { log } from "../utils/log";
 import { Message } from "../types";
 import { API_URL } from "@/config/app";
 import { generateRandomNumber } from "./random";
+import { SearchProvider } from "@/types/llm";
 
 /**----------------------------------------------------------
  * Send a message to the server and get a response
@@ -77,7 +78,7 @@ export class ChatClient extends Client {
                         )}`,
                     },
                     body: JSON.stringify({
-                        provider: "pinecone",
+                        provider: SearchProvider.REDIS,
                         index_name: payload.index_name,
                         embedding: "text-embedding-3-small",
                         documents: payload.documents,

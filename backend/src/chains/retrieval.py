@@ -48,17 +48,18 @@ def retrieval_chain(body: Retrieval or Agent, user_id = None): # type: ignore
 	vectorstore = None
 	if body.retrieval.provider and body.retrieval.index_name:
 		embedding = EmbeddingFactory(token=OPENAI_API_KEY) # TODO: Check the index information in DB to see which was used.
+		index_name_or_namespace = f"{user_id}::{body.retrieval.index_name}" if user_id else body.retrieval.index_name
 		if body.retrieval.provider == 'redis':
 			provider_keys={
 				'redis_url': REDIS_URL,
-				'namespace': f"{user_id}::{body.retrieval.index_name}" if user_id else body.retrieval.index_name,
+				'index_name': index_name_or_namespace,
 			}
 		elif body.retrieval.provider == 'pinecone':
 			provider_keys = {
 				'api_key': PINECONE_API_KEY,
 				'env': PINECONE_ENV,
 				'index_name': PINECONE_INDEX,
-				'namespace': f"{user_id}::{body.retrieval.index_name}" if user_id else body.retrieval.index_name,
+				'namespace': index_name_or_namespace,
 			}
 		else:
 			raise ValueError(f"Invalid retrieval provider {body.retrieval.provider}")

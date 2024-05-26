@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ENV_FILE=.env.local
+ENV_FILE=.env
 
 ### Set Environment Variables
 set -a # automatically export all variables
