@@ -183,6 +183,10 @@ export default function ChatProvider({
         setImages([]);
     };
 
+    const messagesContainsSources = () => {
+        return messages.some((message) => message.sources);
+    };
+
     const resetChat = (event: any) => {
         event.preventDefault();
         setUserInput("");
@@ -725,6 +729,7 @@ export default function ChatProvider({
                     adjustHeight,
                     setDone,
                     setSelectedDocument,
+                    messagesContainsSources,
                 };
             }, [
                 chats,
@@ -756,6 +761,7 @@ export default function ChatProvider({
                 adjustHeight,
                 setFiles,
                 setSelectedDocument,
+                messagesContainsSources,
             ])}
         >
             {children}
