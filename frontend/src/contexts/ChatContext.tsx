@@ -61,7 +61,7 @@ export default function ChatProvider({
     const [chatPayload, setChatPayload] = useState<ChatPayload>({
         query: "",
         history_id: "",
-        model: ModelType.OPENAI_GPT_3_5_TURBO_16K,
+        model: ModelType.OPENAI_GPT_4_OMNI,
         temperature: 0.5,
         tools: [],
         retrieval: {
