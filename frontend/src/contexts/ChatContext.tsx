@@ -105,6 +105,12 @@ export default function ChatProvider({
         try {
             const res = await chatClient.find(chatId);
             setMessages(res.chat.messages);
+            setChatPayload((prev: ChatPayload) => ({
+                ...prev,
+                history_id: chatId,
+                retrieval: res.chat.retrieval,
+                tools: res.chat.tools,
+            }));
             renderConversation(res.chat.messages);
             let updatedUrl = `/chat/${chatId}`;
             if (searchParams.toString()) {
@@ -181,6 +187,10 @@ export default function ChatProvider({
 
         setMessages([...messages, messageContent]);
         setImages([]);
+    };
+
+    const messagesContainsSources = () => {
+        return messages.some((message) => message.sources);
     };
 
     const resetChat = (event: any) => {
@@ -599,7 +609,7 @@ export default function ChatProvider({
                             };
                             setMessages(finalMessages);
 
-                            updateMessages(finalMessages);
+                            updateMessages(finalMessages, chatPayload.retrieval, chatPayload.tools);
                             setDone(true);
                         }
                     }
@@ -620,10 +630,12 @@ export default function ChatProvider({
 
 
 
-    async function updateMessages(messages: Message[]) {
+    async function updateMessages(messages: Message[], retrieval?: any, tools?: string[]) {
         if (!chatPayload.history_id) {
             const history = await chatClient.create({
-                messages: messages,
+                messages,
+                retrieval,
+                tools,
             });
             log("contexts.ChatContext.updateCallback", history, "Created");
             setChatPayload({
@@ -638,7 +650,9 @@ export default function ChatProvider({
             shallowUrl(updatedUrl);
         } else {
             const history = await chatClient.update(chatPayload.history_id, {
-                messages: messages,
+                messages,
+                retrieval,
+                tools,
             });
             log("contexts.ChatContext.updateCallback", history, "Updated");
         }
@@ -725,6 +739,7 @@ export default function ChatProvider({
                     adjustHeight,
                     setDone,
                     setSelectedDocument,
+                    messagesContainsSources,
                 };
             }, [
                 chats,
@@ -756,6 +771,7 @@ export default function ChatProvider({
                 adjustHeight,
                 setFiles,
                 setSelectedDocument,
+                messagesContainsSources,
             ])}
         >
             {children}

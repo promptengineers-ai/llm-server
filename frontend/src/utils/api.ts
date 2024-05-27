@@ -111,7 +111,11 @@ export class ChatClient extends Client {
         }
     }
 
-    public async create(payload: { messages: Message[] }) {
+    public async create(payload: {
+        messages: Message[];
+        retrieval?: any;
+        tools?: string[];
+    }) {
         try {
             const response = await fetch(`${this.apiUrl}/api/v1/c`, {
                 method: "POST",
@@ -149,9 +153,7 @@ export class ChatClient extends Client {
 
     public async update(
         history_id: string,
-        payload: {
-            messages: Message[];
-        }
+        payload: { messages: Message[]; retrieval?: any; tools?: string[] }
     ) {
         try {
             const response = await fetch(

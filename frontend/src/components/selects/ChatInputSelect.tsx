@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useChatContext } from "@/contexts/ChatContext";
 import { FaCog } from "react-icons/fa";
-import { FaCamera, FaGlobe } from "react-icons/fa";
+import { FaCamera, FaGlobe, FaDatabase } from "react-icons/fa";
 import FileIcon from "../icons/FileIcon";
 import { useAppContext } from "@/contexts/AppContext";
 import { multiModalModels } from "@/types/llm";
@@ -10,7 +10,13 @@ import { generateRandomNumber } from "@/utils/random";
 
 const ChatInputSelect: React.FC = () => {
     const { isMobile } = useAppContext();
-    const { setFiles, setImages, adjustHeight, chatPayload } = useChatContext();
+    const {
+        setFiles,
+        setImages,
+        adjustHeight,
+        chatPayload,
+        messagesContainsSources,
+    } = useChatContext();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -18,7 +24,13 @@ const ChatInputSelect: React.FC = () => {
 
     const toggleMenu = (e?: any) => {
         if (e) e.preventDefault();
-        !isMenuOpen ? adjustHeight((isMobile() && chatPayload.model in multiModalModels) ? "170px" : "145px") : adjustHeight();
+        !isMenuOpen
+            ? adjustHeight(
+                  isMobile() && chatPayload.model in multiModalModels
+                      ? "170px"
+                      : "145px"
+              )
+            : adjustHeight();
         setIsMenuOpen(!isMenuOpen);
     };
 
@@ -125,6 +137,21 @@ const ChatInputSelect: React.FC = () => {
                             <span className="mr-2">Web</span>
                             <FaGlobe fontSize={"20px"} />
                         </a>
+
+                        {/* {messagesContainsSources() && (
+                            <a
+                                onClick={() =>
+                                    alert("Will open Web Loader Modal")
+                                }
+                                href="#"
+                                className={`flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100`}
+                                role="menuitem"
+                                tabIndex={-1}
+                            >
+                                <span className="mr-2">Create Index</span>
+                                <FaDatabase fontSize={"20px"} />
+                            </a>
+                        )} */}
 
                         {isMobile() &&
                             chatPayload.model in multiModalModels && (
