@@ -31,6 +31,7 @@ class ChatRepository:
         chats_json = [
             {
                 "id": chat.id,
+                "system": chat.system or None,
                 "messages": [
                     {"role": message.role, "content": message.content, "model": message.model, "created_at": message.created_at.isoformat()}
                     for message in sorted(chat.messages, key=lambda m: m.created_at)  # Sort messages here if not sorted in model
@@ -49,8 +50,9 @@ class ChatRepository:
         async with self.db.begin() as transaction:
             try:
                 new_chat = Chat(user_id=self.user_id,
+                                system=chat.system,
                                 retrieval=chat.retrieval.model_dump_json(),
-                                tools=chat.tools.model_dump_json(), 
+                                tools=ujson.dumps(chat.tools), 
                                 created_at=datetime.utcnow(), 
                                 updated_at=datetime.utcnow())
                 self.db.add(new_chat)
@@ -105,6 +107,7 @@ class ChatRepository:
         if chat:
             chat_json = {
                 "id": chat.id,
+                "system": chat.system or None,
                 "messages": [
                     {
                         "role": message.role, 
@@ -149,9 +152,13 @@ class ChatRepository:
                     # Set the updated_at field
                     chat.updated_at = datetime.utcnow()
                     
-                    # Update tools and retrieval if present in updates
+                    # Update tools, system, and retrieval if present in updates
+                    if updates.system is not None:
+                        if chat.system != updates.system:
+                            chat.system = updates.system
+                    
                     if updates.tools is not None:
-                        new_tools_json = updates.tools.model_dump_json()
+                        new_tools_json = ujson.dumps(updates.tools)
                         current_tools_hash = hash_string(chat.tools)
                         new_tools_hash = hash_string(new_tools_json)
                         
