@@ -27,6 +27,7 @@ def upgrade() -> None:
         sa.Column('organization_id', sa.INTEGER(), nullable=True),
         sa.Column('retrieval', sa.JSON(), nullable=True),
         sa.Column('tools', sa.JSON(), nullable=True),
+        sa.Column('system', sa.TEXT(), nullable=True),
         sa.Column('created_at', sa.DATETIME(), nullable=False),
         sa.Column('updated_at', sa.DATETIME(), nullable=False),
     )
