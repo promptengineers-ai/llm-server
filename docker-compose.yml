@@ -12,7 +12,7 @@ services:
     ports:
       - 8000:8000
     env_file:
-      - ./backend/.env.local
+      - ./backend/.env
 
   # Proxy (Nginx)
   nginx:
