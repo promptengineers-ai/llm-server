@@ -158,7 +158,7 @@ async def list_chats(chat_repo: ChatRepository = Depends(get_repo)):
 	return {"chats": chats}
 
 @router.post("/c", tags=[TAG])
-async def create_chat(chat: Chat, chat_repo: ChatRepository = Depends(get_repo)):
+async def create_chat(chat: Agent, chat_repo: ChatRepository = Depends(get_repo)):
 	# Retrieve user_id (assuming it's an email) from request state
 	chat = await chat_repo.create(chat)
 	if not chat:
@@ -174,7 +174,7 @@ async def find_chat(chat_id: str, chat_repo: ChatRepository = Depends(get_repo))
 	return {"chat": chat}
 		
 @router.put("/c/{chat_id}", tags=[TAG], dependencies=[Depends(current_user)])
-async def update_chat(chat_id: str, chat: Chat, chat_repo: ChatRepository = Depends(get_repo)):
+async def update_chat(chat_id: str, chat: Agent, chat_repo: ChatRepository = Depends(get_repo)):
 	# Retrieve user_id (assuming it's an email) from request state
 	chat = await chat_repo.update(chat_id, chat)
 	if not chat:
