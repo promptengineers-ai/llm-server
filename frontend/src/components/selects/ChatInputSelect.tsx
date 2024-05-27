@@ -138,7 +138,7 @@ const ChatInputSelect: React.FC = () => {
                             <FaGlobe fontSize={"20px"} />
                         </a>
 
-                        {messagesContainsSources() && (
+                        {/* {messagesContainsSources() && (
                             <a
                                 onClick={() =>
                                     alert("Will open Web Loader Modal")
@@ -151,7 +151,7 @@ const ChatInputSelect: React.FC = () => {
                                 <span className="mr-2">Create Index</span>
                                 <FaDatabase fontSize={"20px"} />
                             </a>
-                        )}
+                        )} */}
 
                         {isMobile() &&
                             chatPayload.model in multiModalModels && (
