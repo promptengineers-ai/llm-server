@@ -11,6 +11,9 @@ class Chat(Base):
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(String(36))
     organization_id = Column(Integer, nullable=True)
+    retrieval = Column(JSON, nullable=True)
+    tools = Column(JSON, nullable=True)
+    system = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.now)
     updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
 

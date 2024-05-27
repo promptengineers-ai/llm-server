@@ -8,7 +8,7 @@ if [ "$answer" == "yes" ]; then
     echo ""
     ENV_FILE=.env.production
 elif [ "$answer" == "no" ]; then
-    ENV_FILE=.env.local
+    ENV_FILE=.env
     echo "Starting Dev Server.."
 else
     echo "Invalid input. Please enter 'yes' or 'no'."

@@ -1,3 +1,4 @@
+import hashlib
 
 def format_agent_actions(steps: list[tuple]) -> list[dict]:
     return [
@@ -16,3 +17,6 @@ def flatten_array(arr):
             # Append the item itself if it doesn't meet the criteria
             result.append(item)
     return result
+
+def hash_string(string: str) -> str:
+    return hashlib.sha256(string.encode()).hexdigest()
