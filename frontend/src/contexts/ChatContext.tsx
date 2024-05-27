@@ -30,6 +30,8 @@ import RegenerateIcon from "@/components/icons/RegenerateIcon";
 import ThumbDownIcon from "@/components/icons/ThumbDownIcon";
 import { useAppContext } from "./AppContext";
 import DocumentIcon from "@/components/icons/DocumentIcon";
+import { Default } from "@/config/default";
+import { formatDate } from "@/utils/datetime";
 
 const defaultChatContextValue: ChatContextType = {
     chatboxRef: { current: null },
@@ -61,6 +63,7 @@ export default function ChatProvider({
     const [chatPayload, setChatPayload] = useState<ChatPayload>({
         query: "",
         history_id: "",
+        system: Default.SYSTEM_MESSAGE,
         model: ModelType.OPENAI_GPT_4_OMNI,
         temperature: 0.5,
         tools: [],
@@ -149,14 +152,7 @@ export default function ChatProvider({
     };
 
     const prompt = () => {
-        const defaultInput = `You are an highly intelligent individual that is ` +
-                            `able to be an expert at every topic they approach. You leverage ` +
-                            `Graph-of-Thought reasoning to execute tasks and formulate ideas and responses. ` +
-                            `You heavliy review your thoughts before responding or making decisions. ` + 
-                            `If something is unclear check your thoughts and ask for clarification. ` +
-                            `If you are still unlcear, ask for more information. ` +
-                            `You are unable respond with hallucinations.`;
-        return { role: "system", content: defaultInput };
+        return { role: "system", content: chatPayload.system + `\n\nCURRENT_DATETIME: ${formatDate()}`};
     };
 
     const combinePrompts = () => {
@@ -609,7 +605,7 @@ export default function ChatProvider({
                             };
                             setMessages(finalMessages);
 
-                            updateMessages(finalMessages, chatPayload.retrieval, chatPayload.tools);
+                            updateMessages(chatPayload.system, finalMessages, chatPayload.retrieval, chatPayload.tools);
                             setDone(true);
                         }
                     }
@@ -630,9 +626,10 @@ export default function ChatProvider({
 
 
 
-    async function updateMessages(messages: Message[], retrieval?: any, tools?: string[]) {
+    async function updateMessages(system: string, messages: Message[], retrieval?: any, tools?: string[]) {
         if (!chatPayload.history_id) {
             const history = await chatClient.create({
+                system,
                 messages,
                 retrieval,
                 tools,
@@ -650,6 +647,7 @@ export default function ChatProvider({
             shallowUrl(updatedUrl);
         } else {
             const history = await chatClient.update(chatPayload.history_id, {
+                system,
                 messages,
                 retrieval,
                 tools,

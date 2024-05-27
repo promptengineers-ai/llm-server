@@ -112,6 +112,7 @@ export class ChatClient extends Client {
     }
 
     public async create(payload: {
+        system: string;
         messages: Message[];
         retrieval?: any;
         tools?: string[];
@@ -153,7 +154,12 @@ export class ChatClient extends Client {
 
     public async update(
         history_id: string,
-        payload: { messages: Message[]; retrieval?: any; tools?: string[] }
+        payload: {
+            system: string;
+            messages: Message[];
+            retrieval?: any;
+            tools?: string[];
+        }
     ) {
         try {
             const response = await fetch(

@@ -3,6 +3,7 @@ import { SearchProvider, ModelType, SearchType } from "./llm";
 export type ChatPayload = {
     query: string;
     history_id: string;
+    system: string,
     model: ModelType;
     temperature: number;
     tools: string[];

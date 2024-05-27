@@ -107,6 +107,7 @@ class Chat(BaseModel):
     streaming: bool = False
     memory: str = MemoryType.CONVERSATION_KG
     model: str = ModelType.OPENAI_GPT_3_5_TURBO_16K
+    system: str = None
     messages: list
     
     __config__ = {
@@ -115,8 +116,8 @@ class Chat(BaseModel):
 				"streaming": False,
 				"memory": MemoryType.CONVERSATION_KG,
                 "model": ModelType.OPENAI_GPT_3_5_TURBO_16K,
+                "system": None,
 				"messages": [
-					{"role": "system", "content": "You are a helpful assistant."},
 					{"role": "user", "content": 'Who won the 2001 world series?'},
 					{"role": "assistant", "content": 'The arizona diamondbacks won the 2001 world series.'},
 					{
