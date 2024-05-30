@@ -3,15 +3,12 @@ import TopNav from "@/components/nav/TopNav";
 import ChatSection from "@/components/sections/ChatSection";
 import SideSection from "@/components/sections/SideSection";
 import ModelSelect from "@/components/selects/ModelSelect";
-import theme from "@/config/theme";
 import { useChatContext } from "@/contexts/ChatContext";
 import { withAuth } from "@/middleware/AuthMiddleware";
 import { useState, useEffect, useRef } from "react";
-import {
-    MdKeyboardArrowDown,
-    MdOutlineArrowBackIosNew,
-    MdOutlineArrowForwardIos,
-} from "react-icons/md";
+import { MdOutlineArrowBackIosNew, MdOutlineArrowForwardIos } from "react-icons/md";
+import HomeSection from "@/components/sections/HomeSection";
+import MessageSection from "@/components/sections/MessageSection";
 
 const useDefaultOpenState = () => {
     const isClient = typeof window === "object";
@@ -41,17 +38,7 @@ const Chat = () => {
     const [isUserScrolledUp, setIsUserScrolledUp] = useState(false);
     const [showScrollButton, setShowScrollButton] = useState(false);
     const { isOpen, setIsOpen } = useDefaultOpenState();
-    const {
-        messages,
-        renderConversation,
-        selectedImage,
-        setSelectedImage,
-        fetchChats,
-        selectedDocument,
-        setSelectedDocument,
-        setCsvContent,
-        csvContent,
-    } = useChatContext();
+    const { messages, fetchChats } = useChatContext();
     const isMobile = window.innerWidth < 768;
 
     const toggleSideSection = () => setIsOpen(!isOpen);
@@ -152,135 +139,9 @@ const Chat = () => {
                             ref={messagesContainerRef}
                         >
                             {messages.length === 0 ? (
-                                <div className="flex h-full flex-col items-center justify-center bg-fixed">
-                                    <div className="w-full pb-2 flex justify-center">
-                                        <img
-                                            src={theme.button.icon.src}
-                                            alt="Icon"
-                                            width="100px"
-                                        />
-                                    </div>
-                                    <h1 className="text-3xl font-semibold text-center text-primary-200 dark:text-gray-600 mt-4 mb-64 sm:mb-16">
-                                        {theme.chatWindow.welcomeMessage}
-                                    </h1>
-                                </div>
+                                <HomeSection />
                             ) : (
-                                <>
-                                    {renderConversation(messages)}
-                                    {selectedImage && (
-                                        <div
-                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4"
-                                            style={{ zIndex: 1000 }}
-                                            onClick={() =>
-                                                setSelectedImage(null)
-                                            }
-                                        >
-                                            <img
-                                                src={selectedImage}
-                                                alt="Enlarged content"
-                                                className="max-w-full max-h-full"
-                                                style={{ borderRadius: "10px" }}
-                                            />
-                                        </div>
-                                    )}
-                                    {selectedDocument && (
-                                        <div
-                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-2 cursor-pointer"
-                                            style={{ zIndex: 1000 }}
-                                            onClick={() =>
-                                                setSelectedDocument(null)
-                                            }
-                                        >
-                                            <iframe
-                                                src={selectedDocument}
-                                                // sandbox=""
-                                                title="Selected Document"
-                                                className="w-full h-5/6 md:w-3/4 md:h-3/4"
-                                                style={{
-                                                    background: "#fff", // Ensure white background for text files
-                                                    border: "none",
-                                                    borderRadius: "10px",
-                                                }}
-                                            ></iframe>
-                                        </div>
-                                    )}
-                                    {csvContent && (
-                                        <div
-                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-2 cursor-pointer"
-                                            style={{ zIndex: 1000 }}
-                                            onClick={() => setCsvContent(null)}
-                                        >
-                                            <div className="bg-white rounded-lg max-w-full h-5/6 overflow-auto">
-                                                <table className="table-auto w-full border-collapse border border-gray-400 text-sm">
-                                                    <thead>
-                                                        <tr>
-                                                            {csvContent[0].map(
-                                                                (
-                                                                    header: string,
-                                                                    index: number
-                                                                ) => (
-                                                                    <th
-                                                                        key={
-                                                                            index
-                                                                        }
-                                                                        className="border border-gray-300 px-1 py-0.5"
-                                                                    >
-                                                                        {header}
-                                                                    </th>
-                                                                )
-                                                            )}
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {csvContent
-                                                            .slice(1)
-                                                            .map(
-                                                                (
-                                                                    row: any,
-                                                                    rowIndex: number
-                                                                ) => (
-                                                                    <tr
-                                                                        key={
-                                                                            rowIndex
-                                                                        }
-                                                                    >
-                                                                        {row.map(
-                                                                            (
-                                                                                cell: any,
-                                                                                cellIndex: number
-                                                                            ) => (
-                                                                                <td
-                                                                                    key={
-                                                                                        cellIndex
-                                                                                    }
-                                                                                    className="border border-gray-300 px-1 py-0.5"
-                                                                                >
-                                                                                    {
-                                                                                        cell
-                                                                                    }
-                                                                                </td>
-                                                                            )
-                                                                        )}
-                                                                    </tr>
-                                                                )
-                                                            )}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    )}
-                                    {showScrollButton && (
-                                        <div className="flex items-center justify-center">
-                                            <button
-                                                onClick={scrollToBottom}
-                                                className="fixed bottom-24 p-2 rounded-full bg-gray-200 shadow-lg z-30"
-                                                aria-label="Scroll to bottom"
-                                            >
-                                                <MdKeyboardArrowDown size="20" />
-                                            </button>
-                                        </div>
-                                    )}
-                                </>
+                                <MessageSection showScrollButton={showScrollButton} scrollToBottom={scrollToBottom} />
                             )}
                         </div>
                         <div
