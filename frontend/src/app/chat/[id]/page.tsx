@@ -1,25 +1,12 @@
 "use client";
-import ToggleThemeButton from "@/components/buttons/ToggleThemeButton";
 import TopNav from "@/components/nav/TopNav";
 import ChatSection from "@/components/sections/ChatSection";
-import ModelSection from "@/components/sections/ModelSection";
 import SideSection from "@/components/sections/SideSection";
 import ModelSelect from "@/components/selects/ModelSelect";
 import theme from "@/config/theme";
-import { useAppContext } from "@/contexts/AppContext";
 import { useChatContext } from "@/contexts/ChatContext";
 import { withAuth } from "@/middleware/AuthMiddleware";
-import {
-    useState,
-    useEffect,
-    useRef,
-    AwaitedReactNode,
-    JSXElementConstructor,
-    Key,
-    ReactElement,
-    ReactNode,
-    ReactPortal,
-} from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     MdKeyboardArrowDown,
     MdOutlineArrowBackIosNew,
@@ -112,7 +99,7 @@ const Chat = () => {
     }, []);
 
     return (
-        <main className="overflow-hidden w-full h-screen relative flex z-0">
+        <main className="overflow w-full h-svh relative flex z-0">
             <SideSection isOpen={isOpen} />
             {!isMobile ? (
                 <>
@@ -165,7 +152,7 @@ const Chat = () => {
                             ref={messagesContainerRef}
                         >
                             {messages.length === 0 ? (
-                                <div className="flex h-full flex-col items-center justify-center">
+                                <div className="flex h-full flex-col items-center justify-center bg-fixed">
                                     <div className="w-full pb-2 flex justify-center">
                                         <img
                                             src={theme.button.icon.src}
@@ -196,25 +183,6 @@ const Chat = () => {
                                             />
                                         </div>
                                     )}
-                                    {/* {selectedDocument && (
-                                        <div
-                                            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4"
-                                            style={{ zIndex: 1000 }}
-                                            onClick={() =>
-                                                setSelectedDocument(null)
-                                            }
-                                        >
-                                            <iframe
-                                                src={selectedDocument}
-                                                title="Selected Document"
-                                                className="max-w-full max-h-full"
-                                                style={{
-                                                    border: "none",
-                                                    borderRadius: "10px",
-                                                }}
-                                            ></iframe>
-                                        </div>
-                                    )} */}
                                     {selectedDocument && (
                                         <div
                                             className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-2 cursor-pointer"
