@@ -12,6 +12,8 @@ import {
 } from "react-icons/md";
 import HomeSection from "@/components/sections/HomeSection";
 import MessageSection from "@/components/sections/MessageSection";
+import DocumentSection from "@/components/sections/DocumentSection";
+import { useAppContext } from "@/contexts/AppContext";
 
 const useDefaultOpenState = () => {
     const isClient = typeof window === "object";
@@ -41,8 +43,8 @@ const Chat = () => {
     const [isUserScrolledUp, setIsUserScrolledUp] = useState(false);
     const [showScrollButton, setShowScrollButton] = useState(false);
     const { isOpen, setIsOpen } = useDefaultOpenState();
-    const { messages, fetchChats } = useChatContext();
-    const isMobile = window.innerWidth < 768;
+    const { isMobile } = useAppContext();
+    const { messages, fetchChats, expand, selectedDocument } = useChatContext();
 
     const toggleSideSection = () => setIsOpen(!isOpen);
 
@@ -91,7 +93,7 @@ const Chat = () => {
     return (
         <main className="overflow w-full h-svh relative flex z-0">
             <SideSection isOpen={isOpen} />
-            {!isMobile ? (
+            {!isMobile() ? (
                 <>
                     {/* <div
                         style={{
@@ -115,17 +117,33 @@ const Chat = () => {
             ) : (
                 <TopNav />
             )}
-
-            <div className="relative flex h-full max-w-full flex-1 flex-col overflow-hidden">
+            {!isMobile() && expand && selectedDocument && (
+                <div className="w-4/6 flex flex-col">
+                    <DocumentSection
+                        expand={true}
+                        document={selectedDocument.src}
+                        style={{ background: "#fff" }}
+                    />
+                </div>
+            )}
+            <div
+                className={
+                    expand && selectedDocument
+                        ? "w-2/6 flex flex-col"
+                        : "relative flex h-full max-w-full flex-1 flex-col overflow-hidden"
+                }
+            >
                 <div className="relative h-full w-full flex-1 overflow-auto transition-width">
                     <div
                         role="presentation"
                         className="flex h-full flex-col position-relative"
                     >
-                        {!isMobile && (
+                        {!isMobile() && (
                             <div
                                 style={{
-                                    margin: "10px 0px 0px 0px",
+                                    margin: `10px 0px 0px ${
+                                        expand ? "10px" : "0px"
+                                    }`,
                                     zIndex: 1000,
                                     top: 0,
                                     left: 0,
@@ -136,8 +154,10 @@ const Chat = () => {
                             </div>
                         )}
                         <div
-                            className={`flex-1 overflow-auto px-2 mt-16 lg:px-48 xl:px-[27%] pb-[40px] md:pb-[30px] ${
-                                isMobile && "mb-[50px]"
+                            className={`flex-1 overflow-auto px-2 mt-16 ${
+                                !expand && "lg:px-48 xl:px-[27%]"
+                            } pb-[40px] md:pb-[30px] ${
+                                isMobile() && "mb-[50px]"
                             }`}
                             ref={messagesContainerRef}
                         >
@@ -152,7 +172,7 @@ const Chat = () => {
                         </div>
                         <div
                             style={
-                                isMobile ? mobileFixedBottomStyle : undefined
+                                isMobile() ? mobileFixedBottomStyle : undefined
                             }
                         >
                             <ChatSection />

@@ -134,6 +134,16 @@ vercel login
 vercel .
 ```
 
+## 🚀 Roadmap
+
+Here are the upcoming features we're excited to bring to Prompt Engineers AI - LLM Server (More to come):
+
+- 🛠 **UI-Based Tool Configuration**
+- 🖥 **Code Interpreter**
+- 🤖 **Assistant Creation Capability**
+
+Create an issue and lets start a discussion if you'd like to see a feature added to the roadmap.
+
 ## 🤝 How to Contribute
 
 We welcome contributions from the community, from beginners to seasoned developers. Here's how you can contribute:
