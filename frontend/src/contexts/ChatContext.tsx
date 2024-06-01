@@ -32,6 +32,7 @@ import { useAppContext } from "./AppContext";
 import DocumentIcon from "@/components/icons/DocumentIcon";
 import { Default } from "@/config/default";
 import { formatDate } from "@/utils/datetime";
+import DocumentSection from "@/components/sections/DocumentSection";
 
 const defaultChatContextValue: ChatContextType = {
     chatboxRef: { current: null },
@@ -53,7 +54,7 @@ const ChatContext = createContext(defaultChatContextValue);
 export default function ChatProvider({
     children,
 }: IContextProvider) {
-    const {setLoading, loading} = useAppContext();
+    const {setLoading, loading, isMobile} = useAppContext();
     const searchParams = useSearchParams();
     const chatClient = new ChatClient();
     const chatInputRef = useRef<HTMLInputElement | null>(null);
@@ -83,7 +84,7 @@ export default function ChatProvider({
     const [images, setImages] = useState<any[]>([]);
     const [files, setFiles] = useState<any[]>([]);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
-    const [selectedDocument, setSelectedDocument] = useState<string | null>(
+    const [selectedDocument, setSelectedDocument] = useState<any | null>(
         null
     );
     const [csvContent, setCsvContent] = useState<string[][] | null>(null);
@@ -237,31 +238,37 @@ export default function ChatProvider({
         return rows;
     };
 
-    const handleDocumentClick = async (src: string, type: string) => {
-        if (type === "text/plain") {
-            try {
-                const response = await fetch(src);
-                const text = await response.text();
-                const blob = new Blob([text], { type: "text/plain" });
-                const blobUrl = URL.createObjectURL(blob);
-                setSelectedDocument(blobUrl);
-                setCsvContent(null);
-            } catch (error) {
-                console.error("Failed to fetch text content:", error);
-            }
-        } else if (type === "text/csv") {
-            try {
-                const response = await fetch(src);
-                const text = await response.text();
-                const parsedCSV = parseCSV(text);
-                setCsvContent(parsedCSV);
-                setSelectedDocument(null);
-            } catch (error) {
-                console.error("Failed to fetch CSV content:", error);
-            }
-        } else {
-            setSelectedDocument(src);
+    const handleDocumentClick = async (messageIndex: number, source: any) => {
+        if (selectedDocument || csvContent) {
+            setSelectedDocument(null);
             setCsvContent(null);
+            return;
+        } else {
+            if (source.type === "text/plain") {
+                try {
+                    const response = await fetch(source.src);
+                    const text = await response.text();
+                    const blob = new Blob([text], { type: "text/plain" });
+                    const blobUrl = URL.createObjectURL(blob);
+                    setSelectedDocument(blobUrl);
+                    setCsvContent(null);
+                } catch (error) {
+                    console.error("Failed to fetch text content:", error);
+                }
+            } else if (source.type === "text/csv") {
+                try {
+                    const response = await fetch(source.src);
+                    const text = await response.text();
+                    const parsedCSV = parseCSV(text);
+                    setCsvContent(parsedCSV);
+                    setSelectedDocument(null);
+                } catch (error) {
+                    console.error("Failed to fetch CSV content:", error);
+                }
+            } else {
+                setSelectedDocument({ ...source, id: messageIndex});
+                setCsvContent(null);
+            }
         }
     };
 
@@ -340,12 +347,10 @@ export default function ChatProvider({
                                 <div
                                     key={source.id}
                                     className="relative overflow-hidden rounded-xl border border-token-border-dark bg-white"
-                                    onClick={() =>
-                                        handleDocumentClick(
-                                            source.src,
-                                            source.type
-                                        )
-                                    }
+                                    onClick={() => {
+                                        console.log(source);
+                                        handleDocumentClick(i, source);
+                                    }}
                                 >
                                     <div className="p-2 w-48">
                                         <div className="flex flex-row items-center gap-2">
@@ -368,6 +373,15 @@ export default function ChatProvider({
                             ))}
                         </div>
                     )}
+                    {selectedDocument &&
+                        selectedDocument.id === i && (
+                            <div className="h-72">
+                                <DocumentSection
+                                    expand={true}
+                                    document={selectedDocument.src}
+                                />
+                            </div>
+                        )}
                     <ReactMarkdown
                         components={{
                             h1: ({ node, ...props }) => (
