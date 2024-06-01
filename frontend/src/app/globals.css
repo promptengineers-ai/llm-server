@@ -75,25 +75,3 @@ body {
         transform: rotate(360deg);
     }
 }
-
-@media (min-width: 1300px) {
-    .chat-container {
-        display: flex;
-    }
-    .chat-container .document-section {
-        width: 33.33%;
-        border-right: 1px solid #ddd;
-    }
-    .chat-container .message-section {
-        width: 66.67%;
-    }
-}
-
-@media (max-width: 1300px) {
-    .chat-container .document-section {
-        display: none;
-    }
-    .chat-container .message-section {
-        width: 100%;
-    }
-}
