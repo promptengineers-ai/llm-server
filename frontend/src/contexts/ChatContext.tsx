@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import {
     useContext,
     createContext,
@@ -13,7 +13,12 @@ import { ChatContextType, Message } from "../types";
 import { IContextProvider } from "../interfaces/provider";
 import { log } from "../utils/log";
 import { ChatPayload } from "@/types/chat";
-import { ModelType, SearchProvider, SearchType, acceptRagSystemMessage } from "@/types/llm";
+import {
+    ModelType,
+    SearchProvider,
+    SearchType,
+    acceptRagSystemMessage,
+} from "@/types/llm";
 import { useSearchParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import rehypeSanitize from "rehype-sanitize";
@@ -33,6 +38,9 @@ import DocumentIcon from "@/components/icons/DocumentIcon";
 import { Default } from "@/config/default";
 import { formatDate } from "@/utils/datetime";
 import DocumentSection from "@/components/sections/DocumentSection";
+import CollapseIcon from "@/components/icons/CollapseIcon";
+import ExpandIcon from "@/components/icons/ExpandIcon";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 const defaultChatContextValue: ChatContextType = {
     chatboxRef: { current: null },
@@ -51,10 +59,8 @@ const defaultChatContextValue: ChatContextType = {
 };
 
 const ChatContext = createContext(defaultChatContextValue);
-export default function ChatProvider({
-    children,
-}: IContextProvider) {
-    const {setLoading, loading, isMobile} = useAppContext();
+export default function ChatProvider({ children }: IContextProvider) {
+    const { setLoading, loading, isMobile } = useAppContext();
     const searchParams = useSearchParams();
     const chatClient = new ChatClient();
     const chatInputRef = useRef<HTMLInputElement | null>(null);
@@ -83,17 +89,15 @@ export default function ChatProvider({
     const [messages, setMessages] = useState<Message[]>([]);
     const [images, setImages] = useState<any[]>([]);
     const [files, setFiles] = useState<any[]>([]);
+    const [expand, setExpand] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
-    const [selectedDocument, setSelectedDocument] = useState<any | null>(
-        null
-    );
+    const [selectedDocument, setSelectedDocument] = useState<any | null>(null);
     const [csvContent, setCsvContent] = useState<string[][] | null>(null);
 
     const responseRef = useRef("");
     const [userInput, setUserInput] = useState("");
     const [response, setResponse] = useState("");
     const [done, setDone] = useState(true);
-
 
     const fetchChats = async () => {
         try {
@@ -116,6 +120,9 @@ export default function ChatProvider({
                 tools: res.chat.tools,
             }));
             renderConversation(res.chat.messages);
+            setExpand(false);
+            setSelectedDocument(null);
+            setCsvContent(null);
             let updatedUrl = `/chat/${chatId}`;
             if (searchParams.toString()) {
                 updatedUrl += `?${searchParams.toString()}`;
@@ -140,7 +147,7 @@ export default function ChatProvider({
             await chatClient.delete(chatId);
             setChats(chats.filter((chat) => chat.id !== chatId));
             if (chatId === chatPayload.history_id) {
-                setMessages([])
+                setMessages([]);
             }
         } catch (err) {
             alert(err); // Display error message from the exception
@@ -153,7 +160,11 @@ export default function ChatProvider({
     };
 
     const prompt = () => {
-        return { role: "system", content: chatPayload.system + `\n\nCURRENT_DATETIME: ${formatDate()}`};
+        return {
+            role: "system",
+            content:
+                chatPayload.system + `\n\nCURRENT_DATETIME: ${formatDate()}`,
+        };
     };
 
     const combinePrompts = () => {
@@ -211,7 +222,9 @@ export default function ChatProvider({
         const textarea = chatInputRef.current as unknown as HTMLTextAreaElement; // Type assertion
         if (textarea) {
             textarea.style.height = "auto";
-            textarea.style.height = height ? height : `${textarea.scrollHeight}px`;
+            textarea.style.height = height
+                ? height
+                : `${textarea.scrollHeight}px`;
         }
     };
 
@@ -266,7 +279,7 @@ export default function ChatProvider({
                     console.error("Failed to fetch CSV content:", error);
                 }
             } else {
-                setSelectedDocument({ ...source, id: messageIndex});
+                setSelectedDocument({ ...source, id: messageIndex });
                 setCsvContent(null);
             }
         }
@@ -278,11 +291,12 @@ export default function ChatProvider({
             assistant: "secondary",
         };
         const filteredConvo = messages.filter((item) => item.role !== "system");
-        
+
         return filteredConvo.map((conversationItem, i) => {
             const isLastMessage = i === filteredConvo.length - 1;
             const images = conversationItem.images || [];
             const sources = conversationItem.sources || [];
+            const noContent = !selectedDocument && !csvContent;
             return (
                 <div
                     className="pl-2 text-sm mb-3"
@@ -347,12 +361,8 @@ export default function ChatProvider({
                                 <div
                                     key={source.id}
                                     className="relative overflow-hidden rounded-xl border border-token-border-dark bg-white"
-                                    onClick={() => {
-                                        console.log(source);
-                                        handleDocumentClick(i, source);
-                                    }}
                                 >
-                                    <div className="p-2 w-48">
+                                    <div className="p-2 w-52">
                                         <div className="flex flex-row items-center gap-2">
                                             <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md">
                                                 <DocumentIcon />
@@ -369,11 +379,57 @@ export default function ChatProvider({
                                             </div>
                                         </div>
                                     </div>
+                                    <div className="absolute bottom-1 right-2 flex gap-1">
+                                        {!isMobile() && !noContent && (
+                                            expand ? (
+                                                <div
+                                                    onClick={() =>
+                                                        setExpand(!expand)
+                                                    }
+                                                >
+                                                    <CollapseIcon size="18" />
+                                                </div>
+                                            ) : (
+                                                <div
+                                                    onClick={() =>
+                                                        setExpand(!expand)
+                                                    }
+                                                >
+                                                    <ExpandIcon size="18" />
+                                                </div>
+                                            )
+                                        )}
+                                        {noContent ? (
+                                            <FaRegEye
+                                                size="18"
+                                                className="cursor-pointer"
+                                                onClick={() =>
+                                                    handleDocumentClick(
+                                                        i,
+                                                        source
+                                                    )
+                                                }
+                                            />
+                                        ) : (
+                                            <FaRegEyeSlash
+                                                size="18"
+                                                className="cursor-pointer"
+                                                onClick={() => {
+                                                    handleDocumentClick(
+                                                        i,
+                                                        source
+                                                    );
+                                                    setExpand(false);
+                                                }}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     )}
-                    {selectedDocument &&
+                    {!expand &&
+                        selectedDocument &&
                         selectedDocument.id === i && (
                             <div className="h-72">
                                 <DocumentSection
@@ -546,13 +602,11 @@ export default function ChatProvider({
         });
     };
 
-
     const submitCleanUp = () => {
         setChatPayload({ ...chatPayload, query: "" });
         setUserInput("");
         chatInputRef.current?.focus();
     };
-
 
     const submitQuestionStream = async () => {
         setDone(false);
@@ -563,9 +617,11 @@ export default function ChatProvider({
 
         const config = {
             model: chatPayload.model,
-            messages: chatPayload.retrieval.index_name
-                      && !acceptRagSystemMessage.has(chatPayload.model)
-                      ? messages : combinePrompts(),
+            messages:
+                chatPayload.retrieval.index_name &&
+                !acceptRagSystemMessage.has(chatPayload.model)
+                    ? messages
+                    : combinePrompts(),
             // messages: combinePrompts(),
             tools: chatPayload.tools,
             retrieval: chatPayload.retrieval,
@@ -608,8 +664,6 @@ export default function ChatProvider({
                         setLoading(false);
                         setResponse(responseRef.current);
                         if (objectsArray[0].type === "end") {
-                            
-
                             // Replace the temporary message with the actual response
                             const finalMessages = [...updatedMessages];
                             finalMessages[tempIndex] = {
@@ -619,7 +673,12 @@ export default function ChatProvider({
                             };
                             setMessages(finalMessages);
 
-                            updateMessages(chatPayload.system, finalMessages, chatPayload.retrieval, chatPayload.tools);
+                            updateMessages(
+                                chatPayload.system,
+                                finalMessages,
+                                chatPayload.retrieval,
+                                chatPayload.tools
+                            );
                             setDone(true);
                         }
                     }
@@ -638,9 +697,12 @@ export default function ChatProvider({
         source.stream();
     };
 
-
-
-    async function updateMessages(system: string, messages: Message[], retrieval?: any, tools?: string[]) {
+    async function updateMessages(
+        system: string,
+        messages: Message[],
+        retrieval?: any,
+        tools?: string[]
+    ) {
         if (!chatPayload.history_id) {
             const history = await chatClient.create({
                 system,
@@ -682,7 +744,7 @@ export default function ChatProvider({
             "",
             url
         );
-    }
+    };
 
     useEffect(() => {
         response.length &&
@@ -694,14 +756,22 @@ export default function ChatProvider({
                     // Update the last message from the assistant with the new content
                     return prevConversationContext.map((item, index) =>
                         index === prevConversationContext.length - 1
-                            ? { role: "assistant", content: response, model: chatPayload.model }
+                            ? {
+                                  role: "assistant",
+                                  content: response,
+                                  model: chatPayload.model,
+                              }
                             : item
                     );
                 } else {
                     // If the last message is not from the server, add a new server message
                     return [
                         ...prevConversationContext,
-                        { role: "assistant", content: response, model: chatPayload.model },
+                        {
+                            role: "assistant",
+                            content: response,
+                            model: chatPayload.model,
+                        },
                     ];
                 }
             });
@@ -731,6 +801,7 @@ export default function ChatProvider({
                     done,
                     selectedDocument,
                     csvContent,
+                    expand,
                     setCsvContent,
                     setFiles,
                     resetChat,
@@ -752,10 +823,12 @@ export default function ChatProvider({
                     setDone,
                     setSelectedDocument,
                     messagesContainsSources,
+                    setExpand,
                 };
             }, [
                 chats,
                 done,
+                expand,
                 userInput,
                 chatboxRef,
                 chatInputRef,
@@ -784,6 +857,7 @@ export default function ChatProvider({
                 setFiles,
                 setSelectedDocument,
                 messagesContainsSources,
+                setExpand,
             ])}
         >
             {children}

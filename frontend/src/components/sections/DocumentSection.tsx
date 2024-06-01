@@ -1,8 +1,15 @@
 
+const defaultStyle = {
+    background: "#fff",
+    border: "none",
+    borderRadius: "10px",
+}
 
-const DocumentSection = ({ onClick, document, expand = false }: any) => {
-
-    
+const DocumentSection = ({
+    document,
+    expand = false,
+    style,
+}: any) => {
     return (
         <iframe
             src={document}
@@ -11,11 +18,7 @@ const DocumentSection = ({ onClick, document, expand = false }: any) => {
             className={
                 expand ? "w-full h-full" : "w-full h-5/6 md:w-3/4 md:h-3/4"
             }
-            style={{
-                background: "#fff", // Ensure white background for text files
-                border: "none",
-                borderRadius: "10px",
-            }}
+            style={style ? style : defaultStyle}
         ></iframe>
     );
 };

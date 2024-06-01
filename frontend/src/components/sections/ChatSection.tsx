@@ -199,7 +199,7 @@ export default function ChatSection() {
                         <div className="shadow-custom overflow-hidden flex flex-col w-full flex-grow relative border border-black/10 bg-primary-300 rounded-xl shadow-xs">
                             {/* Images container */}
                             {selectedFiles.length > 0 && (
-                                <div className="flex w-full flex-row flex-wrap items-center justify-start gap-2 p-2">
+                                <div className="bg-white flex w-full flex-row flex-wrap items-center justify-start gap-2 p-2">
                                     {/* Enlarged Image Preview Overlay */}
                                     {selectedImage && (
                                         <div
