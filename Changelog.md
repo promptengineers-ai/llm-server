@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - bugfix/42-redis-is-default-vector-db (2024-05-26)
   - bugfix/33-groq-rag-not-working (2024-05-19)
 ### Changed 
+  - feature/49-view-documents-side-by-side-with-chat (2024-06-01)
   - feature/46-add-system-to-chat-record (2024-05-26)
   - feature/44-can-create-index-from-existing (2024-05-26)
   - feature/35-db-indexes (2024-05-19)
