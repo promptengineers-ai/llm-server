@@ -7,9 +7,11 @@ import {
     useEffect,
     useCallback,
 } from "react";
+import { jwtDecode } from "jwt-decode";
 import { IContextProvider } from "../interfaces/provider";
 import { useRouter } from "next/navigation";
 import { API_URL } from "@/config/app";
+import { log } from "@/utils/log";
 
 export const AuthContext = createContext({});
 
@@ -58,20 +60,28 @@ export default function AuthProvider({ children }: IContextProvider) {
                 payload: { user: JSON.parse(user), token: token },
             });
         }
+
+        // Check token expiration
+        if (token) {
+            const decodedToken = jwtDecode<{ exp: number }>(token);
+            const expirationTime = decodedToken.exp * 1000 - Date.now();
+            if (expirationTime <= 0) {
+                logout();
+            } else {
+                setTimeout(logout, expirationTime);
+            }
+        }
     }, []);
 
     const login = useCallback(async (email: string, password: string) => {
         try {
-            const loginResponse = await fetch(
-                `${API_URL}/auth/login`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ email, password }),
-                }
-            );
+            const loginResponse = await fetch(`${API_URL}/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
 
             if (!loginResponse.ok) {
                 throw new Error(loginResponse.statusText);
@@ -80,14 +90,11 @@ export default function AuthProvider({ children }: IContextProvider) {
             const { access_token } = await loginResponse.json();
 
             // Fetch additional user data after successful login
-            const userDataResponse = await fetch(
-                `${API_URL}/auth/user`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${access_token}`,
-                    },
-                }
-            );
+            const userDataResponse = await fetch(`${API_URL}/auth/user`, {
+                headers: {
+                    Authorization: `Bearer ${access_token}`,
+                },
+            });
 
             if (!userDataResponse.ok) {
                 throw new Error(loginResponse.statusText);
@@ -99,6 +106,12 @@ export default function AuthProvider({ children }: IContextProvider) {
                 type: "LOGIN",
                 payload: { user: { ...userData["user"] }, token: access_token },
             });
+
+            // Check token expiration
+            const decodedToken = jwtDecode<{ exp: number }>(access_token);
+            const expirationTime = decodedToken.exp * 1000 - Date.now();
+            setTimeout(logout, expirationTime);
+
             router.push("/chat");
         } catch (error) {
             console.error("Login Failed:", error);
