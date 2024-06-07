@@ -3,7 +3,7 @@ export function log(originator: string, value: any, message?: string) {
         // Log the message with caller details
         let concatStr = `[${originator}]`;
         if (message) {
-            message += `: ${message}`;
+            concatStr += `: ${message}`;
         }
         // Use console.log to log the message
         console.log(concatStr, value);
