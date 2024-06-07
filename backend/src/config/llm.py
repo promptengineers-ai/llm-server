@@ -1,5 +1,5 @@
 from enum import Enum
-from src.config import ANTHROPIC_API_KEY, GROQ_API_KEY, OPENAI_API_KEY
+from src.config import ANTHROPIC_API_KEY, GROQ_API_KEY, OLLAMA_BASE_URL, OPENAI_API_KEY
 
 class OpenAIModels(Enum):
     GPT_3_5_TURBO = 'gpt-3.5-turbo'
@@ -127,49 +127,49 @@ MODEL_LIST = [
 		"model_name": ModelType.OLLAMA_LLAVA,
 		"litellm_params": {
 			"model": "ollama/llava",
-			"api_base": "http://localhost:11434"
+			"api_base": OLLAMA_BASE_URL
 		},
 	},
 	{
 		"model_name": ModelType.OLLAMA_BAKLLAVA,
 		"litellm_params": {
 			"model": "ollama/bakllava",
-			"api_base": "http://localhost:11434"
+			"api_base": OLLAMA_BASE_URL
 		},
 	},
     {
 		"model_name": ModelType.OLLAMA_MISTRAL,
 		"litellm_params": {
 			"model": "ollama/mistral",
-			"api_base": "http://localhost:11434"
+			"api_base": OLLAMA_BASE_URL
 		},
 	},
     {
 		"model_name": ModelType.OLLAMA_LLAMA_2,
 		"litellm_params": {
 			"model": "ollama/llama2",
-			"api_base": "http://localhost:11434"
+			"api_base": OLLAMA_BASE_URL
 		},
 	},
     {
 		"model_name": ModelType.OLLAMA_LLAMA_3,
 		"litellm_params": {
 			"model": "ollama/llama3",
-			"api_base": "http://localhost:11434"
+			"api_base": OLLAMA_BASE_URL
 		},
 	},
     {
 		"model_name": ModelType.OLLAMA_LLAMA_2_CHAT,
 		"litellm_params": {
 			"model": "ollama_chat/llama2",
-			"api_base": "http://localhost:11434"
+			"api_base": OLLAMA_BASE_URL
 		},
 	},
     {
 		"model_name": ModelType.OLLAMA_LLAMA_3_CHAT,
 		"litellm_params": {
 			"model": "ollama_chat/llama3",
-			"api_base": "http://localhost:11434"
+			"api_base": OLLAMA_BASE_URL
 		},
 	},
     {

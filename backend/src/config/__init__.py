@@ -16,6 +16,7 @@ PINECONE_INDEX = os.environ.get('PINECONE_INDEX', 'default')
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
+OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", 'http://localhost:11434')
 
 ## Storage
 TEST_USER_ID = os.environ.get("TEST_USER_ID", "000000000000000000000000")
