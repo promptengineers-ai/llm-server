@@ -12,11 +12,18 @@ import ModelSelect from "../selects/ModelSelect";
 import { useChatContext } from "@/contexts/ChatContext";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "@/contexts/AppContext";
+import SettingsPopover from "../dialog/SettingsPopover";
 
 const TopNav: React.FC = () => {
     const router = useRouter();
-    const { toggleDrawer, closeDrawer, isDrawerOpen } = useAppContext();
-    const { logout } = useAuthContext();
+    const {
+        toggleDrawer,
+        closeDrawer,
+        isDrawerOpen,
+        isPopoverOpen,
+        setIsPopoverOpen,
+    } = useAppContext();
+    const { retrieveUser } = useAuthContext();
     const { chats, setDone, resetChat } = useChatContext();
 
     return (
@@ -52,7 +59,7 @@ const TopNav: React.FC = () => {
             <div
                 id="drawer" // Add an ID here for the drawer
                 style={{ padding: "0px", width: "65%" }}
-                className={`z-50 fixed top-0 z-50 h-full w-65 transform bg-black p-4 text-gray-100 shadow-md transition-transform shadow-xl ${
+                className={`z-50 fixed top-0 h-full w-65 transform bg-black p-4 text-gray-100 shadow-md transition-transform shadow-xl ${
                     isDrawerOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
             >
@@ -138,13 +145,13 @@ const TopNav: React.FC = () => {
                             data-headlessui-state=""
                         >
                             <button
-                                className="flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm transition-colors duration-200 hover:bg-gray-100 group-ui-open:bg-gray-100 dark:hover:bg-gray-800 dark:group-ui-open:bg-gray-800"
+                                className="flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm transition-colors duration-200 group-ui-open:bg-gray-100 dark:hover:bg-gray-800 dark:group-ui-open:bg-gray-800"
                                 id="headlessui-menu-button-:rb:"
                                 type="button"
                                 aria-haspopup="true"
                                 aria-expanded="false"
                                 data-headlessui-state=""
-                                onClick={logout}
+                                onMouseDown={() => setIsPopoverOpen(!isPopoverOpen)}
                             >
                                 <div className="flex-shrink-0">
                                     <div className="flex items-center justify-center rounded">
@@ -165,15 +172,16 @@ const TopNav: React.FC = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="grow overflow-hidden text-ellipsis whitespace-nowrap text-left text-gray-700 text-white">
+                                <div className="grow overflow-hidden text-ellipsis whitespace-nowrap text-left text-white">
                                     <div className="font-semibold text-secondary-50">
                                         {" "}
-                                        John Eggleston
+                                        {retrieveUser().full_name}
                                     </div>
                                     <div className="text-xs text-gray-500"></div>
                                 </div>
                                 <DotsIcon />
                             </button>
+                            {isPopoverOpen && <SettingsPopover />}
                         </div>
                     </div>
                 </nav>

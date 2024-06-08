@@ -130,12 +130,20 @@ export default function AuthProvider({ children }: IContextProvider) {
         dispatch({ type: "LOGIN", payload: { user: JSON.parse(user), token } });
     }, []);
 
+    const retrieveUser = () => {
+        const user = sessionStorage.getItem("user");
+        if (user) {
+            return JSON.parse(user);
+        }
+    };
+
     const value = useMemo(
         () => ({
             ...state,
             login,
             logout,
             updateToken,
+            retrieveUser,
         }),
         [state, updateToken]
     );

@@ -59,7 +59,7 @@ const ModelSelect: React.FC = () => {
     return (
         <div ref={menuRef} className="relative inline-block text-left">
             <div
-                onClick={toggleMenu}
+                onMouseDown={toggleMenu}
                 aria-haspopup="menu"
                 aria-expanded={isMenuOpen}
                 className="group flex cursor-pointer items-center justify-between rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75"
