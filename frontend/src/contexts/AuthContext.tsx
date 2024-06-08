@@ -26,7 +26,7 @@ function authReducer(state: any, action: any) {
     switch (action.type) {
         case "LOGIN":
             localStorage.setItem("token", action.payload.token);
-            sessionStorage.setItem("user", JSON.stringify(action.payload.user));
+            localStorage.setItem("user", JSON.stringify(action.payload.user));
             return {
                 ...state,
                 user: action.payload.user,
@@ -34,7 +34,7 @@ function authReducer(state: any, action: any) {
             };
         case "LOGOUT":
             localStorage.removeItem("token");
-            sessionStorage.removeItem("user");
+            localStorage.removeItem("user");
             return {
                 ...state,
                 user: null,
@@ -52,7 +52,7 @@ export default function AuthProvider({ children }: IContextProvider) {
     // Effect to initialize state from localStorage on client side only
     useEffect(() => {
         const token = localStorage.getItem("token");
-        const user = sessionStorage.getItem("user") || "{}";
+        const user = localStorage.getItem("user") || "{}";
         if (token || user) {
             // Optionally validate the token and fetch user details
             dispatch({
@@ -126,12 +126,12 @@ export default function AuthProvider({ children }: IContextProvider) {
     }, []);
 
     const updateToken = useCallback((token: string) => {
-        const user = sessionStorage.getItem("user") || "{}";
+        const user = localStorage.getItem("user") || "{}";
         dispatch({ type: "LOGIN", payload: { user: JSON.parse(user), token } });
     }, []);
 
     const retrieveUser = () => {
-        const user = sessionStorage.getItem("user");
+        const user = localStorage.getItem("user");
         if (user) {
             return JSON.parse(user);
         }
