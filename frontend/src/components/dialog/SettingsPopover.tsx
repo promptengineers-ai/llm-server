@@ -1,7 +1,7 @@
 import { useAuthContext } from "@/contexts/AuthContext";
 
 const SettingsPopover = () => {
-    const { logout } = useAuthContext();
+    const { logout, retrieveUser } = useAuthContext();
 
     return (
         <div
@@ -16,7 +16,7 @@ const SettingsPopover = () => {
                     className="pl-3 pr-2 py-2 text-sm text-token-text-secondary"
                     role="none"
                 >
-                    kre8mymedia@gmail.com
+                    {retrieveUser().email}
                 </div>
                 <div
                     className="h-px bg-token-border-light my-1.5 bg-gray-400"

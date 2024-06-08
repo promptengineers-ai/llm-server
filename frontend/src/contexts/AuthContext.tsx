@@ -11,7 +11,6 @@ import { jwtDecode } from "jwt-decode";
 import { IContextProvider } from "../interfaces/provider";
 import { useRouter } from "next/navigation";
 import { API_URL } from "@/config/app";
-import { log } from "@/utils/log";
 
 export const AuthContext = createContext({});
 
@@ -130,12 +129,20 @@ export default function AuthProvider({ children }: IContextProvider) {
         dispatch({ type: "LOGIN", payload: { user: JSON.parse(user), token } });
     }, []);
 
+    const retrieveUser = () => {
+        const user = sessionStorage.getItem("user");
+        if (user) {
+            return JSON.parse(user);
+        }
+    };
+
     const value = useMemo(
         () => ({
             ...state,
             login,
             logout,
             updateToken,
+            retrieveUser,
         }),
         [state, updateToken]
     );

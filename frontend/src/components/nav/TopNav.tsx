@@ -16,7 +16,7 @@ import { useAppContext } from "@/contexts/AppContext";
 const TopNav: React.FC = () => {
     const router = useRouter();
     const { toggleDrawer, closeDrawer, isDrawerOpen } = useAppContext();
-    const { logout } = useAuthContext();
+    const { logout, retrieveUser } = useAuthContext();
     const { chats, setDone, resetChat } = useChatContext();
 
     return (
@@ -168,7 +168,7 @@ const TopNav: React.FC = () => {
                                 <div className="grow overflow-hidden text-ellipsis whitespace-nowrap text-left text-gray-700 text-white">
                                     <div className="font-semibold text-secondary-50">
                                         {" "}
-                                        John Eggleston
+                                        {retrieveUser()?.name}
                                     </div>
                                     <div className="text-xs text-gray-500"></div>
                                 </div>

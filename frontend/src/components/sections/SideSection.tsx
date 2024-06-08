@@ -6,6 +6,7 @@ import ChatHistoryButton from "../buttons/ChatHistoryButton";
 import { useChatContext } from "@/contexts/ChatContext";
 import SettingsPopover from "../dialog/SettingsPopover";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 interface DrawerProps {
     isOpen: boolean;
@@ -13,6 +14,7 @@ interface DrawerProps {
 
 const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
     const router = useRouter();
+    const { retrieveUser } = useAuthContext();
     const { resetChat, chats, shallowUrl } = useChatContext();
     const [open, setOpen] = useState(false);
     
@@ -48,7 +50,7 @@ const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
                                     href="#"
                                     onClick={(e) => {
                                         e.preventDefault();
-                                        router.push('/chat')
+                                        router.push("/chat");
                                         resetChat(e);
                                     }}
                                     className="flex px-3 min-h-[44px] py-1 items-center gap-3 transition-colors duration-200 cursor-pointer text-sm rounded-md border-solid border-2 border-secondary-outline-dark dark:border-white/20 hover:bg-gray-500/10 h-11 gizmo:rounded-lg bg-primary-800 dark:bg-transparent flex-grow overflow-hidden"
@@ -131,7 +133,7 @@ const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
                                         aria-haspopup="true"
                                         aria-expanded="false"
                                         data-headlessui-state=""
-                                        onClick={() => setOpen(!open)}
+                                        onMouseDown={() => setOpen(!open)}
                                     >
                                         <div className="flex-shrink-0">
                                             <div className="flex items-center justify-center rounded">
@@ -155,7 +157,7 @@ const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
                                         <div className="grow overflow-hidden text-ellipsis whitespace-nowrap text-left text-gray-700 dark:text-white">
                                             <div className="font-semibold text-secondary-50">
                                                 {" "}
-                                                John Eggleston
+                                                {retrieveUser()?.full_name}
                                             </div>
                                             <div className="text-xs text-gray-500"></div>
                                         </div>
