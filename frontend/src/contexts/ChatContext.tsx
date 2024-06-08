@@ -115,6 +115,7 @@ export default function ChatProvider({ children }: IContextProvider) {
             setMessages(res.chat.messages);
             setChatPayload((prev: ChatPayload) => ({
                 ...prev,
+                system: res.chat.system,
                 history_id: chatId,
                 retrieval: res.chat.retrieval,
                 tools: res.chat.tools,
