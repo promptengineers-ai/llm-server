@@ -7,14 +7,19 @@ import {
 } from "@headlessui/react";
 
 const CustomizeModal = () => {
-    const {isOpen, setIsOpen} = useAppContext();
+    const {isOpen, setIsOpen, setIsPopoverOpen, setIsDrawerOpen} = useAppContext();
     
     if (isOpen) {
         return (
             <div
                 className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-2 cursor-pointer"
                 style={{ zIndex: 1000 }}
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => {
+                    setIsOpen(!isOpen);
+                    setIsDrawerOpen(true);
+                    setIsPopoverOpen(false);
+
+                }}
             >
                 <Dialog open={true} onClose={() => {}} className="relative z-50">
                     <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
@@ -49,7 +54,14 @@ const CustomizeModal = () => {
                                     </p>
                                 </div>
                                 <div className="mt-4 md:mt-5 flex gap-4">
-                                    <button onClick={() => setIsOpen(false)}>Cancel</button>
+                                    <button 
+                                        onClick={() => {
+                                            setIsOpen(false);
+                                            setIsDrawerOpen(true);
+                                        }}
+                                    >
+                                        Cancel
+                                    </button>
                                     <button onClick={() => {}}>Deactivate</button>
                                 </div>
                             </div>

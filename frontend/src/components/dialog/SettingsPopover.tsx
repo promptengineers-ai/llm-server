@@ -7,11 +7,12 @@ const SettingsPopover = () => {
 
     return (
         <div
-            className="popover absolute bg-gray-100 bottom-full left-0 z-20 mb-1 w-full overflow-hidden rounded-lg border border-token-border-light bg-token-main-surface-primary p-1.5 shadow-lg outline-none opacity-100 translate-y-0"
+            className="popover absolute bg-gray-100 bottom-full left-0 z-20 mb-1 w-full overflow-hidden rounded-lg border border-token-border-light bg-token-main-surface-primary p-1.5 shadow-lg outline-none opacity-100 translate-y-0 text-black"
             aria-labelledby="headlessui-menu-button-:rmc:"
             id="headlessui-menu-items-:rmg:"
             role="menu"
             data-headlessui-state="open"
+            
         >
             <nav role="none">
                 <div

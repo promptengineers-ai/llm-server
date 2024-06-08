@@ -7,6 +7,7 @@ import { useChatContext } from "@/contexts/ChatContext";
 import SettingsPopover from "../dialog/SettingsPopover";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useAppContext } from "@/contexts/AppContext";
 
 interface DrawerProps {
     isOpen: boolean;
@@ -14,9 +15,9 @@ interface DrawerProps {
 
 const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
     const router = useRouter();
+    const {isPopoverOpen, setIsPopoverOpen} = useAppContext();
     const { retrieveUser } = useAuthContext();
     const { resetChat, chats, shallowUrl } = useChatContext();
-    const [open, setOpen] = useState(false);
     
     if (!isOpen) return null;
 
@@ -133,7 +134,7 @@ const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
                                         aria-haspopup="true"
                                         aria-expanded="false"
                                         data-headlessui-state=""
-                                        onMouseDown={() => setOpen(!open)}
+                                        onMouseDown={() => setIsPopoverOpen(!isPopoverOpen)}
                                     >
                                         <div className="flex-shrink-0">
                                             <div className="flex items-center justify-center rounded">
@@ -163,7 +164,7 @@ const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
                                         </div>
                                         <DotsIcon />
                                     </button>
-                                    {open && <SettingsPopover />}
+                                    {isPopoverOpen && <SettingsPopover />}
                                 </div>
                             </div>
                         </nav>
