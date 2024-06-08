@@ -1,15 +1,18 @@
+import { useAppContext } from "@/contexts/AppContext";
 import { useAuthContext } from "@/contexts/AuthContext";
 
 const SettingsPopover = () => {
     const { logout, retrieveUser } = useAuthContext();
+    const { setIsOpen } = useAppContext();
 
     return (
         <div
-            className="popover absolute bg-gray-100 bottom-full left-0 z-20 mb-1 w-full overflow-hidden rounded-lg border border-token-border-light bg-token-main-surface-primary p-1.5 shadow-lg outline-none opacity-100 translate-y-0"
+            className="popover absolute bg-gray-100 bottom-full left-0 z-20 mb-1 w-full overflow-hidden rounded-lg border border-token-border-light bg-token-main-surface-primary p-1.5 shadow-lg outline-none opacity-100 translate-y-0 text-black"
             aria-labelledby="headlessui-menu-button-:rmc:"
             id="headlessui-menu-items-:rmg:"
             role="menu"
             data-headlessui-state="open"
+            
         >
             <nav role="none">
                 <div
@@ -107,6 +110,7 @@ const SettingsPopover = () => {
                     id="headlessui-menu-item-:rmj:"
                     role="menuitem"
                     data-headlessui-state=""
+                    onMouseDown={() => setIsOpen(true)}
                 >
                     <svg
                         width="24"
