@@ -1,7 +1,9 @@
+import { useAppContext } from "@/contexts/AppContext";
 import { useAuthContext } from "@/contexts/AuthContext";
 
 const SettingsPopover = () => {
     const { logout, retrieveUser } = useAuthContext();
+    const { setIsOpen } = useAppContext();
 
     return (
         <div
@@ -107,6 +109,7 @@ const SettingsPopover = () => {
                     id="headlessui-menu-item-:rmj:"
                     role="menuitem"
                     data-headlessui-state=""
+                    onMouseDown={() => setIsOpen(true)}
                 >
                     <svg
                         width="24"

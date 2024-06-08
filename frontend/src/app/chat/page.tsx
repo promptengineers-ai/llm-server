@@ -11,6 +11,7 @@ import HomeSection from "@/components/sections/HomeSection";
 import MessageSection from "@/components/sections/MessageSection";
 import DocumentSection from "@/components/sections/DocumentSection";
 import { useAppContext } from "@/contexts/AppContext";
+import CustomizeModal from "@/components/dialog/CustomizeModal";
 
 const useDefaultOpenState = () => {
     const isClient = typeof window === "object";
@@ -135,13 +136,13 @@ const Chat = () => {
                         role="presentation"
                         className="flex h-full flex-col position-relative"
                     >
+                        <CustomizeModal />
                         {!isMobile() && (
                             <div
                                 style={{
                                     margin: `10px 0px 0px ${
                                         expand ? "10px" : "0px"
                                     }`,
-                                    zIndex: 1000,
                                     top: 0,
                                     left: 0,
                                     position: "absolute",
