@@ -1,8 +1,28 @@
 import { useState, useEffect } from "react";
 import { useAppContext } from "@/contexts/AppContext";
 import { useChatContext } from "@/contexts/ChatContext";
-import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import {
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+    Disclosure,
+    DisclosureButton,
+    DisclosurePanel,
+} from "@headlessui/react";
+import {
+    Description,
+    Field,
+    Fieldset,
+    Input,
+    Label,
+    Legend,
+    Select,
+    Textarea,
+} from "@headlessui/react";
 import { ChatPayload } from "@/types/chat";
+import { FaChevronDown } from "react-icons/fa";
+import clsx from "clsx";
+import RetrievalForm from "../forms/RetrievalForm";
 
 const CustomizeModal = () => {
     const { isOpen, setIsOpen, setIsPopoverOpen, setIsDrawerOpen } =
@@ -32,11 +52,11 @@ const CustomizeModal = () => {
         <div
             className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-2 cursor-pointer"
             style={{ zIndex: 1000 }}
-            onClick={() => {
-                setIsOpen(false);
-                setIsDrawerOpen(true);
-                setIsPopoverOpen(false);
-            }}
+            // onClick={() => {
+            //     setIsOpen(false);
+            //     setIsDrawerOpen(true);
+            //     setIsPopoverOpen(false);
+            // }}
         >
             <Dialog open={true} onClose={() => {}} className="relative z-50">
                 <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
@@ -49,7 +69,7 @@ const CustomizeModal = () => {
                                             id="radix-:re0:"
                                             className="text-lg font-semibold leading-6 text-token-text-primary"
                                         >
-                                            Customize ChatGPT
+                                            Customize
                                         </h2>
                                     </div>
                                 </div>
@@ -60,24 +80,41 @@ const CustomizeModal = () => {
                                 <DialogTitle className="font-bold">
                                     Custom Instructions
                                 </DialogTitle>
-                                <p className="mt-1 mb-2">
+                                <p className="mt-1 mb-2 text-sm">
                                     What would you like ChatGPT to know about
                                     you to provide better responses?
                                 </p>
                                 <textarea
-                                    className="w-full resize-y rounded p-2 placeholder:text-gray-300"
+                                    className="w-full resize-y rounded-sm p-2 placeholder:text-gray-300 border text-sm"
                                     rows={6}
-                                    style={{ border: "2px solid #94a3b8" }}
                                     value={textareaValue}
                                     onChange={(e) =>
                                         setTextareaValue(e.target.value)
                                     }
                                 />
+                                <Disclosure as="div" className="py-3">
+                                    <DisclosureButton className="group flex w-full items-center justify-between">
+                                        <DialogTitle className="font-bold">
+                                            Retrieval
+                                        </DialogTitle>
+                                        <FaChevronDown
+                                            size={"10px"}
+                                            className="size-5 group-data-[open]:rotate-180"
+                                        />
+                                    </DisclosureButton>
+                                    <DisclosurePanel
+                                        className={
+                                            "mt-3"
+                                        }
+                                    >
+                                        <RetrievalForm />
+                                    </DisclosurePanel>
+                                </Disclosure>
                             </div>
                             <div className="mt-4 md:mt-5 flex gap-4">
                                 <button
                                     onClick={() => {
-                                        let confirmCancel = false
+                                        let confirmCancel = false;
                                         if (isSaveEnabled) {
                                             confirmCancel = confirm(
                                                 "Are you sure you want to exit? Any changes you made will be permanently lost."
@@ -89,7 +126,9 @@ const CustomizeModal = () => {
                                         if (confirmCancel) {
                                             setIsOpen(false);
                                             setIsDrawerOpen(true);
-                                            setTextareaValue(chatPayload.system);
+                                            setTextareaValue(
+                                                chatPayload.system
+                                            );
                                         }
                                     }}
                                 >
