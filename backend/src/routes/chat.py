@@ -10,7 +10,7 @@ from src.middleware.auth import current_user
 from src.chains.agent import agent_chain
 from src.chains.retrieval import retrieval_chain
 from src.models import Agent, Chat
-from src.config.llm import filter_models
+from src.config.llm import available_models, filter_models
 from src.services import ClientService, LLMService, RetrievalService
 from src.utils import chain_stream, format_agent_actions, retrieve_chat_messages
 from src.utils.exception import NotFoundException
@@ -19,6 +19,7 @@ TAG = "Chat"
 router = APIRouter()
 client_service = ClientService()
 retrieval_service = RetrievalService()
+
 
 ############################################################################
 ## Define the endpoints for chat and chat with csv
@@ -191,3 +192,4 @@ async def delete_chat(chat_id: str, chat_repo: ChatRepository = Depends(get_repo
 	# Retrieve user_id (assuming it's an email) from request state
 	await chat_repo.delete(chat_id)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)
+

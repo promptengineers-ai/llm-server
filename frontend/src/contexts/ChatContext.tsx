@@ -12,7 +12,7 @@ import { ChatClient } from "../utils/api";
 import { ChatContextType, Message } from "../types";
 import { IContextProvider } from "../interfaces/provider";
 import { log } from "../utils/log";
-import { ChatPayload } from "@/types/chat";
+import { ChatPayload, LLM } from "@/types/chat";
 import {
     EmbeddingModel,
     ModelType,
@@ -69,6 +69,8 @@ export default function ChatProvider({ children }: IContextProvider) {
     const chatboxRef = useRef<HTMLInputElement | null>(null);
     const [chatboxRefIsEmpty, setChatboxRefIsEmpty] = useState(true);
     const userInputRef = useRef<HTMLInputElement | null>(null);
+    const [models, setModels] = useState<LLM[]>([]);
+    const [embeddings, setEmbeddings] = useState<LLM[]>([]);
     const [chatPayload, setChatPayload] = useState<ChatPayload>({
         query: "",
         history_id: "",
@@ -125,6 +127,15 @@ export default function ChatProvider({ children }: IContextProvider) {
             console.error(err);
         }
     };
+
+    const fetchModels = async () => {
+        const res = await chatClient.listModels();
+        setModels(
+            res.models.sort((a: LLM, b: LLM) =>
+                a.model_name.localeCompare(b.model_name)
+            )
+        );
+    }
 
     const findChat = async (chatId: string) => {
         try {
@@ -809,6 +820,12 @@ export default function ChatProvider({ children }: IContextProvider) {
         }
     }, [initChatPayload, chatPayload]);
 
+    useEffect(() => {
+        if (models.length === 0) {
+            fetchModels();
+        }
+    }, []);
+
     return (
         <ChatContext.Provider
             value={useMemo(() => {
@@ -830,6 +847,8 @@ export default function ChatProvider({ children }: IContextProvider) {
                     expand,
                     initChatPayload,
                     isSaveEnabled,
+                    models,
+                    fetchModels,
                     setCsvContent,
                     setFiles,
                     resetChat,
@@ -858,12 +877,14 @@ export default function ChatProvider({ children }: IContextProvider) {
             }, [
                 chats,
                 done,
+                embeddings,
                 expand,
                 userInput,
                 chatboxRef,
                 chatInputRef,
                 userInputRef,
                 messages,
+                models,
                 images,
                 chatPayload,
                 chatboxRefIsEmpty,
@@ -873,25 +894,6 @@ export default function ChatProvider({ children }: IContextProvider) {
                 csvContent,
                 initChatPayload,
                 isSaveEnabled,
-                setCsvContent,
-                resetChat,
-                setDone,
-                sendChatPayload,
-                deleteChat,
-                findChat,
-                shallowUrl,
-                renderConversation,
-                setUserInput,
-                setSelectedImage,
-                handleImageClick,
-                fetchChats,
-                adjustHeight,
-                setFiles,
-                setSelectedDocument,
-                messagesContainsSources,
-                setExpand,
-                setInitChatPayload,
-                setIsSaveEnabled,
             ])}
         >
             {children}

@@ -35,7 +35,7 @@ app.include_router(prefix='/api/v1', dependencies=[Depends(current_user)], route
 ############################################################################
 ## Define the endpoints for chat with csv
 ############################################################################
-@app.post("/homes/search", status_code=status.HTTP_201_CREATED, tags=['Homes'])
+@app.post("/homes/search", status_code=status.HTTP_201_CREATED, tags=['Homes'], include_in_schema=False)
 async def create_csv(body: Harvest):
 	# Instantiate your ClientService
 	client_service = ClientService()
