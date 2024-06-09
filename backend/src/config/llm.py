@@ -50,7 +50,7 @@ class ModelType(str, Enum):
 	GROQ_MIXTRAL = 'groq-mixtral'
 	GROQ_GEMMA_7B_IT = 'groq-gemma-7b-it'
 	GROQ_LLAMA_3_70B = 'groq-llama3-70b'
-	ANTHROPIC_HAIKU = 'anthorpic-claude-3-sonnet'
+	ANTHROPIC_HAIKU = 'anthorpic-claude-3-haiku'
 	ANTHROPIC_OPUS = 'anthorpic-claude-3-opus'
 	ANTHROPIC_SONNET = 'anthorpic-claude-3-sonnet'
 	
