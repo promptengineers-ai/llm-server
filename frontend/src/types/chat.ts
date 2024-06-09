@@ -1,14 +1,15 @@
-import { SearchProvider, ModelType, SearchType } from "./llm";
+import { SearchProvider, ModelType, SearchType, EmbeddingModel } from "./llm";
 
 export type ChatPayload = {
     query: string;
     history_id: string;
-    system: string,
+    system: string;
     model: ModelType;
     temperature: number;
     tools: string[];
     retrieval: {
         provider: SearchProvider;
+        embedding: EmbeddingModel;
         index_name: string;
         search_type: SearchType;
         search_kwargs: {

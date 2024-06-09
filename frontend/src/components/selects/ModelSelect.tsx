@@ -1,10 +1,11 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ModelType, modelLabels, onPremModels, multiModalModels } from "@/types/llm";
+import { ModelType, modelLabels, onPremModels, multiModalModels, embeddingModels } from "@/types/llm";
 import { useChatContext } from "@/contexts/ChatContext";
 import { ON_PREM } from "@/config/app";
 import { IoMdImages } from "react-icons/io";
+import { filterModels } from "@/utils/chat";
 
 const ModelSelect: React.FC = () => {
     const { setChatPayload, chatPayload } = useChatContext();
@@ -56,6 +57,8 @@ const ModelSelect: React.FC = () => {
         };
     }, [menuRef]);
 
+    const models = filterModels(ON_PREM ? onPremModels : modelLabels, embeddingModels, false);
+
     return (
         <div ref={menuRef} className="relative inline-block text-left">
             <div
@@ -100,9 +103,7 @@ const ModelSelect: React.FC = () => {
                     tabIndex={-1}
                 >
                     <div className="py-1" role="none">
-                        {Object.entries(
-                            ON_PREM ? onPremModels : modelLabels
-                        ).map(([key, label]) => (
+                        {Object.entries(models).map(([key, label]) => (
                             <a
                                 key={key}
                                 href="#"
