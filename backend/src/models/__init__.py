@@ -2,7 +2,7 @@ from enum import Enum
 from pydantic import BaseModel, Field, field_validator
 from typing import Optional, Any, Union, Literal, List, Annotated
 
-from src.config.llm import ACCEPTED_EMBEDDING_MODELS, ModelType
+from src.config.llm import ACCEPTED_EMBEDDING_MODELS, Embedding, ModelType
 
 class ListingType(str, Enum):
     FOR_SALE = 'for_sale'
@@ -99,6 +99,7 @@ class RetrievalTool(BaseModel):
     
 class RetrievalParams(BaseModel):
     provider: SearchProvider = SearchProvider.PINECONE
+    embedding: Embedding = Embedding.TEXT_EMBED_3_SMALL
     index_name: str
     search_type: SearchType
     search_kwargs: SearchKwargs
@@ -156,6 +157,7 @@ class Retrieval(Chat):
 				],
                 "retrieval": {
                     "provider": SearchProvider.PINECONE,
+                    "embedding": Embedding.TEXT_EMBED_3_SMALL,
                     "index_name": "",
                     "search_type": SearchType.SIMILARITY,
                     "search_kwargs": {
@@ -195,6 +197,7 @@ class Agent(Chat):
                 "tools": ["repl_tool", "csv_tool"],
                 "retrieval": {
                     "provider": SearchProvider.REDIS,
+                    "embedding": Embedding.TEXT_EMBED_3_SMALL,
                     "index_name": "",
                     "search_type": SearchType.SIMILARITY,
                     "search_kwargs": {

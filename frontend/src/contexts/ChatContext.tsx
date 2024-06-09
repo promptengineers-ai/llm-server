@@ -14,6 +14,7 @@ import { IContextProvider } from "../interfaces/provider";
 import { log } from "../utils/log";
 import { ChatPayload } from "@/types/chat";
 import {
+    EmbeddingModel,
     ModelType,
     SearchProvider,
     SearchType,
@@ -28,7 +29,7 @@ import rehypeHighlight from "rehype-highlight";
 import { SSE } from "sse.js";
 import { constructBubbleMessage } from "@/utils/chat";
 import { userMessageTitleStyle } from "@/config/message";
-import { API_URL } from "@/config/app";
+import { API_URL, ON_PREM } from "@/config/app";
 import CopyCodeButton from "@/components/buttons/CopyCodeButton";
 import CopyIcon from "@/components/icons/CopyIcon";
 import RegenerateIcon from "@/components/icons/RegenerateIcon";
@@ -72,11 +73,20 @@ export default function ChatProvider({ children }: IContextProvider) {
         query: "",
         history_id: "",
         system: Default.SYSTEM_MESSAGE,
-        model: ModelType.OPENAI_GPT_4_OMNI,
+        model: (
+            ON_PREM 
+            ? ModelType.OLLAMA_LLAMA_3_CHAT 
+            : ModelType.OPENAI_GPT_4_OMNI
+        ),
         temperature: 0.5,
         tools: [],
         retrieval: {
             provider: SearchProvider.REDIS,
+            embedding: (
+                ON_PREM 
+                ? EmbeddingModel.OLLAMA_NOMIC_EMBED_TEXT 
+                : EmbeddingModel.OPENAI_TEXT_EMBED_3_SMALL
+            ),
             index_name: "",
             search_type: SearchType.SIMILARITY,
             search_kwargs: {

@@ -124,6 +124,8 @@ export default function ChatSection() {
                 await chatClient.upsert({
                     documents: docs.documents,
                     index_name: index_name,
+                    provider: chatPayload.retrieval.provider,
+                    embedding: chatPayload.retrieval.embedding,
                 });
                 setChatPayload((prev: any) => ({
                     ...prev,

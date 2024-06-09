@@ -47,7 +47,7 @@ from langchain_core.runnables.history import RunnableWithMessageHistory, Configu
 def retrieval_chain(body: Retrieval or Agent, user_id = None): # type: ignore
 	vectorstore = None
 	if body.retrieval.provider and body.retrieval.index_name:
-		embedding = EmbeddingFactory(token=OPENAI_API_KEY) # TODO: Check the index information in DB to see which was used.
+		embedding = EmbeddingFactory(llm=body.retrieval.embedding, token=OPENAI_API_KEY) # TODO: Check the index information in DB to see which was used.
 		index_name_or_namespace = f"{user_id}::{body.retrieval.index_name}" if user_id else body.retrieval.index_name
 		if body.retrieval.provider == 'redis':
 			provider_keys={

@@ -22,8 +22,16 @@ class OllamaModels(Enum):
     CODE_LLAMA = 'codellama'
     VICUNA = 'vicuna'
     MISTRAL = 'mistral'
+    NOMIC_EMBED_TEXT = 'nomic-embed-text'
+    MXBAI_EMBED_LARGE = 'mxbai-embed-large'
+    PHI3 = 'phi3'
+    PHI3_14B = 'phi3:14b'
+    
     
 class ModelType(str, Enum):
+    OPENAI_EMBED_ADA = 'openai-text-embedding-ada'
+    OPENAI_TEXT_EMBED_3_SMALL = 'openai-text-embedding-3-small'
+    OPENAI_TEXT_EMBED_3_LARGE = 'openai-text-embedding-3-large'
     OPENAI_GPT_3_5_TURBO_16K = 'openai-gpt-3.5-turbo-16k'
     OPENAI_GPT_4_TURBO_PREVIEW = 'openai-gpt-4-turbo-preview'
     OPENAI_GPT_4_VISION_PREVIEW = 'openai-gpt-4-vision-preview'
@@ -35,6 +43,10 @@ class ModelType(str, Enum):
     OLLAMA_LLAMA_2_CHAT = 'ollama_chat-llama2'
     OLLAMA_LLAMA_3 = 'ollama-llama3'
     OLLAMA_LLAMA_3_CHAT = 'ollama_chat-llama3'
+    OLLAMA_NOMIC_EMBED_TEXT = 'ollama-nomic-embed-text'
+    OLLAMA_MXBAI_EMBED_LARGE = 'ollama-mxbai-embed-large'
+    OLLAMA_PHI3 = 'ollama-phi3'
+    OLLAMA_PHI3_14B = 'ollama-phi3-14b'
     GROQ_MIXTRAL = 'groq-mixtral'
     GROQ_GEMMA_7B_IT = 'groq-gemma-7b-it'
     GROQ_LLAMA_3_70B = 'groq-llama3-70b'
@@ -82,114 +94,173 @@ ACCEPTED_OLLAMA_MODELS = {
     ModelType.GROQ_MIXTRAL.value,
     ModelType.GROQ_GEMMA_7B_IT.value,
     ModelType.GROQ_LLAMA_3_70B.value,
+    ModelType.OLLAMA_NOMIC_EMBED_TEXT.value,
+    ModelType.OLLAMA_MXBAI_EMBED_LARGE.value,
+    ModelType.OLLAMA_PHI3.value,
+    ModelType.OLLAMA_PHI3_14B.value,
 }
 
 ACCEPTED_EMBEDDING_MODELS = {
-    OpenAIModels.EMBED_ADA.value,
-    OpenAIModels.TEXT_EMBED_3_SMALL.value,
-    OpenAIModels.TEXT_EMBED_3_LARGE.value,
-    OllamaModels.LLAMA_2.value,
-    OllamaModels.LLAMA_2_7B.value,
+    ModelType.OPENAI_EMBED_ADA.value,
+    ModelType.OPENAI_TEXT_EMBED_3_SMALL.value,
+    ModelType.OPENAI_TEXT_EMBED_3_LARGE.value,
+    ModelType.OLLAMA_LLAMA_2.value,
+    ModelType.OLLAMA_NOMIC_EMBED_TEXT.value,
+    ModelType.OLLAMA_MXBAI_EMBED_LARGE.value,
 }
 
-
+class Embedding(str, Enum):
+    EMBED_ADA = ModelType.OPENAI_EMBED_ADA.value
+    TEXT_EMBED_3_SMALL = ModelType.OPENAI_TEXT_EMBED_3_SMALL.value
+    TEXT_EMBED_3_LARGE = ModelType.OPENAI_TEXT_EMBED_3_LARGE.value
+    NOMIC_EMBED_TEXT = ModelType.OLLAMA_NOMIC_EMBED_TEXT.value
+    MXBAI_EMBED_LARGE = ModelType.OLLAMA_MXBAI_EMBED_LARGE.value
 
 MODEL_LIST = [
     {
+		"model_name": ModelType.OPENAI_EMBED_ADA,
+		"litellm_params": {
+			"model": f"openai/{OpenAIModels.EMBED_ADA.value}",
+			"api_key": OPENAI_API_KEY
+		},
+	},
+    {
+		"model_name": ModelType.OPENAI_TEXT_EMBED_3_SMALL,
+		"litellm_params": {
+			"model": f"openai/{OpenAIModels.TEXT_EMBED_3_SMALL.value}",
+			"api_key": OPENAI_API_KEY
+		},
+	},
+    {
+		"model_name": ModelType.OPENAI_TEXT_EMBED_3_LARGE,
+		"litellm_params": {
+			"model": f"openai/{OpenAIModels.TEXT_EMBED_3_LARGE.value}",
+			"api_key": OPENAI_API_KEY
+		},
+	},
+    {
 		"model_name": ModelType.OPENAI_GPT_4_VISION_PREVIEW,
 		"litellm_params": {
-			"model": "openai/gpt-4-vision-preview",
+			"model": f"openai/gpt-4-vision-preview",
 			"api_key": OPENAI_API_KEY
 		},
 	},
 	{
 		"model_name": ModelType.OPENAI_GPT_3_5_TURBO_16K,
 		"litellm_params": {
-			"model": "openai/gpt-3.5-turbo-16k",
+			"model": f"openai/gpt-3.5-turbo-16k",
 			"api_key": OPENAI_API_KEY
 		},
 	},
 	{
 		"model_name": ModelType.OPENAI_GPT_4_TURBO_PREVIEW,
 		"litellm_params": {
-			"model": "openai/gpt-4-turbo-preview",
+			"model": f"openai/gpt-4-turbo-preview",
 			"api_key": OPENAI_API_KEY
 		},
 	},
  	{
 		"model_name": ModelType.OPENAI_GPT_4_OMNI,
 		"litellm_params": {
-			"model": "openai/gpt-4o",
+			"model": f"openai/gpt-4o",
 			"api_key": OPENAI_API_KEY
+		},
+	},
+	{
+		"model_name": ModelType.OLLAMA_NOMIC_EMBED_TEXT,
+		"litellm_params": {
+			"model": f"ollama/{OllamaModels.NOMIC_EMBED_TEXT.value}",
+			"api_base": OLLAMA_BASE_URL
+		},
+	},
+	{
+		"model_name": ModelType.OLLAMA_MXBAI_EMBED_LARGE,
+		"litellm_params": {
+			"model": f"ollama/{OllamaModels.MXBAI_EMBED_LARGE.value}",
+			"api_base": OLLAMA_BASE_URL
+		},
+	},
+ 	{
+		"model_name": ModelType.OLLAMA_PHI3,
+		"litellm_params": {
+			"model": f"ollama/{OllamaModels.PHI3.value}",
+			"api_base": OLLAMA_BASE_URL
+		},
+	},
+  	{
+		"model_name": ModelType.OLLAMA_PHI3_14B,
+		"litellm_params": {
+			"model": f"ollama/{OllamaModels.PHI3_14B.value}",
+			"api_base": OLLAMA_BASE_URL
 		},
 	},
 	{
 		"model_name": ModelType.OLLAMA_LLAVA,
 		"litellm_params": {
-			"model": "ollama/llava",
+			"model": f"ollama/llava",
 			"api_base": OLLAMA_BASE_URL
 		},
 	},
 	{
 		"model_name": ModelType.OLLAMA_BAKLLAVA,
 		"litellm_params": {
-			"model": "ollama/bakllava",
+			"model": f"ollama/bakllava",
 			"api_base": OLLAMA_BASE_URL
 		},
 	},
     {
 		"model_name": ModelType.OLLAMA_MISTRAL,
 		"litellm_params": {
-			"model": "ollama/mistral",
+			"model": f"ollama/mistral",
 			"api_base": OLLAMA_BASE_URL
 		},
 	},
     {
 		"model_name": ModelType.OLLAMA_LLAMA_2,
 		"litellm_params": {
-			"model": "ollama/llama2",
+			"model": f"ollama/llama2",
 			"api_base": OLLAMA_BASE_URL
 		},
 	},
     {
 		"model_name": ModelType.OLLAMA_LLAMA_3,
 		"litellm_params": {
-			"model": "ollama/llama3",
+			"model": f"ollama/llama3",
 			"api_base": OLLAMA_BASE_URL
 		},
 	},
     {
 		"model_name": ModelType.OLLAMA_LLAMA_2_CHAT,
 		"litellm_params": {
-			"model": "ollama_chat/llama2",
+			"model": f"ollama_chat/llama2",
 			"api_base": OLLAMA_BASE_URL
 		},
 	},
     {
 		"model_name": ModelType.OLLAMA_LLAMA_3_CHAT,
 		"litellm_params": {
-			"model": "ollama_chat/llama3",
+			"model": f"ollama_chat/llama3",
 			"api_base": OLLAMA_BASE_URL
 		},
 	},
     {
 		"model_name": ModelType.GROQ_MIXTRAL,
 		"litellm_params": {
-			"model": "groq/mixtral-8x7b-32768",
+			"model": f"groq/mixtral-8x7b-32768",
 			"api_key": GROQ_API_KEY
 		},
 	},
     {
 		"model_name": ModelType.GROQ_GEMMA_7B_IT,
 		"litellm_params": {
-			"model": "groq/gemma-7b-it",
+			"model": f"groq/gemma-7b-it",
 			"api_key": GROQ_API_KEY
 		},
 	},
     {
 		"model_name": ModelType.GROQ_LLAMA_3_70B,
 		"litellm_params": {
-			"model": "groq/llama3-70b-8192",
+			"model": f"groq/llama3-70b-8192",
 			"api_key": GROQ_API_KEY
 		},
 	},

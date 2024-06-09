@@ -7,7 +7,7 @@ import { log } from "../utils/log";
 import { Message } from "../types";
 import { API_URL } from "@/config/app";
 import { generateRandomNumber } from "./random";
-import { SearchProvider } from "@/types/llm";
+import { EmbeddingModel, SearchProvider } from "@/types/llm";
 
 /**----------------------------------------------------------
  * Send a message to the server and get a response
@@ -64,7 +64,12 @@ export class ChatClient extends Client {
         }
     }
 
-    public async upsert(payload: { documents: any[]; index_name: string }) {
+    public async upsert(payload: { 
+        documents: any[]; 
+        index_name: string,
+        provider: SearchProvider, 
+        embedding: EmbeddingModel
+    }) {
         try {
             const response = await fetch(
                 `${this.apiUrl}/api/v1/documents/upsert`,
@@ -78,9 +83,9 @@ export class ChatClient extends Client {
                         )}`,
                     },
                     body: JSON.stringify({
-                        provider: SearchProvider.REDIS,
+                        provider: payload.provider,
                         index_name: payload.index_name,
-                        embedding: "text-embedding-3-small",
+                        embedding: payload.embedding,
                         documents: payload.documents,
                     }),
                 }
