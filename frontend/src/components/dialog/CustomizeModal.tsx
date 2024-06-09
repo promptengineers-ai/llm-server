@@ -4,10 +4,6 @@ import { useChatContext } from "@/contexts/ChatContext";
 import {
     Dialog,
     DialogPanel,
-    DialogTitle,
-    Disclosure,
-    DisclosureButton,
-    DisclosurePanel,
     Tab,
     TabGroup,
     TabList,
@@ -15,7 +11,6 @@ import {
     TabPanels,
 } from "@headlessui/react";
 import { ChatPayload } from "@/types/chat";
-import { FaChevronDown } from "react-icons/fa";
 import RetrievalForm from "../forms/RetrievalForm";
 
 const CustomizeModal = () => {

@@ -4,8 +4,6 @@ import {
     Field,
     Fieldset,
     Select,
-    Label,
-    Description,
 } from "@headlessui/react";
 
 const RetrievalForm = () => {
