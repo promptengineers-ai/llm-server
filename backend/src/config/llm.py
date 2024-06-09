@@ -145,15 +145,6 @@ MODEL_LIST = [
 		},
 	},
 	{
-		"model_name": ModelType.OPENAI_GPT_4_VISION_PREVIEW,
-		"multimodal": True,
-		"embedding": False,
-		"litellm_params": {
-			"model": f"openai/gpt-4-vision-preview",
-			"api_key": OPENAI_API_KEY
-		},
-	},
-	{
 		"model_name": ModelType.OPENAI_GPT_3_5_TURBO_16K,
 		"multimodal": False,
 		"embedding": False,
@@ -162,15 +153,24 @@ MODEL_LIST = [
 			"api_key": OPENAI_API_KEY
 		},
 	},
-	{
-		"model_name": ModelType.OPENAI_GPT_4_TURBO_PREVIEW,
-		"multimodal": False,
-		"embedding": False,
-		"litellm_params": {
-			"model": f"openai/gpt-4-turbo-preview",
-			"api_key": OPENAI_API_KEY
-		},
-	},
+	# {
+	# 	"model_name": ModelType.OPENAI_GPT_4_VISION_PREVIEW,
+	# 	"multimodal": True,
+	# 	"embedding": False,
+	# 	"litellm_params": {
+	# 		"model": f"openai/gpt-4-vision-preview",
+	# 		"api_key": OPENAI_API_KEY
+	# 	},
+	# },
+	# {
+	# 	"model_name": ModelType.OPENAI_GPT_4_TURBO_PREVIEW,
+	# 	"multimodal": False,
+	# 	"embedding": False,
+	# 	"litellm_params": {
+	# 		"model": f"openai/gpt-4-turbo-preview",
+	# 		"api_key": OPENAI_API_KEY
+	# 	},
+	# },
  	{
 		"model_name": ModelType.OPENAI_GPT_4_OMNI,
 		"multimodal": True,
@@ -243,24 +243,24 @@ MODEL_LIST = [
 			"api_base": OLLAMA_BASE_URL
 		},
 	},
-	{
-		"model_name": ModelType.OLLAMA_LLAMA_2,
-		"multimodal": False,
-		"embedding": True,
-		"litellm_params": {
-			"model": f"ollama/llama2",
-			"api_base": OLLAMA_BASE_URL
-		},
-	},
-	{
-		"model_name": ModelType.OLLAMA_LLAMA_3,
-		"multimodal": False,
-		"embedding": False,
-		"litellm_params": {
-			"model": f"ollama/llama3",
-			"api_base": OLLAMA_BASE_URL
-		},
-	},
+	# {
+	# 	"model_name": ModelType.OLLAMA_LLAMA_2,
+	# 	"multimodal": False,
+	# 	"embedding": True,
+	# 	"litellm_params": {
+	# 		"model": f"ollama/llama2",
+	# 		"api_base": OLLAMA_BASE_URL
+	# 	},
+	# },
+	# {
+	# 	"model_name": ModelType.OLLAMA_LLAMA_3,
+	# 	"multimodal": False,
+	# 	"embedding": False,
+	# 	"litellm_params": {
+	# 		"model": f"ollama/llama3",
+	# 		"api_base": OLLAMA_BASE_URL
+	# 	},
+	# },
 	{
 		"model_name": ModelType.OLLAMA_LLAMA_2_CHAT,
 		"multimodal": False,

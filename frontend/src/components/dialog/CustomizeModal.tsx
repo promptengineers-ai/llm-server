@@ -16,7 +16,14 @@ import RetrievalForm from "../forms/RetrievalForm";
 const CustomizeModal = () => {
     const { isOpen, setIsOpen, setIsPopoverOpen, setIsDrawerOpen } =
         useAppContext();
-    const { chatPayload, setChatPayload, initChatPayload, setInitChatPayload, isSaveEnabled } = useChatContext();
+    const {
+        chatPayload,
+        setChatPayload,
+        initChatPayload,
+        setInitChatPayload,
+        isSaveEnabled,
+        fetchModels,
+    } = useChatContext();
 
     if (!isOpen) {
         return null;
