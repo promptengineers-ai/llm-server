@@ -22,6 +22,11 @@ class OllamaModels(Enum):
     CODE_LLAMA = 'codellama'
     VICUNA = 'vicuna'
     MISTRAL = 'mistral'
+    NOMIC_EMBED_TEXT = 'nomic-embed-text'
+    MXBAI_EMBED_LARGE = 'mxbai-embed-large'
+    PHI3 = 'phi3'
+    PHI3_14B = 'phi3:14b'
+    
     
 class ModelType(str, Enum):
     OPENAI_GPT_3_5_TURBO_16K = 'openai-gpt-3.5-turbo-16k'
@@ -35,6 +40,10 @@ class ModelType(str, Enum):
     OLLAMA_LLAMA_2_CHAT = 'ollama_chat-llama2'
     OLLAMA_LLAMA_3 = 'ollama-llama3'
     OLLAMA_LLAMA_3_CHAT = 'ollama_chat-llama3'
+    OLLAMA_NOMIC_EMBED_TEXT = 'ollama-nomic-embed-text'
+    OLLAMA_MXBAI_EMBED_LARGE = 'ollama-mxbai-embed-large'
+    OLLAMA_PHI3 = 'ollama-phi3'
+    OLLAMA_PHI3_14B = 'ollama-phi3-14b'
     GROQ_MIXTRAL = 'groq-mixtral'
     GROQ_GEMMA_7B_IT = 'groq-gemma-7b-it'
     GROQ_LLAMA_3_70B = 'groq-llama3-70b'
@@ -90,7 +99,16 @@ ACCEPTED_EMBEDDING_MODELS = {
     OpenAIModels.TEXT_EMBED_3_LARGE.value,
     OllamaModels.LLAMA_2.value,
     OllamaModels.LLAMA_2_7B.value,
+    OllamaModels.NOMIC_EMBED_TEXT.value,
+    OllamaModels.MXBAI_EMBED_LARGE.value,
 }
+
+class Embedding(Enum):
+    EMBED_ADA = OpenAIModels.EMBED_ADA.value
+    TEXT_EMBED_3_SMALL = OpenAIModels.TEXT_EMBED_3_SMALL.value
+    TEXT_EMBED_3_LARGE = OpenAIModels.TEXT_EMBED_3_LARGE.value
+    NOMIC_EMBED_TEXT = OllamaModels.NOMIC_EMBED_TEXT.value
+    MXBAI_EMBED_LARGE = OllamaModels.MXBAI_EMBED_LARGE.value
 
 
 
@@ -121,6 +139,34 @@ MODEL_LIST = [
 		"litellm_params": {
 			"model": "openai/gpt-4o",
 			"api_key": OPENAI_API_KEY
+		},
+	},
+	{
+		"model_name": ModelType.OLLAMA_NOMIC_EMBED_TEXT,
+		"litellm_params": {
+			"model": f"ollama/{OllamaModels.NOMIC_EMBED_TEXT.value}",
+			"api_base": OLLAMA_BASE_URL
+		},
+	},
+	{
+		"model_name": ModelType.OLLAMA_MXBAI_EMBED_LARGE,
+		"litellm_params": {
+			"model": f"ollama/{OllamaModels.MXBAI_EMBED_LARGE.value}",
+			"api_base": OLLAMA_BASE_URL
+		},
+	},
+ 	{
+		"model_name": ModelType.OLLAMA_PHI3,
+		"litellm_params": {
+			"model": f"ollama/{OllamaModels.PHI3.value}",
+			"api_base": OLLAMA_BASE_URL
+		},
+	},
+  	{
+		"model_name": ModelType.OLLAMA_PHI3_14B,
+		"litellm_params": {
+			"model": f"ollama/{OllamaModels.PHI3_14B.value}",
+			"api_base": OLLAMA_BASE_URL
 		},
 	},
 	{

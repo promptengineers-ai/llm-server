@@ -34,19 +34,19 @@ services:
       - 6379:6379
 
   # Ollama (AI Service)
-  # ollama:
-  #   container_name: ollama
-  #   image: ollama/ollama
-  #   volumes:
-  #     - ./docker/ollama:/ollama  # Mount the directory containing entrypoint.sh
-  #   ports:
-  #     - 11434:11434
-  #   entrypoint: ["/ollama/entrypoint.sh"]  # Specify the entrypoint script
-  #   deploy:
-  #     resources:
-  #       reservations:
-  #         devices:
-  #           - capabilities: [gpu]
+  ollama:
+    container_name: ollama
+    image: ollama/ollama
+    volumes:
+      - ./docker/ollama:/ollama  # Mount the directory containing entrypoint.sh
+    ports:
+      - 11434:11434
+    entrypoint: ["/ollama/entrypoint.sh"]  # Specify the entrypoint script
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
 
   # Minio (File Storage) -- CURRENTLY ALL FILES AND IMAGES ARE BASE64 ENCODED
   # minio:
