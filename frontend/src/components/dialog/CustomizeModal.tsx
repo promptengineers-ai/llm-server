@@ -8,20 +8,14 @@ import {
     Disclosure,
     DisclosureButton,
     DisclosurePanel,
-} from "@headlessui/react";
-import {
-    Description,
-    Field,
-    Fieldset,
-    Input,
-    Label,
-    Legend,
-    Select,
-    Textarea,
+    Tab,
+    TabGroup,
+    TabList,
+    TabPanel,
+    TabPanels,
 } from "@headlessui/react";
 import { ChatPayload } from "@/types/chat";
 import { FaChevronDown } from "react-icons/fa";
-import clsx from "clsx";
 import RetrievalForm from "../forms/RetrievalForm";
 
 const CustomizeModal = () => {
@@ -52,11 +46,6 @@ const CustomizeModal = () => {
         <div
             className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-2 cursor-pointer"
             style={{ zIndex: 1000 }}
-            // onClick={() => {
-            //     setIsOpen(false);
-            //     setIsDrawerOpen(true);
-            //     setIsPopoverOpen(false);
-            // }}
         >
             <Dialog open={true} onClose={() => {}} className="relative z-50">
                 <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
@@ -75,41 +64,47 @@ const CustomizeModal = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex-grow overflow-y-auto p-4 sm:p-6">
+                        <div className="flex-grow overflow-y-auto p-4">
                             <div className="max-h-[60vh] overflow-y-auto md:max-h-[calc(100vh-300px)]">
-                                <DialogTitle className="font-bold">
-                                    Custom Instructions
-                                </DialogTitle>
-                                <p className="mt-1 mb-2 text-sm">
-                                    What would you like ChatGPT to know about
-                                    you to provide better responses?
-                                </p>
-                                <textarea
-                                    className="w-full resize-y rounded-sm p-2 placeholder:text-gray-300 border text-sm"
-                                    rows={6}
-                                    value={textareaValue}
-                                    onChange={(e) =>
-                                        setTextareaValue(e.target.value)
-                                    }
-                                />
-                                <Disclosure as="div" className="py-3">
-                                    <DisclosureButton className="group flex w-full items-center justify-between">
-                                        <DialogTitle className="font-bold">
+                                <TabGroup>
+                                    <TabList className="flex gap-2">
+                                        <Tab className="rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
+                                            Instructions
+                                        </Tab>
+                                        <Tab className="rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
                                             Retrieval
-                                        </DialogTitle>
-                                        <FaChevronDown
-                                            size={"10px"}
-                                            className="size-5 group-data-[open]:rotate-180"
-                                        />
-                                    </DisclosureButton>
-                                    <DisclosurePanel
-                                        className={
-                                            "mt-3"
-                                        }
-                                    >
-                                        <RetrievalForm />
-                                    </DisclosurePanel>
-                                </Disclosure>
+                                        </Tab>
+                                        <Tab
+                                            disabled
+                                            className="disabled:opacity-50 rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white"
+                                        >
+                                            Tools
+                                        </Tab>
+                                    </TabList>
+                                    <TabPanels className={"mt-3"}>
+                                        <TabPanel>
+                                            <p className="mt-1 mb-2 text-sm">
+                                                What would you like ChatGPT to
+                                                know about you to provide better
+                                                responses?
+                                            </p>
+                                            <textarea
+                                                className="w-full resize-y rounded-sm p-2 placeholder:text-gray-300 border text-sm"
+                                                rows={6}
+                                                value={textareaValue}
+                                                onChange={(e) =>
+                                                    setTextareaValue(
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                        </TabPanel>
+                                        <TabPanel>
+                                            <RetrievalForm />
+                                        </TabPanel>
+                                        {/* <TabPanel>Content 3</TabPanel> */}
+                                    </TabPanels>
+                                </TabGroup>
                             </div>
                             <div className="mt-4 md:mt-5 flex gap-4">
                                 <button
