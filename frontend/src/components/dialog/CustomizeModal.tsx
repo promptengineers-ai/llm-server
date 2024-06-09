@@ -49,7 +49,7 @@ const CustomizeModal = () => {
         >
             <Dialog open={true} onClose={() => {}} className="relative z-50">
                 <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-                    <DialogPanel className="max-w-lg border bg-white rounded-2xl">
+                    <DialogPanel className="max-w-lg border bg-white rounded-2xl w-full">
                         <div className="px-4 pb-4 pt-5 sm:p-6 flex items-center justify-between border-b border-black/10 dark:border-white/10">
                             <div className="flex">
                                 <div className="flex items-center">
