@@ -1,28 +1,22 @@
 import { useState, useEffect } from "react";
 import { useAppContext } from "@/contexts/AppContext";
 import { useChatContext } from "@/contexts/ChatContext";
-import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import {
+    Dialog,
+    DialogPanel,
+    Tab,
+    TabGroup,
+    TabList,
+    TabPanel,
+    TabPanels,
+} from "@headlessui/react";
 import { ChatPayload } from "@/types/chat";
+import RetrievalForm from "../forms/RetrievalForm";
 
 const CustomizeModal = () => {
     const { isOpen, setIsOpen, setIsPopoverOpen, setIsDrawerOpen } =
         useAppContext();
-    const { chatPayload, setChatPayload } = useChatContext();
-
-    const [textareaValue, setTextareaValue] = useState(chatPayload.system);
-    const [isSaveEnabled, setIsSaveEnabled] = useState(false);
-
-    useEffect(() => {
-        if (textareaValue !== chatPayload.system) {
-            setIsSaveEnabled(true);
-        } else {
-            setIsSaveEnabled(false);
-        }
-    }, [textareaValue, chatPayload.system]);
-
-    useEffect(() => {
-        setTextareaValue(chatPayload.system);
-    }, [isOpen]);
+    const { chatPayload, setChatPayload, initChatPayload, setInitChatPayload, isSaveEnabled } = useChatContext();
 
     if (!isOpen) {
         return null;
@@ -32,15 +26,10 @@ const CustomizeModal = () => {
         <div
             className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-2 cursor-pointer"
             style={{ zIndex: 1000 }}
-            onClick={() => {
-                setIsOpen(false);
-                setIsDrawerOpen(true);
-                setIsPopoverOpen(false);
-            }}
         >
             <Dialog open={true} onClose={() => {}} className="relative z-50">
                 <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-                    <DialogPanel className="max-w-lg border bg-white rounded-2xl">
+                    <DialogPanel className="max-w-lg border bg-white rounded-2xl w-full">
                         <div className="px-4 pb-4 pt-5 sm:p-6 flex items-center justify-between border-b border-black/10 dark:border-white/10">
                             <div className="flex">
                                 <div className="flex items-center">
@@ -49,35 +38,59 @@ const CustomizeModal = () => {
                                             id="radix-:re0:"
                                             className="text-lg font-semibold leading-6 text-token-text-primary"
                                         >
-                                            Customize ChatGPT
+                                            Customize
                                         </h2>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="flex-grow overflow-y-auto p-4 sm:p-6">
+                        <div className="flex-grow overflow-y-auto p-4">
                             <div className="max-h-[60vh] overflow-y-auto md:max-h-[calc(100vh-300px)]">
-                                <DialogTitle className="font-bold">
-                                    Custom Instructions
-                                </DialogTitle>
-                                <p className="mt-1 mb-2">
-                                    What would you like ChatGPT to know about
-                                    you to provide better responses?
-                                </p>
-                                <textarea
-                                    className="w-full resize-y rounded p-2 placeholder:text-gray-300"
-                                    rows={6}
-                                    style={{ border: "2px solid #94a3b8" }}
-                                    value={textareaValue}
-                                    onChange={(e) =>
-                                        setTextareaValue(e.target.value)
-                                    }
-                                />
+                                <TabGroup>
+                                    <TabList className="flex gap-2">
+                                        <Tab className="rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
+                                            Instructions
+                                        </Tab>
+                                        <Tab className="rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
+                                            Retrieval
+                                        </Tab>
+                                        <Tab
+                                            disabled
+                                            className="disabled:opacity-50 rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white"
+                                        >
+                                            Tools
+                                        </Tab>
+                                    </TabList>
+                                    <TabPanels className={"mt-3"}>
+                                        <TabPanel>
+                                            <p className="mt-1 mb-2 text-sm">
+                                                What would you like ChatGPT to
+                                                know about you to provide better
+                                                responses?
+                                            </p>
+                                            <textarea
+                                                className="w-full resize-y rounded-sm p-2 placeholder:text-gray-300 border text-sm"
+                                                rows={6}
+                                                value={initChatPayload.system}
+                                                onChange={(e) =>
+                                                    setInitChatPayload((prev: ChatPayload) => ({
+                                                        ...prev,
+                                                        system: e.target.value,
+                                                    }))
+                                                }
+                                            />
+                                        </TabPanel>
+                                        <TabPanel>
+                                            <RetrievalForm />
+                                        </TabPanel>
+                                        {/* <TabPanel>Content 3</TabPanel> */}
+                                    </TabPanels>
+                                </TabGroup>
                             </div>
                             <div className="mt-4 md:mt-5 flex gap-4">
                                 <button
                                     onClick={() => {
-                                        let confirmCancel = false
+                                        let confirmCancel = false;
                                         if (isSaveEnabled) {
                                             confirmCancel = confirm(
                                                 "Are you sure you want to exit? Any changes you made will be permanently lost."
@@ -89,7 +102,12 @@ const CustomizeModal = () => {
                                         if (confirmCancel) {
                                             setIsOpen(false);
                                             setIsDrawerOpen(true);
-                                            setTextareaValue(chatPayload.system);
+                                            setInitChatPayload(
+                                                (prev: ChatPayload) => ({
+                                                    ...prev,
+                                                    system: chatPayload.system,
+                                                })
+                                            );
                                         }
                                     }}
                                 >
@@ -99,7 +117,7 @@ const CustomizeModal = () => {
                                     onClick={() => {
                                         setChatPayload((prev: ChatPayload) => ({
                                             ...prev,
-                                            system: textareaValue,
+                                            ...initChatPayload,
                                         }));
                                         setIsOpen(false);
                                         setIsPopoverOpen(false);

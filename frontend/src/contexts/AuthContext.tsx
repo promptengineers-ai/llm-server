@@ -11,7 +11,6 @@ import { jwtDecode } from "jwt-decode";
 import { IContextProvider } from "../interfaces/provider";
 import { useRouter } from "next/navigation";
 import { API_URL } from "@/config/app";
-import { log } from "@/utils/log";
 
 export const AuthContext = createContext({});
 
