@@ -4,7 +4,7 @@ from typing import Any
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.embeddings import OllamaEmbeddings
 
-from src.config.llm import ACCEPTED_EMBEDDING_MODELS, ACCEPTED_OLLAMA_MODELS
+from src.config.llm import ACCEPTED_EMBEDDING_MODELS, ACCEPTED_OLLAMA_MODELS, filter_models
 
 class EmbeddingFactory:
     def __init__(self, llm: str = "text-embedding-3-small", token: str = None, base_url: str = None):
@@ -42,9 +42,13 @@ class EmbeddingFactory:
         :return: An instance of OpenAIEmbeddings or OllamaEmbeddings.
         :raises ValueError: If the language model is not supported.
         """
+        embedding = filter_models(llm)
+        embedding_name = embedding[0].get('litellm_params').get('model').split('/')[-1]
         if llm in ACCEPTED_OLLAMA_MODELS:
-            return OllamaEmbeddings(model=llm, base_url=base_url or 'http://127.0.0.1:11434')
+            base_url = embedding[0].get('litellm_params').get('api_base')
+            return OllamaEmbeddings(model=embedding_name, base_url=base_url)
         else:
+            token = embedding[0].get('litellm_params').get('api_key')
             return OpenAIEmbeddings(model=llm, 
                                     openai_api_key=token, 
                                     disallowed_special=())

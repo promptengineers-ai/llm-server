@@ -99,7 +99,7 @@ class RetrievalTool(BaseModel):
     
 class RetrievalParams(BaseModel):
     provider: SearchProvider = SearchProvider.PINECONE
-    embedding: Embedding.TEXT_EMBED_3_SMALL
+    embedding: Embedding = Embedding.TEXT_EMBED_3_SMALL
     index_name: str
     search_type: SearchType
     search_kwargs: SearchKwargs

@@ -45,22 +45,22 @@ const CustomizeModal = () => {
                             </div>
                         </div>
                         <div className="flex-grow overflow-y-auto p-4">
-                            <div className="max-h-[60vh] overflow-y-auto md:max-h-[calc(100vh-300px)]">
-                                <TabGroup>
-                                    <TabList className="flex gap-2">
-                                        <Tab className="rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
-                                            Instructions
-                                        </Tab>
-                                        <Tab className="rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
-                                            Retrieval
-                                        </Tab>
-                                        <Tab
-                                            disabled
-                                            className="disabled:opacity-50 rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white"
-                                        >
-                                            Tools
-                                        </Tab>
-                                    </TabList>
+                            <TabGroup>
+                                <TabList className="flex gap-2">
+                                    <Tab className="rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
+                                        Instructions
+                                    </Tab>
+                                    <Tab className="rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
+                                        Retrieval
+                                    </Tab>
+                                    <Tab
+                                        disabled
+                                        className="disabled:opacity-50 rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white"
+                                    >
+                                        Tools
+                                    </Tab>
+                                </TabList>
+                                <div className="max-h-[60vh] overflow-y-auto md:max-h-[calc(100vh-300px)]">
                                     <TabPanels className={"mt-3"}>
                                         <TabPanel>
                                             <p className="mt-1 mb-2 text-sm">
@@ -73,10 +73,15 @@ const CustomizeModal = () => {
                                                 rows={6}
                                                 value={initChatPayload.system}
                                                 onChange={(e) =>
-                                                    setInitChatPayload((prev: ChatPayload) => ({
-                                                        ...prev,
-                                                        system: e.target.value,
-                                                    }))
+                                                    setInitChatPayload(
+                                                        (
+                                                            prev: ChatPayload
+                                                        ) => ({
+                                                            ...prev,
+                                                            system: e.target
+                                                                .value,
+                                                        })
+                                                    )
                                                 }
                                             />
                                         </TabPanel>
@@ -85,8 +90,9 @@ const CustomizeModal = () => {
                                         </TabPanel>
                                         {/* <TabPanel>Content 3</TabPanel> */}
                                     </TabPanels>
-                                </TabGroup>
-                            </div>
+                                </div>
+                            </TabGroup>
+
                             <div className="mt-4 md:mt-5 flex gap-4">
                                 <button
                                     onClick={() => {

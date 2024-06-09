@@ -12,7 +12,7 @@ done
 ollama pull llama3
 
 ## Embeddings
-ollama pull mxbai-embed-large
+ollama pull nomic-embed-text
 
 # Keep the container running
 touch /var/log/ollama.log
