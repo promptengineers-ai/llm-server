@@ -1,14 +1,13 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ModelType, modelLabels, onPremModels, multiModalModels, embeddingModels } from "@/types/llm";
+import { ModelType, modelLabels, multiModalModels } from "@/types/llm";
 import { useChatContext } from "@/contexts/ChatContext";
-import { ON_PREM } from "@/config/app";
 import { IoMdImages } from "react-icons/io";
-import { filterModels } from "@/utils/chat";
+import { LLM } from "@/types/chat";
 
 const ModelSelect: React.FC = () => {
-    const { setChatPayload, chatPayload } = useChatContext();
+    const { setChatPayload, chatPayload, models } = useChatContext();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
@@ -57,8 +56,6 @@ const ModelSelect: React.FC = () => {
         };
     }, [menuRef]);
 
-    const models = filterModels(ON_PREM ? onPremModels : modelLabels, embeddingModels, false);
-
     return (
         <div ref={menuRef} className="relative inline-block text-left">
             <div
@@ -68,9 +65,7 @@ const ModelSelect: React.FC = () => {
                 className="group flex cursor-pointer items-center justify-between rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75"
             >
                 <span className="flex items-center justify-start space-x-2">
-                    <span>
-                        {modelLabels[chatPayload.model as ModelType]}
-                    </span>
+                    <span>{modelLabels[chatPayload.model as ModelType]}</span>
                     {multiModalModels[
                         chatPayload.model as keyof typeof multiModalModels
                     ] && <IoMdImages fontSize="20px" />}
@@ -103,25 +98,27 @@ const ModelSelect: React.FC = () => {
                     tabIndex={-1}
                 >
                     <div className="py-1" role="none">
-                        {Object.entries(models).map(([key, label]) => (
+                        {models.filter((model: LLM) => !model.embedding).map((model: LLM) => (
                             <a
-                                key={key}
+                                key={model.model_name}
                                 href="#"
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    setQueryParam(key as ModelType);
+                                    setQueryParam(
+                                        model.model_name as ModelType
+                                    );
                                 }}
                                 className={`flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ${
-                                    chatPayload.model === key
+                                    chatPayload.model === model.model_name
                                         ? "bg-gray-200"
                                         : ""
                                 }`}
                                 role="menuitem"
                                 tabIndex={-1}
                             >
-                                <span className="mr-2">{label}</span>
+                                <span className="mr-2">{modelLabels[model.model_name as ModelType]}</span>
                                 {multiModalModels[
-                                    key as keyof typeof multiModalModels
+                                    model.model_name as keyof typeof multiModalModels
                                 ] && <IoMdImages fontSize={"20px"} />}
                             </a>
                         ))}

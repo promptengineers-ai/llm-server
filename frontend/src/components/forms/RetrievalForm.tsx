@@ -1,8 +1,6 @@
 import { ON_PREM } from "@/config/app";
 import { useChatContext } from "@/contexts/ChatContext";
-import { ChatPayload } from "@/types/chat";
-import { embeddingModels, onPremModels } from "@/types/llm";
-import { filterModels } from "@/utils/chat";
+import { ChatPayload, LLM } from "@/types/chat";
 import {
     Field,
     Fieldset,
@@ -10,17 +8,12 @@ import {
     Disclosure,
     DisclosureButton,
     DisclosurePanel,
-    DialogTitle,
 } from "@headlessui/react";
 import { FaChevronDown } from "react-icons/fa";
 
 const RetrievalForm = () => {
-    const {initChatPayload, setInitChatPayload} = useChatContext();
-    const models = (
-         ON_PREM
-        ? filterModels(embeddingModels, onPremModels)
-        : embeddingModels
-    );
+    const {initChatPayload, setInitChatPayload, models} = useChatContext();
+
     return (
         <>
             <Fieldset>
@@ -71,9 +64,12 @@ const RetrievalForm = () => {
                         }
                         value={initChatPayload.retrieval.embedding}
                     >
-                        {Object.entries(models).map(([key, value]) => (
-                            <option key={key} value={key}>
-                                {value}
+                        {models.filter((model: LLM) => model.embedding).map((embedding: LLM) => (
+                            <option
+                                key={embedding.model_name}
+                                value={embedding.model_name}
+                            >
+                                {embedding.model_name}
                             </option>
                         ))}
                     </Select>

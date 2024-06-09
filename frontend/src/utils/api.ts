@@ -64,11 +64,11 @@ export class ChatClient extends Client {
         }
     }
 
-    public async upsert(payload: { 
-        documents: any[]; 
-        index_name: string,
-        provider: SearchProvider, 
-        embedding: EmbeddingModel
+    public async upsert(payload: {
+        documents: any[];
+        index_name: string;
+        provider: SearchProvider;
+        embedding: EmbeddingModel;
     }) {
         try {
             const response = await fetch(
@@ -90,6 +90,24 @@ export class ChatClient extends Client {
                     }),
                 }
             );
+
+            const data = await response.json();
+            return data; // This will return the response data from the server
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error: " + error);
+        }
+    }
+
+    public async listModels(type?: "embedding" | "multimodal") {
+        try {
+            // Construct the URL with conditional query parameter
+            let url = `${this.apiUrl}/models`;
+            if (type !== undefined) {
+                url += `?type=${encodeURIComponent(type)}`;
+            }
+
+            const response = await fetch(url, {method: "GET"});
 
             const data = await response.json();
             return data; // This will return the response data from the server

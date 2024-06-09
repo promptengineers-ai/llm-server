@@ -19,3 +19,9 @@ export type ChatPayload = {
         };
     };
 };
+
+export type LLM = {
+    model_name: string;
+    multimodal: boolean;
+    embedding: boolean;
+};
