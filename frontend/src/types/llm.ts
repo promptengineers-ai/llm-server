@@ -47,7 +47,7 @@ export const modelLabels: { [key in ModelType]: string } = {
     [ModelType.GROQ_MIXTRAL]: "Groq - Mixtral",
     [ModelType.GROQ_GEMMA_7B_IT]: "Groq - Gemma 7b IT",
     [ModelType.GROQ_LLAMA_3_70B]: "Groq - LLaMA 3",
-    [ModelType.ANTHROPIC_HAIKU]: "Anthropic - Claude 3 Haiku",
+    [ModelType.ANTHROPIC_HAIKU]: "Anthropic - Haiku",
     [ModelType.ANTHROPIC_OPUS]: "Anthropic - Opus",
     [ModelType.ANTHROPIC_SONNET]: "Anthropic - Sonnet",
 };
