@@ -51,6 +51,7 @@ const RetrievalForm = () => {
                         name="provider"
                         aria-label="Provider"
                         className="p-1 border rounded-md w-full mt-1"
+                        value={chatPayload.retrieval.search_type}
                         onChange={(e) =>
                             setChatPayload((prev: ChatPayload) => ({
                                 ...prev,
@@ -60,7 +61,6 @@ const RetrievalForm = () => {
                                 },
                             }))
                         }
-                        value={chatPayload.retrieval.search_type}
                     >
                         <option value="similarity">Similarity</option>
                         <option value="mmr">MMR</option>
@@ -75,10 +75,24 @@ const RetrievalForm = () => {
                         Number of documents to retrieve for context.
                     </p>
                     <input
-                        type="text"
-                        name="docs"
+                        type="number"
+                        name="k"
+                        min="1"
+                        max="100"
                         className="p-1 border rounded-md w-full mt-1"
                         value={chatPayload.retrieval.search_kwargs.k}
+                        onChange={(e) =>
+                            setChatPayload((prev: ChatPayload) => ({
+                                ...prev,
+                                retrieval: {
+                                    ...prev.retrieval,
+                                    search_kwargs: {
+                                        ...prev.retrieval.search_kwargs,
+                                        k: e.target.value,
+                                    },
+                                },
+                            }))
+                        }
                     />
                 </Field>
             </Fieldset>
@@ -91,8 +105,10 @@ const RetrievalForm = () => {
                         Nearest neighbor documents to retrieve.
                     </p>
                     <input
-                        type="text"
-                        name="docs"
+                        type="number"
+                        name="fetch_k"
+                        min={1}
+                        max={100}
                         className="p-1 border rounded-md w-full mt-1"
                         placeholder="Enter a number"
                         value={chatPayload.retrieval.search_kwargs.fetch_k}
