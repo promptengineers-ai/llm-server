@@ -1,30 +1,30 @@
 version: '3'
 
 services:
-  # API
-  api:
-    container_name: api
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend/data:/app/data  # Mount for SQLite database to host directory
-    ports:
-      - 8000:8000
-    env_file:
-      - ./backend/.env
+  # # API
+  # api:
+  #   container_name: api
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./backend/data:/app/data  # Mount for SQLite database to host directory
+  #   ports:
+  #     - 8000:8000
+  #   env_file:
+  #     - ./backend/.env
 
-  # Proxy (Nginx)
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    volumes:
-      - ./docker/nginx:/etc/nginx/conf.d
-    ports:
-      - 80:80
-      - 443:443
-    depends_on:
-      - api
+  # # Proxy (Nginx)
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: nginx
+  #   volumes:
+  #     - ./docker/nginx:/etc/nginx/conf.d
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   depends_on:
+  #     - api
 
   # Redis (Cache / Broker / Vector Index / Stream)
   redis:
