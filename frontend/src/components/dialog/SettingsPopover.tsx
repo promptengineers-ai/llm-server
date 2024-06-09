@@ -52,7 +52,7 @@ const SettingsPopover = () => {
                     My plan
                 </a>
                 <a
-                    href="/gpts/mine"
+                    // href="/gpts/mine"
                     className="hover:bg-gray-200 flex gap-2 rounded p-2.5 text-sm cursor-pointer focus:ring-0 radix-disabled:pointer-events-none radix-disabled:opacity-50 group items-center hover:bg-token-sidebar-surface-secondary"
                     id="headlessui-menu-item-:rmi:"
                     role="menuitem"
