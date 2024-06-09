@@ -16,22 +16,7 @@ import RetrievalForm from "../forms/RetrievalForm";
 const CustomizeModal = () => {
     const { isOpen, setIsOpen, setIsPopoverOpen, setIsDrawerOpen } =
         useAppContext();
-    const { chatPayload, setChatPayload } = useChatContext();
-
-    const [textareaValue, setTextareaValue] = useState(chatPayload.system);
-    const [isSaveEnabled, setIsSaveEnabled] = useState(false);
-
-    useEffect(() => {
-        if (textareaValue !== chatPayload.system) {
-            setIsSaveEnabled(true);
-        } else {
-            setIsSaveEnabled(false);
-        }
-    }, [textareaValue, chatPayload.system]);
-
-    useEffect(() => {
-        setTextareaValue(chatPayload.system);
-    }, [isOpen]);
+    const { chatPayload, setChatPayload, initChatPayload, setInitChatPayload, isSaveEnabled } = useChatContext();
 
     if (!isOpen) {
         return null;
@@ -86,11 +71,12 @@ const CustomizeModal = () => {
                                             <textarea
                                                 className="w-full resize-y rounded-sm p-2 placeholder:text-gray-300 border text-sm"
                                                 rows={6}
-                                                value={textareaValue}
+                                                value={initChatPayload.system}
                                                 onChange={(e) =>
-                                                    setTextareaValue(
-                                                        e.target.value
-                                                    )
+                                                    setInitChatPayload((prev: ChatPayload) => ({
+                                                        ...prev,
+                                                        system: e.target.value,
+                                                    }))
                                                 }
                                             />
                                         </TabPanel>
@@ -116,8 +102,11 @@ const CustomizeModal = () => {
                                         if (confirmCancel) {
                                             setIsOpen(false);
                                             setIsDrawerOpen(true);
-                                            setTextareaValue(
-                                                chatPayload.system
+                                            setInitChatPayload(
+                                                (prev: ChatPayload) => ({
+                                                    ...prev,
+                                                    system: chatPayload.system,
+                                                })
                                             );
                                         }
                                     }}
@@ -128,7 +117,7 @@ const CustomizeModal = () => {
                                     onClick={() => {
                                         setChatPayload((prev: ChatPayload) => ({
                                             ...prev,
-                                            system: textareaValue,
+                                            ...initChatPayload,
                                         }));
                                         setIsOpen(false);
                                         setIsPopoverOpen(false);

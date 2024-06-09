@@ -7,7 +7,7 @@ import {
 } from "@headlessui/react";
 
 const RetrievalForm = () => {
-    const {chatPayload, setChatPayload} = useChatContext();
+    const {initChatPayload, setInitChatPayload} = useChatContext();
     return (
         <>
             <Fieldset>
@@ -21,7 +21,7 @@ const RetrievalForm = () => {
                         aria-label="Provider"
                         className="p-1 border rounded-md w-full mt-1"
                         onChange={(e) =>
-                            setChatPayload((prev: ChatPayload) => ({
+                            setInitChatPayload((prev: ChatPayload) => ({
                                 ...prev,
                                 retrieval: {
                                     ...prev.retrieval,
@@ -29,7 +29,7 @@ const RetrievalForm = () => {
                                 },
                             }))
                         }
-                        value={chatPayload.retrieval.provider}
+                        value={initChatPayload.retrieval.provider}
                     >
                         <option value="redis">Redis</option>
                         <option value="pinecone">Pinecone</option>
@@ -49,9 +49,9 @@ const RetrievalForm = () => {
                         name="provider"
                         aria-label="Provider"
                         className="p-1 border rounded-md w-full mt-1"
-                        value={chatPayload.retrieval.search_type}
+                        value={initChatPayload.retrieval.search_type}
                         onChange={(e) =>
-                            setChatPayload((prev: ChatPayload) => ({
+                            setInitChatPayload((prev: ChatPayload) => ({
                                 ...prev,
                                 retrieval: {
                                     ...prev.retrieval,
@@ -62,8 +62,8 @@ const RetrievalForm = () => {
                     >
                         <option value="similarity">Similarity</option>
                         <option value="mmr">MMR</option>
-                        <option value="mongo" disabled className="bg-gray-200">
-                            Similarity Score Threshold
+                        <option value="similarity_score_threshold">
+                            Similarity Threshold
                         </option>
                     </Select>
                 </Field>
@@ -78,9 +78,9 @@ const RetrievalForm = () => {
                         min="1"
                         max="100"
                         className="p-1 border rounded-md w-full mt-1"
-                        value={chatPayload.retrieval.search_kwargs.k}
+                        value={initChatPayload.retrieval.search_kwargs.k}
                         onChange={(e) =>
-                            setChatPayload((prev: ChatPayload) => ({
+                            setInitChatPayload((prev: ChatPayload) => ({
                                 ...prev,
                                 retrieval: {
                                     ...prev.retrieval,
@@ -109,9 +109,9 @@ const RetrievalForm = () => {
                         max={100}
                         className="p-1 border rounded-md w-full mt-1"
                         placeholder="Enter a number"
-                        value={chatPayload.retrieval.search_kwargs.fetch_k}
+                        value={initChatPayload.retrieval.search_kwargs.fetch_k}
                         onChange={(e) =>
-                            setChatPayload((prev: ChatPayload) => ({
+                            setInitChatPayload((prev: ChatPayload) => ({
                                 ...prev,
                                 retrieval: {
                                     ...prev.retrieval,
@@ -137,10 +137,11 @@ const RetrievalForm = () => {
                         className="p-1 border rounded-md w-full mt-1"
                         placeholder="0.5"
                         value={
-                            chatPayload.retrieval.search_kwargs.score_threshold
+                            initChatPayload.retrieval.search_kwargs
+                                .score_threshold
                         }
                         onChange={(e) =>
-                            setChatPayload((prev: ChatPayload) => ({
+                            setInitChatPayload((prev: ChatPayload) => ({
                                 ...prev,
                                 retrieval: {
                                     ...prev.retrieval,

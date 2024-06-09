@@ -41,6 +41,7 @@ import DocumentSection from "@/components/sections/DocumentSection";
 import CollapseIcon from "@/components/icons/CollapseIcon";
 import ExpandIcon from "@/components/icons/ExpandIcon";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import equal from "fast-deep-equal/react";
 
 const defaultChatContextValue: ChatContextType = {
     chatboxRef: { current: null },
@@ -85,6 +86,12 @@ export default function ChatProvider({ children }: IContextProvider) {
             },
         },
     });
+    const [initChatPayload, setInitChatPayload] = useState({
+        system: chatPayload.system,
+        retrieval: chatPayload.retrieval,
+        tools: chatPayload.tools,
+    });
+    const [isSaveEnabled, setIsSaveEnabled] = useState(false);
     const [chats, setChats] = useState<any[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
     const [images, setImages] = useState<any[]>([]);
@@ -784,6 +791,14 @@ export default function ChatProvider({ children }: IContextProvider) {
         }
     }, [messages]);
 
+    useEffect(() => {
+        if (!equal(initChatPayload, {system: chatPayload.system, retrieval: chatPayload.retrieval, tools: chatPayload.tools})) {
+            setIsSaveEnabled(true);
+        } else {
+            setIsSaveEnabled(false);
+        }
+    }, [initChatPayload, chatPayload]);
+
     return (
         <ChatContext.Provider
             value={useMemo(() => {
@@ -803,6 +818,8 @@ export default function ChatProvider({ children }: IContextProvider) {
                     selectedDocument,
                     csvContent,
                     expand,
+                    initChatPayload,
+                    isSaveEnabled,
                     setCsvContent,
                     setFiles,
                     resetChat,
@@ -825,6 +842,8 @@ export default function ChatProvider({ children }: IContextProvider) {
                     setSelectedDocument,
                     messagesContainsSources,
                     setExpand,
+                    setInitChatPayload,
+                    setIsSaveEnabled,
                 };
             }, [
                 chats,
@@ -842,6 +861,8 @@ export default function ChatProvider({ children }: IContextProvider) {
                 files,
                 selectedDocument,
                 csvContent,
+                initChatPayload,
+                isSaveEnabled,
                 setCsvContent,
                 resetChat,
                 setDone,
@@ -859,6 +880,8 @@ export default function ChatProvider({ children }: IContextProvider) {
                 setSelectedDocument,
                 messagesContainsSources,
                 setExpand,
+                setInitChatPayload,
+                setIsSaveEnabled,
             ])}
         >
             {children}
