@@ -49,7 +49,7 @@ class EmbeddingFactory:
             return OllamaEmbeddings(model=embedding_name, base_url=base_url)
         else:
             token = embedding[0].get('litellm_params').get('api_key')
-            return OpenAIEmbeddings(model=llm, 
+            return OpenAIEmbeddings(model=embedding_name, 
                                     openai_api_key=token, 
                                     disallowed_special=())
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useAppContext } from "@/contexts/AppContext";
 import { useChatContext } from "@/contexts/ChatContext";
 import {
@@ -22,12 +22,31 @@ const CustomizeModal = () => {
         initChatPayload,
         setInitChatPayload,
         isSaveEnabled,
-        fetchModels,
     } = useChatContext();
 
     if (!isOpen) {
         return null;
     }
+
+    function resetOnCancel() {
+        sessionStorage.removeItem("system");
+        sessionStorage.removeItem("provider");
+        sessionStorage.removeItem("embedding");
+        sessionStorage.removeItem("search_type");
+        sessionStorage.removeItem("k");
+        sessionStorage.removeItem("fetch_k");
+        sessionStorage.removeItem("score_threshold");
+    }
+
+    useEffect(() => {
+        const system = sessionStorage.getItem("system");
+        if (system) {
+            setInitChatPayload((prev: ChatPayload) => ({
+                ...prev,
+                system,
+            }));
+        }
+    }, []);
 
     return (
         <div
@@ -79,7 +98,7 @@ const CustomizeModal = () => {
                                                 className="w-full resize-y rounded-sm p-2 placeholder:text-gray-300 border text-sm"
                                                 rows={6}
                                                 value={initChatPayload.system}
-                                                onChange={(e) =>
+                                                onChange={(e) => {
                                                     setInitChatPayload(
                                                         (
                                                             prev: ChatPayload
@@ -88,8 +107,9 @@ const CustomizeModal = () => {
                                                             system: e.target
                                                                 .value,
                                                         })
-                                                    )
-                                                }
+                                                    );
+                                                    sessionStorage.setItem('system', e.target.value)
+                                                }}
                                             />
                                         </TabPanel>
                                         <TabPanel>
@@ -121,6 +141,7 @@ const CustomizeModal = () => {
                                                     system: chatPayload.system,
                                                 })
                                             );
+                                            resetOnCancel();
                                         }
                                     }}
                                 >

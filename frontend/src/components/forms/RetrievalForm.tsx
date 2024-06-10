@@ -9,10 +9,90 @@ import {
     DisclosureButton,
     DisclosurePanel,
 } from "@headlessui/react";
+import { useEffect } from "react";
 import { FaChevronDown } from "react-icons/fa";
 
 const RetrievalForm = () => {
     const {initChatPayload, setInitChatPayload, models} = useChatContext();
+
+
+    useEffect(() => {
+        const provider = sessionStorage.getItem('provider');
+        const embedding = sessionStorage.getItem('embedding');
+        const search_type = sessionStorage.getItem('search_type');
+        const k = sessionStorage.getItem('k');
+        const fetch_k = sessionStorage.getItem('fetch_k');
+        const score_threshold = sessionStorage.getItem('score_threshold');
+
+        if (provider) {
+            setInitChatPayload((prev: ChatPayload) => ({
+                ...prev,
+                retrieval: {
+                    ...prev.retrieval,
+                    provider,
+                },
+            }));
+        }
+
+        if (embedding) {
+            setInitChatPayload((prev: ChatPayload) => ({
+                ...prev,
+                retrieval: {
+                    ...prev.retrieval,
+                    embedding,
+                },
+            }));
+        }
+
+        if (search_type) {
+            setInitChatPayload((prev: ChatPayload) => ({
+                ...prev,
+                retrieval: {
+                    ...prev.retrieval,
+                    search_type,
+                },
+            }));
+        }
+
+        if (k) {
+            setInitChatPayload((prev: ChatPayload) => ({
+                ...prev,
+                retrieval: {
+                    ...prev.retrieval,
+                    search_kwargs: {
+                        ...prev.retrieval.search_kwargs,
+                        k,
+                    },
+                },
+            }));
+        }
+
+        if (fetch_k) {
+            setInitChatPayload((prev: ChatPayload) => ({
+                ...prev,
+                retrieval: {
+                    ...prev.retrieval,
+                    search_kwargs: {
+                        ...prev.retrieval.search_kwargs,
+                        fetch_k,
+                    },
+                },
+            }));
+        }
+
+        if (score_threshold) {
+            setInitChatPayload((prev: ChatPayload) => ({
+                ...prev,
+                retrieval: {
+                    ...prev.retrieval,
+                    search_kwargs: {
+                        ...prev.retrieval.search_kwargs,
+                        score_threshold,
+                    },
+                },
+            }));
+        }
+    }, [])
 
     return (
         <>
@@ -26,15 +106,16 @@ const RetrievalForm = () => {
                         name="provider"
                         aria-label="Provider"
                         className="p-1 border rounded-md w-full mt-1"
-                        onChange={(e) =>
+                        onChange={(e) => {
                             setInitChatPayload((prev: ChatPayload) => ({
                                 ...prev,
                                 retrieval: {
                                     ...prev.retrieval,
                                     provider: e.target.value,
                                 },
-                            }))
-                        }
+                            }));
+                            sessionStorage.setItem('provider', e.target.value);
+                        }}
                         value={initChatPayload.retrieval.provider}
                     >
                         <option value="redis">Redis</option>
@@ -53,15 +134,16 @@ const RetrievalForm = () => {
                         name="embedding"
                         aria-label="Embedding"
                         className="p-1 border rounded-md w-full mt-1"
-                        onChange={(e) =>
+                        onChange={(e) => {
                             setInitChatPayload((prev: ChatPayload) => ({
                                 ...prev,
                                 retrieval: {
                                     ...prev.retrieval,
                                     embedding: e.target.value,
                                 },
-                            }))
-                        }
+                            }));
+                            sessionStorage.setItem('embedding', e.target.value);
+                        }}
                         value={initChatPayload.retrieval.embedding}
                     >
                         {models.filter((model: LLM) => model.embedding).map((embedding: LLM) => (
@@ -96,15 +178,16 @@ const RetrievalForm = () => {
                                 aria-label="Provider"
                                 className="p-1 border rounded-md w-full mt-1"
                                 value={initChatPayload.retrieval.search_type}
-                                onChange={(e) =>
+                                onChange={(e) => {
                                     setInitChatPayload((prev: ChatPayload) => ({
                                         ...prev,
                                         retrieval: {
                                             ...prev.retrieval,
                                             search_type: e.target.value,
                                         },
-                                    }))
-                                }
+                                    }));
+                                    sessionStorage.setItem('search_type', e.target.value);
+                                }}
                             >
                                 <option value="similarity">Similarity</option>
                                 <option value="mmr">MMR</option>
@@ -125,9 +208,9 @@ const RetrievalForm = () => {
                                 max="100"
                                 className="p-1 border rounded-md w-full mt-1"
                                 value={
-                                    initChatPayload.retrieval.search_kwargs.k
+                                    initChatPayload.retrieval.search_kwargs.k || ''
                                 }
-                                onChange={(e) =>
+                                onChange={(e) => {
                                     setInitChatPayload((prev: ChatPayload) => ({
                                         ...prev,
                                         retrieval: {
@@ -137,8 +220,9 @@ const RetrievalForm = () => {
                                                 k: e.target.value,
                                             },
                                         },
-                                    }))
-                                }
+                                    }));
+                                    sessionStorage.setItem('k', e.target.value);
+                                }}
                             />
                         </Field>
                     </Fieldset>
@@ -159,9 +243,9 @@ const RetrievalForm = () => {
                                 placeholder="Enter a number"
                                 value={
                                     initChatPayload.retrieval.search_kwargs
-                                        .fetch_k
+                                        .fetch_k || ''
                                 }
-                                onChange={(e) =>
+                                onChange={(e) => {
                                     setInitChatPayload((prev: ChatPayload) => ({
                                         ...prev,
                                         retrieval: {
@@ -171,8 +255,9 @@ const RetrievalForm = () => {
                                                 fetch_k: e.target.value,
                                             },
                                         },
-                                    }))
-                                }
+                                    }));
+                                    sessionStorage.setItem('fetch_k', e.target.value);
+                                }}
                             />
                         </Field>
                         <Field className={"border px-2 rounded-md p-3"}>
@@ -189,9 +274,9 @@ const RetrievalForm = () => {
                                 placeholder="0.5"
                                 value={
                                     initChatPayload.retrieval.search_kwargs
-                                        .score_threshold
+                                        .score_threshold || ''
                                 }
-                                onChange={(e) =>
+                                onChange={(e) => {
                                     setInitChatPayload((prev: ChatPayload) => ({
                                         ...prev,
                                         retrieval: {
@@ -201,8 +286,9 @@ const RetrievalForm = () => {
                                                 score_threshold: e.target.value,
                                             },
                                         },
-                                    }))
-                                }
+                                    }));
+                                    sessionStorage.setItem('score_threshold', e.target.value);
+                                }}
                             />
                         </Field>
                     </Fieldset>
