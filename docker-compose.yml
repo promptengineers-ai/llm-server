@@ -4,9 +4,7 @@ services:
   # API
   api:
     container_name: api
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: promptengineers/llm-server:latest
     volumes:
       - ./backend/data:/app/data  # Mount for SQLite database to host directory
     ports:

@@ -33,3 +33,5 @@ Changelog.md
 .dockerignore
 lint.py
 vercel.json
+static
+__pycache__
