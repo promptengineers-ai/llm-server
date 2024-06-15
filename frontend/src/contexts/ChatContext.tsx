@@ -269,7 +269,7 @@ export default function ChatProvider({ children }: IContextProvider) {
         setMessages(newMessages);
 
         setTimeout(() => {
-            setMessages([...newMessages, messageAtIndex]);
+            // setMessages([...newMessages, messageAtIndex]);
             setUserInput(messageAtIndex.content);
             // submitQuestionStream();
         }, 500);
