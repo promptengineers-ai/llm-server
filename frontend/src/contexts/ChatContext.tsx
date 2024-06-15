@@ -87,12 +87,12 @@ export default function ChatProvider({ children }: IContextProvider) {
             embedding: (
                 ON_PREM 
                 ? EmbeddingModel.OLLAMA_NOMIC_EMBED_TEXT 
-                : EmbeddingModel.OPENAI_TEXT_EMBED_3_SMALL
+                : EmbeddingModel.OPENAI_TEXT_EMBED_3_LARGE
             ),
             index_name: "",
-            search_type: SearchType.SIMILARITY,
+            search_type: SearchType.MMR,
             search_kwargs: {
-                k: 10,
+                k: 20,
                 fetch_k: null,
                 score_threshold: null,
             },
@@ -648,93 +648,111 @@ export default function ChatProvider({ children }: IContextProvider) {
     };
 
     const submitQuestionStream = async () => {
-        setDone(false);
-        setLoading(true);
-        responseRef.current = "";
-        setResponse("");
-        submitCleanUp();
+        try {
+            setDone(false);
+            setLoading(true);
+            responseRef.current = "";
+            setResponse("");
+            submitCleanUp();
 
-        const config = {
-            model: chatPayload.model,
-            messages:
-                chatPayload.retrieval.index_name &&
-                !acceptRagSystemMessage.has(chatPayload.model)
-                    ? messages
-                    : combinePrompts(),
-            // messages: combinePrompts(),
-            tools: chatPayload.tools,
-            retrieval: chatPayload.retrieval,
-            temperature: chatPayload.temperature,
-            streaming: true,
-        };
+            const config = {
+                model: chatPayload.model,
+                messages:
+                    chatPayload.retrieval.index_name &&
+                    !acceptRagSystemMessage.has(chatPayload.model)
+                        ? messages
+                        : combinePrompts(),
+                tools: chatPayload.tools,
+                retrieval: chatPayload.retrieval,
+                temperature: chatPayload.temperature,
+                streaming: true,
+            };
 
-        const tempAssistantMessage = {
-            role: "assistant",
-            content: "",
-            model: chatPayload.model,
-        };
-        const updatedMessages = [...messages, tempAssistantMessage];
-        setMessages(updatedMessages);
-        const tempIndex = updatedMessages.length - 1;
+            
 
-        const source = new SSE(API_URL + "/api/v1/chat", {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`, // set this yourself
-            },
-            payload: JSON.stringify(config),
-        });
+            const source = new SSE(API_URL + "/api/v1/chat", {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`, // set this yourself
+                },
+                payload: JSON.stringify(config),
+            });
 
-        source.addEventListener("message", (e: any) => {
-            const jsonObjectsRegExp = /{[\s\S]+?}(?=data:|$)/g;
-            const jsonObjectsMatches = e.data.match(jsonObjectsRegExp);
-
-            if (jsonObjectsMatches) {
-                const objectsArray = jsonObjectsMatches.map((json: any) =>
-                    JSON.parse(json)
-                );
-
-                if (objectsArray) {
-                    if (
-                        objectsArray[0].type === "stream" ||
-                        objectsArray[0].type === "end"
-                    ) {
-                        responseRef.current += objectsArray[0].message;
-                        setLoading(false);
-                        setResponse(responseRef.current);
-                        if (objectsArray[0].type === "end") {
-                            // Replace the temporary message with the actual response
-                            const finalMessages = [...updatedMessages];
-                            finalMessages[tempIndex] = {
-                                role: "assistant",
-                                content: responseRef.current,
-                                model: chatPayload.model,
-                            };
-                            setMessages(finalMessages);
-
-                            updateMessages(
-                                chatPayload.system,
-                                finalMessages,
-                                chatPayload.retrieval,
-                                chatPayload.tools
-                            );
-                            setDone(true);
-                        }
-                    }
-
-                    if (objectsArray[0].type === "doc") {
-                        console.log(objectsArray[0].message);
-                    }
-                }
-            } else {
-                source.close();
+            source.addEventListener("error", (e: any) => {
+                console.error("Error received from server:", e);
+                alert(JSON.parse(e.data).detail);
                 setLoading(false);
                 setDone(true);
-            }
-        });
+                source.close();
+                return;
+            });
 
-        source.stream();
+            const tempAssistantMessage = {
+                role: "assistant",
+                content: "",
+                model: chatPayload.model,
+            };
+            const updatedMessages = [...messages, tempAssistantMessage];
+            setMessages(updatedMessages);
+            const tempIndex = updatedMessages.length - 1;
+
+            source.addEventListener("message", (e: any) => {
+                const jsonObjectsRegExp = /{[\s\S]+?}(?=data:|$)/g;
+                const jsonObjectsMatches = e.data.match(jsonObjectsRegExp);
+
+                if (jsonObjectsMatches) {
+                    const objectsArray = jsonObjectsMatches.map((json: any) =>
+                        JSON.parse(json)
+                    );
+
+                    if (objectsArray) {
+                        if (
+                            objectsArray[0].type === "stream" ||
+                            objectsArray[0].type === "end"
+                        ) {
+                            responseRef.current += objectsArray[0].message;
+                            setLoading(false);
+                            setResponse(responseRef.current);
+                            if (objectsArray[0].type === "end") {
+                                // Replace the temporary message with the actual response
+                                const finalMessages = [...updatedMessages];
+                                finalMessages[tempIndex] = {
+                                    role: "assistant",
+                                    content: responseRef.current,
+                                    model: chatPayload.model,
+                                };
+                                setMessages(finalMessages);
+
+                                updateMessages(
+                                    chatPayload.system,
+                                    finalMessages,
+                                    chatPayload.retrieval,
+                                    chatPayload.tools
+                                );
+                                setDone(true);
+                            }
+                        }
+
+                        if (objectsArray[0].type === "doc") {
+                            console.log(objectsArray[0].message);
+                        }
+                    }
+                } else {
+                    source.close();
+                    setLoading(false);
+                    setDone(true);
+                }
+            });
+
+            source.stream();
+        } catch (error) {
+            console.error("An unexpected error occurred:", error);
+            alert("An unexpected error occurred. Please try again later.");
+            setLoading(false);
+            setDone(true);
+        }
     };
+
 
     async function updateMessages(
         system: string,
