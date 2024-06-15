@@ -409,8 +409,9 @@ export default function ChatProvider({ children }: IContextProvider) {
                                         </div>
                                     </div>
                                     <div className="absolute bottom-1 right-2 flex gap-1">
-                                        {!isMobile() && !noContent && (
-                                            expand ? (
+                                        {!isMobile() &&
+                                            !noContent &&
+                                            (expand ? (
                                                 <div
                                                     onClick={() =>
                                                         setExpand(!expand)
@@ -426,8 +427,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                                                 >
                                                     <ExpandIcon size="18" />
                                                 </div>
-                                            )
-                                        )}
+                                            ))}
                                         {noContent ? (
                                             <FaRegEye
                                                 size="18"
@@ -467,122 +467,132 @@ export default function ChatProvider({ children }: IContextProvider) {
                                 />
                             </div>
                         )}
-                    <ReactMarkdown
-                        components={{
-                            h1: ({ node, ...props }) => (
-                                <h1
-                                    className="text-2xl font-bold my-4"
-                                    {...props}
-                                />
-                            ),
-                            h3: ({ node, ...props }) => (
-                                <h3
-                                    className="text-base font-bold my-2"
-                                    {...props}
-                                />
-                            ),
-                            p: ({ node, ...props }) => (
-                                <p
-                                    className={`py-1 text-gray-700 `}
-                                    {...props}
-                                />
-                            ),
-                            code: (props) => {
-                                const { children, className, node, ...rest } =
-                                    props;
-                                const match = /language-(\w+)/.exec(
-                                    className || ""
-                                );
-                                return match ? (
-                                    <div className="text-white dark bg-gray-950 rounded-md border-[0.5px] border-token-border-medium">
-                                        <div className="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md">
-                                            <span>
-                                                {match[0].replace(
-                                                    "language-",
-                                                    ""
-                                                )}
-                                            </span>
-                                            <div className="flex items-center">
-                                                <span
-                                                    className=""
-                                                    data-state="closed"
-                                                >
-                                                    <CopyCodeButton />
+                    {conversationItem.role === "assistant" ? (
+                        <ReactMarkdown
+                            components={{
+                                h1: ({ node, ...props }) => (
+                                    <h1
+                                        className="text-2xl font-bold my-4"
+                                        {...props}
+                                    />
+                                ),
+                                h3: ({ node, ...props }) => (
+                                    <h3
+                                        className="text-base font-bold my-2"
+                                        {...props}
+                                    />
+                                ),
+                                p: ({ node, ...props }) => (
+                                    <p
+                                        className={`py-1 text-gray-700 `}
+                                        {...props}
+                                    />
+                                ),
+                                code: (props) => {
+                                    const {
+                                        children,
+                                        className,
+                                        node,
+                                        ...rest
+                                    } = props;
+                                    const match = /language-(\w+)/.exec(
+                                        className || ""
+                                    );
+                                    return match ? (
+                                        <div className="text-white dark bg-gray-950 rounded-md border-[0.5px] border-token-border-medium">
+                                            <div className="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md">
+                                                <span>
+                                                    {match[0].replace(
+                                                        "language-",
+                                                        ""
+                                                    )}
                                                 </span>
+                                                <div className="flex items-center">
+                                                    <span
+                                                        className=""
+                                                        data-state="closed"
+                                                    >
+                                                        <CopyCodeButton />
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="overflow-y-auto text-left">
+                                                <code
+                                                    className="rounded px-1 py-0.5 font-bold"
+                                                    {...props}
+                                                />
                                             </div>
                                         </div>
-                                        <div className="overflow-y-auto text-left">
-                                            <code
-                                                className="rounded px-1 py-0.5 font-bold"
-                                                {...props}
-                                            />
-                                        </div>
+                                    ) : (
+                                        <code
+                                            className="rounded px-1 py-0.5 font-bold"
+                                            {...props}
+                                        />
+                                    );
+                                },
+                                ul: ({ node, ...props }) => (
+                                    <ul
+                                        className="list-disc pl-5 my-2"
+                                        {...props}
+                                    />
+                                ),
+                                li: ({ node, ...props }) => (
+                                    <li className="ml-2" {...props} />
+                                ),
+                                a: ({ node, ...props }) => (
+                                    <a
+                                        target="_blank"
+                                        className="text-blue-500 underline"
+                                        {...props}
+                                    />
+                                ),
+                                table: ({ node, ...props }) => (
+                                    <div className="overflow-x-auto">
+                                        <table
+                                            className="min-w-full bg-white border border-gray-300"
+                                            {...props}
+                                        />
                                     </div>
-                                ) : (
-                                    <code
-                                        className="rounded px-1 py-0.5 font-bold"
+                                ),
+                                thead: ({ node, ...props }) => (
+                                    <thead className="bg-gray-200" {...props} />
+                                ),
+                                tbody: ({ node, ...props }) => (
+                                    <tbody className="bg-white" {...props} />
+                                ),
+                                tr: ({ node, ...props }) => (
+                                    <tr
+                                        className="whitespace-nowrap border-b border-gray-200"
                                         {...props}
                                     />
-                                );
-                            },
-                            ul: ({ node, ...props }) => (
-                                <ul
-                                    className="list-disc pl-5 my-2"
-                                    {...props}
-                                />
-                            ),
-                            li: ({ node, ...props }) => (
-                                <li className="ml-2" {...props} />
-                            ),
-                            a: ({ node, ...props }) => (
-                                <a
-                                    target="_blank"
-                                    className="text-blue-500 underline"
-                                    {...props}
-                                />
-                            ),
-                            table: ({ node, ...props }) => (
-                                <div className="overflow-x-auto">
-                                    <table
-                                        className="min-w-full bg-white border border-gray-300"
+                                ),
+                                th: ({ node, ...props }) => (
+                                    <th
+                                        className="px-6 py-2 text-xs text-gray-500 border-r border-gray-200"
                                         {...props}
                                     />
-                                </div>
-                            ),
-                            thead: ({ node, ...props }) => (
-                                <thead className="bg-gray-200" {...props} />
-                            ),
-                            tbody: ({ node, ...props }) => (
-                                <tbody className="bg-white" {...props} />
-                            ),
-                            tr: ({ node, ...props }) => (
-                                <tr
-                                    className="whitespace-nowrap border-b border-gray-200"
-                                    {...props}
-                                />
-                            ),
-                            th: ({ node, ...props }) => (
-                                <th
-                                    className="px-6 py-2 text-xs text-gray-500 border-r border-gray-200"
-                                    {...props}
-                                />
-                            ),
-                            td: ({ node, ...props }) => (
-                                <td
-                                    className="px-6 py-4 text-sm text-gray-900 border-r border-gray-200"
-                                    {...props}
-                                />
-                            ),
-                        }}
-                        remarkPlugins={[remarkGfm]}
-                        rehypePlugins={[
-                            rehypeSanitize,
-                            rehypeRaw,
-                            rehypeHighlight,
-                        ]}
-                    >
-                        {conversationItem.content}
-                    </ReactMarkdown>
+                                ),
+                                td: ({ node, ...props }) => (
+                                    <td
+                                        className="px-6 py-4 text-sm text-gray-900 border-r border-gray-200"
+                                        {...props}
+                                    />
+                                ),
+                            }}
+                            remarkPlugins={[remarkGfm]}
+                            rehypePlugins={[
+                                rehypeSanitize,
+                                rehypeRaw,
+                                rehypeHighlight,
+                            ]}
+                        >
+                            {conversationItem.content}
+                        </ReactMarkdown>
+                    ) : (
+                        <p className="py-1 text-gray-700 whitespace-pre-wrap">
+                            {conversationItem.content}
+                        </p>
+                    )}
 
                     {conversationItem.role === "assistant" && !loading && (
                         <div className="cursor-pointer mt-2 flex items-center gap-3">
