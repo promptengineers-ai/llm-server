@@ -9,7 +9,7 @@ import {
     useMemo,
 } from "react";
 import { ChatClient } from "../utils/api";
-import { ChatContextType, Message } from "../types";
+import { ChatContextType, Message } from "../types/chat";
 import { IContextProvider } from "../interfaces/provider";
 import { log } from "../utils/log";
 import { ChatPayload, LLM } from "@/types/chat";

@@ -25,3 +25,28 @@ export type LLM = {
     multimodal: boolean;
     embedding: boolean;
 };
+
+export type Message = {
+    role: string;
+    content: string;
+    actions?: any[];
+    sources?: any[];
+    images?: string[];
+    model?: ModelType;
+};
+
+export type ChatContextType = {
+    chatboxRef: React.MutableRefObject<HTMLInputElement | null>;
+    chatInputRef: React.MutableRefObject<HTMLInputElement | null>;
+    userInputRef: React.MutableRefObject<HTMLInputElement | null>;
+    chats: any[];
+    setChats: (chats: any[]) => void;
+    messages: Message[];
+    setMessages: (messages: Message[]) => void;
+    sendChatPayload: (event: any) => void;
+    chatPayload: { query: string; history_id: string };
+    setChatPayload: (payload: any) => void;
+    chatboxRefIsEmpty: boolean;
+    setChatboxRefIsEmpty: (isEmpty: boolean) => void;
+    resetChat: (event: any) => void;
+};
