@@ -5,7 +5,7 @@ import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
 import CopyCodeButton from "../buttons/CopyCodeButton";
 
-const CodeBlockCard = ({ content }: { content: string }) => {
+const MarkdownCard = ({ content }: { content: string }) => {
     return (
         <ReactMarkdown
             components={{
@@ -16,7 +16,7 @@ const CodeBlockCard = ({ content }: { content: string }) => {
                     <h3 className="text-base font-bold my-2" {...props} />
                 ),
                 p: ({ node, ...props }) => (
-                    <p className={`py-1 text-gray-700 `} {...props} />
+                    <p className={`py-1`} {...props} />
                 ),
                 code: (props) => {
                     const { children, className, node, ...rest } = props;
@@ -97,4 +97,4 @@ const CodeBlockCard = ({ content }: { content: string }) => {
     );
 };
 
-export default CodeBlockCard;
+export default MarkdownCard;

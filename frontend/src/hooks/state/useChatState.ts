@@ -129,6 +129,7 @@ export const useChatState = () => {
 
     const sendChatPayload = async (event: any) => {
         event.preventDefault();
+        setDone(false);
 
         const messageContent: Message = { role: "user", content: userInput };
 
@@ -268,7 +269,7 @@ export const useChatState = () => {
 
     const submitQuestionStream = async () => {
         try {
-            setDone(false);
+            // setDone(false);
             setLoading(true);
             responseRef.current = "";
             setResponse("");

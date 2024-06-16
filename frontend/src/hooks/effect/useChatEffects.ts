@@ -80,10 +80,11 @@ export const useUpdateMessageOnResponesEffect = (
 export const useSubmitQuestionStreamEffect = (
     userInput: string,
     messages: Message[],
+    done: boolean,
     submitQuestionStream: any
 ) => {
     useEffect(() => {
-        if (userInput.length) {
+        if (userInput.length && !done) {
             submitQuestionStream();
         }
 

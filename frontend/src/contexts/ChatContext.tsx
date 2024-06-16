@@ -1,5 +1,5 @@
 "use client";
-import { useContext, createContext, useEffect, useMemo } from "react";
+import { useContext, createContext, useMemo } from "react";
 import { ChatClient } from "../utils/api";
 import { Message } from "../types/chat";
 import { IContextProvider } from "../interfaces/provider";
@@ -9,10 +9,9 @@ import { constructBubbleMessage, shallowUrl } from "@/utils/chat";
 import { userMessageTitleStyle } from "@/config/message";
 import { useAppContext } from "./AppContext";
 import DocumentSection from "@/components/sections/DocumentSection";
-import equal from "fast-deep-equal/react";
 import { useChatState } from "@/hooks/state/useChatState";
 import ResponseToolBar from "@/components/sections/ResponseToolBar";
-import CodeBlockCard from "@/components/cards/CodeBlockCard";
+import MarkdownCard from "@/components/cards/MarkdownCard";
 import ImageList from "@/components/lists/ImageList";
 import SourceList from "@/components/lists/SourceList";
 import {
@@ -134,7 +133,11 @@ export default function ChatProvider({ children }: IContextProvider) {
                         </div>
                     ) : null}
                     <ImageList images={images} />
-                    <SourceList sources={sources} noContent={noContent} messageIndex={i} />
+                    <SourceList
+                        sources={sources}
+                        noContent={noContent}
+                        messageIndex={i}
+                    />
                     {!expand &&
                         selectedDocument &&
                         selectedDocument.id === i && (
@@ -145,8 +148,10 @@ export default function ChatProvider({ children }: IContextProvider) {
                                 />
                             </div>
                         )}
-                    {conversationItem.role === "assistant" ? <CodeBlockCard content={conversationItem.content} /> : (
-                        <p className="py-1 text-gray-700 whitespace-pre-wrap">
+                    {conversationItem.role === "assistant" ? (
+                        <MarkdownCard content={conversationItem.content} />
+                    ) : (
+                        <p className="py-1 whitespace-pre-wrap">
                             {conversationItem.content}
                         </p>
                     )}
@@ -163,7 +168,7 @@ export default function ChatProvider({ children }: IContextProvider) {
     };
 
     useUpdateMessageOnResponesEffect(response, chatPayload, setMessages);
-    useSubmitQuestionStreamEffect(userInput, messages, submitQuestionStream);
+    useSubmitQuestionStreamEffect(userInput, messages, done, submitQuestionStream);
     useCheckIfSaveEnabledEffect(initChatPayload, chatPayload, setIsSaveEnabled);
     useFetchModelsEffect(models, fetchModels);
 
