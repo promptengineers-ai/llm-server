@@ -25,6 +25,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
+            <head>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.css"></link>
+            </head>
             <body className={inter.className}>
                 <ThemeProvider>
                     <AppProvider>

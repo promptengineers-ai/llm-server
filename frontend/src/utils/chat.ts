@@ -1,3 +1,5 @@
+import { ChatPayload, LLM, Message } from "@/types/chat";
+import { formatDate } from "./datetime";
 
 export const constructBubbleMessage = (
     sender: string,
@@ -30,3 +32,38 @@ export function filterModels(
     }
     return resultModels;
 }
+
+export const prompt = (chatPayload: ChatPayload) => {
+    return {
+        role: "system",
+        content: chatPayload.system + `\n\nCURRENT_DATETIME: ${formatDate()}`,
+    };
+};
+
+export const combinePrompts = (
+    chatPayload: ChatPayload,
+    messages: Message[],
+    userInput: string
+) => {
+    const sysPrompt = prompt(chatPayload);
+    const initialUserInput = { role: "user", content: userInput };
+
+    return [sysPrompt, ...messages, initialUserInput];
+};
+
+export const shallowUrl = (url: string) => {
+    window.history.replaceState(
+        {
+            ...window.history.state,
+            as: url,
+            url: url,
+        },
+        "",
+        url
+    );
+};
+
+export const parseCSV = (text: string) => {
+    const rows = text.split("\n").map((row) => row.split(","));
+    return rows;
+};

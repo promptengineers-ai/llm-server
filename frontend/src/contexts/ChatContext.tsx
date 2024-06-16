@@ -27,7 +27,7 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
 import { SSE } from "sse.js";
-import { constructBubbleMessage } from "@/utils/chat";
+import { combinePrompts, constructBubbleMessage, parseCSV, shallowUrl } from "@/utils/chat";
 import { userMessageTitleStyle } from "@/config/message";
 import { API_URL, ON_PREM } from "@/config/app";
 import CopyCodeButton from "@/components/buttons/CopyCodeButton";
@@ -44,23 +44,7 @@ import ExpandIcon from "@/components/icons/ExpandIcon";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import equal from "fast-deep-equal/react";
 
-const defaultChatContextValue: ChatContextType = {
-    chatboxRef: { current: null },
-    chatInputRef: { current: null },
-    userInputRef: { current: null },
-    chats: [],
-    setChats: () => {},
-    messages: [],
-    setMessages: () => {},
-    sendChatPayload: () => {},
-    chatPayload: { query: "", history_id: "" },
-    setChatPayload: (event) => {},
-    chatboxRefIsEmpty: true,
-    setChatboxRefIsEmpty: () => {},
-    resetChat: (event) => {},
-};
-
-const ChatContext = createContext(defaultChatContextValue);
+const ChatContext = createContext({});
 export default function ChatProvider({ children }: IContextProvider) {
     const { setLoading, loading, isMobile } = useAppContext();
     const searchParams = useSearchParams();
@@ -188,27 +172,6 @@ export default function ChatProvider({ children }: IContextProvider) {
         setSelectedImage(src);
     };
 
-    const prompt = () => {
-        return {
-            role: "system",
-            content:
-                chatPayload.system + `\n\nCURRENT_DATETIME: ${formatDate()}`,
-        };
-    };
-
-    const combinePrompts = () => {
-        const sysPrompt = prompt();
-
-        const initialUserInput = { role: "user", content: userInput };
-        setMessages((prevConversationContext) => [
-            ...prevConversationContext,
-            sysPrompt,
-            initialUserInput,
-        ]);
-
-        return [sysPrompt, ...messages];
-    };
-
     const sendChatPayload = async (event: any) => {
         event.preventDefault();
 
@@ -273,11 +236,6 @@ export default function ChatProvider({ children }: IContextProvider) {
             setUserInput(messageAtIndex.content);
             // submitQuestionStream();
         }, 200);
-    };
-
-    const parseCSV = (text: string) => {
-        const rows = text.split("\n").map((row) => row.split(","));
-        return rows;
     };
 
     const handleDocumentClick = async (messageIndex: number, source: any) => {
@@ -661,7 +619,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                     chatPayload.retrieval.index_name &&
                     !acceptRagSystemMessage.has(chatPayload.model)
                         ? messages
-                        : combinePrompts(),
+                        : combinePrompts(chatPayload, messages, userInput),
                 tools: chatPayload.tools,
                 retrieval: chatPayload.retrieval,
                 temperature: chatPayload.temperature,
@@ -791,18 +749,6 @@ export default function ChatProvider({ children }: IContextProvider) {
         fetchChats();
     }
 
-    const shallowUrl = (url: string) => {
-        window.history.replaceState(
-            {
-                ...window.history.state,
-                as: url,
-                url: url,
-            },
-            "",
-            url
-        );
-    };
-
     useEffect(() => {
         response.length &&
             setMessages((prevConversationContext) => {
@@ -888,7 +834,6 @@ export default function ChatProvider({ children }: IContextProvider) {
                     setChatboxRefIsEmpty,
                     deleteChat,
                     findChat,
-                    shallowUrl,
                     renderConversation,
                     setUserInput,
                     setSelectedImage,
