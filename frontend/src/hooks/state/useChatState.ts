@@ -1,13 +1,15 @@
 // https://chatgpt.com/share/9da3c401-7e86-4ad9-a635-2729a0d015d5
-import { ON_PREM } from "@/config/app";
+import { API_URL, ON_PREM } from "@/config/app";
 import { Default } from "@/config/default";
+import { useAppContext } from "@/contexts/AppContext";
 import { LLM, Message } from "@/types/chat";
-import { EmbeddingModel, ModelType, SearchProvider, SearchType } from "@/types/llm";
+import { EmbeddingModel, ModelType, SearchProvider, SearchType, acceptRagSystemMessage } from "@/types/llm";
 import { ChatClient } from "@/utils/api";
-import { parseCSV, shallowUrl } from "@/utils/chat";
+import { combinePrompts, parseCSV, shallowUrl } from "@/utils/chat";
 import { log } from "@/utils/log";
 import { useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
+import { SSE } from "sse.js";
 
 const chatClient = new ChatClient();
 
@@ -55,6 +57,7 @@ export const defaultState = {
 };
 
 export const useChatState = () => {
+    const {setLoading} = useAppContext();
     const searchParams = useSearchParams();
     const chatInputRef = useRef<HTMLInputElement | null>(defaultState.chatInputRef);
     const chatboxRef = useRef<HTMLInputElement | null>(defaultState.chatboxRef);
@@ -263,6 +266,110 @@ export const useChatState = () => {
         }
     };
 
+    const submitQuestionStream = async () => {
+        try {
+            setDone(false);
+            setLoading(true);
+            responseRef.current = "";
+            setResponse("");
+            submitCleanUp();
+
+            const config = {
+                model: chatPayload.model,
+                messages:
+                    chatPayload.retrieval.index_name &&
+                    !acceptRagSystemMessage.has(chatPayload.model)
+                        ? messages
+                        : combinePrompts(chatPayload, messages, userInput),
+                tools: chatPayload.tools,
+                retrieval: chatPayload.retrieval,
+                temperature: chatPayload.temperature,
+                streaming: true,
+            };
+
+            const source = new SSE(API_URL + "/api/v1/chat", {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`, // set this yourself
+                },
+                payload: JSON.stringify(config),
+            });
+
+            source.addEventListener("error", (e: any) => {
+                console.error("Error received from server:", e);
+                alert(JSON.parse(e.data).detail);
+                setLoading(false);
+                setDone(true);
+                source.close();
+                return;
+            });
+
+            const tempAssistantMessage = {
+                role: "assistant",
+                content: "",
+                model: chatPayload.model,
+            };
+            const updatedMessages = [...messages, tempAssistantMessage];
+            setMessages(updatedMessages);
+            const tempIndex = updatedMessages.length - 1;
+
+            source.addEventListener("message", (e: any) => {
+                const jsonObjectsRegExp = /{[\s\S]+?}(?=data:|$)/g;
+                const jsonObjectsMatches = e.data.match(jsonObjectsRegExp);
+
+                if (jsonObjectsMatches) {
+                    const objectsArray = jsonObjectsMatches.map((json: any) =>
+                        JSON.parse(json)
+                    );
+
+                    if (objectsArray) {
+                        if (
+                            objectsArray[0].type === "stream" ||
+                            objectsArray[0].type === "end"
+                        ) {
+                            responseRef.current += objectsArray[0].message;
+                            setLoading(false);
+                            setResponse(responseRef.current);
+                            if (objectsArray[0].type === "end") {
+                                // Replace the temporary message with the actual response
+                                const finalMessages = [...updatedMessages];
+                                finalMessages[tempIndex] = {
+                                    role: "assistant",
+                                    content: responseRef.current,
+                                    model: chatPayload.model,
+                                };
+                                setMessages(finalMessages);
+
+                                updateMessages(
+                                    chatPayload.system,
+                                    finalMessages,
+                                    chatPayload.retrieval,
+                                    chatPayload.tools
+                                );
+                                setDone(true);
+                            }
+                        }
+
+                        if (objectsArray[0].type === "doc") {
+                            console.log(objectsArray[0].message);
+                        }
+                    }
+                } else {
+                    source.close();
+                    setLoading(false);
+                    setDone(true);
+                }
+            });
+
+            source.stream();
+        } catch (error) {
+            console.error("An unexpected error occurred:", error);
+            alert("An unexpected error occurred. Please try again later.");
+            setLoading(false);
+            setDone(true);
+        }
+    };
+
     return {
         // Refs
         chatInputRef,
@@ -312,5 +419,6 @@ export const useChatState = () => {
         submitCleanUp,
         updateMessages,
         adjustHeight,
+        submitQuestionStream,
     };
 };

@@ -6,11 +6,6 @@ import { IContextProvider } from "../interfaces/provider";
 import { ChatPayload } from "@/types/chat";
 import { acceptRagSystemMessage } from "@/types/llm";
 import { useSearchParams } from "next/navigation";
-import ReactMarkdown from "react-markdown";
-import rehypeSanitize from "rehype-sanitize";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
-import rehypeHighlight from "rehype-highlight";
 import { SSE } from "sse.js";
 import {
     combinePrompts,
@@ -19,22 +14,23 @@ import {
 } from "@/utils/chat";
 import { userMessageTitleStyle } from "@/config/message";
 import { API_URL } from "@/config/app";
-import CopyCodeButton from "@/components/buttons/CopyCodeButton";
 import { useAppContext } from "./AppContext";
 import DocumentSection from "@/components/sections/DocumentSection";
 import equal from "fast-deep-equal/react";
 import { useChatState } from "@/hooks/state/useChatState";
 import ResponseToolBar from "@/components/sections/ResponseToolBar";
 import SourceCard from "@/components/cards/SourceCard";
+import CodeBlockCard from "@/components/cards/CodeBlockCard";
+import ImageList from "@/components/lists/ImageList";
+import SourceList from "@/components/lists/SourceList";
 
 const ChatContext = createContext({});
 export default function ChatProvider({ children }: IContextProvider) {
-    const { setLoading, loading, isMobile } = useAppContext();
+    const { loading } = useAppContext();
     const {
         chatboxRef,
         chatInputRef,
         userInputRef,
-        responseRef,
         done,
         setDone,
         chatPayload,
@@ -44,7 +40,6 @@ export default function ChatProvider({ children }: IContextProvider) {
         isSaveEnabled,
         setIsSaveEnabled,
         response,
-        setResponse,
         models,
         userInput,
         setUserInput,
@@ -72,8 +67,7 @@ export default function ChatProvider({ children }: IContextProvider) {
         fetchModels,
         resetChat,
         handleDocumentClick,
-        submitCleanUp,
-        updateMessages,
+        submitQuestionStream,
         adjustHeight,
     } = useChatState();
     const searchParams = useSearchParams();
@@ -141,51 +135,8 @@ export default function ChatProvider({ children }: IContextProvider) {
                             <span className="ml-2">Processing...</span>
                         </div>
                     ) : null}
-                    {images.length > 0 && (
-                        <div
-                            style={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                justifyContent: "flex-start",
-                                gap: "10px",
-                            }}
-                        >
-                            {images.map((image, index) => (
-                                <img
-                                    onClick={() => setSelectedImage(image)}
-                                    key={index}
-                                    src={image}
-                                    alt={image || "Conversation image"}
-                                    className="my-2"
-                                    style={{
-                                        cursor: "pointer",
-                                        maxWidth: "350px",
-                                        maxHeight: "450px",
-                                        borderRadius: "5px",
-                                    }}
-                                />
-                            ))}
-                        </div>
-                    )}
-                    {sources.length > 0 && (
-                        <div
-                            style={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                justifyContent: "flex-start",
-                                gap: "10px",
-                            }}
-                            className="my-2"
-                        >
-                            {sources.map((source) => (
-                                <SourceCard
-                                    source={source}
-                                    noContent={noContent}
-                                    index={i}
-                                />
-                            ))}
-                        </div>
-                    )}
+                    <ImageList images={images} />
+                    <SourceList sources={sources} noContent={noContent} messageIndex={i} />
                     {!expand &&
                         selectedDocument &&
                         selectedDocument.id === i && (
@@ -196,128 +147,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                                 />
                             </div>
                         )}
-                    {conversationItem.role === "assistant" ? (
-                        <ReactMarkdown
-                            components={{
-                                h1: ({ node, ...props }) => (
-                                    <h1
-                                        className="text-2xl font-bold my-4"
-                                        {...props}
-                                    />
-                                ),
-                                h3: ({ node, ...props }) => (
-                                    <h3
-                                        className="text-base font-bold my-2"
-                                        {...props}
-                                    />
-                                ),
-                                p: ({ node, ...props }) => (
-                                    <p
-                                        className={`py-1 text-gray-700 `}
-                                        {...props}
-                                    />
-                                ),
-                                code: (props) => {
-                                    const {
-                                        children,
-                                        className,
-                                        node,
-                                        ...rest
-                                    } = props;
-                                    const match = /language-(\w+)/.exec(
-                                        className || ""
-                                    );
-                                    return match ? (
-                                        <div className="text-white dark bg-gray-950 rounded-md border-[0.5px] border-token-border-medium">
-                                            <div className="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md">
-                                                <span>
-                                                    {match[0].replace(
-                                                        "language-",
-                                                        ""
-                                                    )}
-                                                </span>
-                                                <div className="flex items-center">
-                                                    <span
-                                                        className=""
-                                                        data-state="closed"
-                                                    >
-                                                        <CopyCodeButton />
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div className="overflow-y-auto text-left">
-                                                <code
-                                                    className="rounded px-1 py-0.5 font-bold"
-                                                    {...props}
-                                                />
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <code
-                                            className="rounded px-1 py-0.5 font-bold"
-                                            {...props}
-                                        />
-                                    );
-                                },
-                                ul: ({ node, ...props }) => (
-                                    <ul
-                                        className="list-disc pl-5 my-2"
-                                        {...props}
-                                    />
-                                ),
-                                li: ({ node, ...props }) => (
-                                    <li className="ml-2" {...props} />
-                                ),
-                                a: ({ node, ...props }) => (
-                                    <a
-                                        target="_blank"
-                                        className="text-blue-500 underline"
-                                        {...props}
-                                    />
-                                ),
-                                table: ({ node, ...props }) => (
-                                    <div className="overflow-x-auto">
-                                        <table
-                                            className="min-w-full bg-white border border-gray-300"
-                                            {...props}
-                                        />
-                                    </div>
-                                ),
-                                thead: ({ node, ...props }) => (
-                                    <thead className="bg-gray-200" {...props} />
-                                ),
-                                tbody: ({ node, ...props }) => (
-                                    <tbody className="bg-white" {...props} />
-                                ),
-                                tr: ({ node, ...props }) => (
-                                    <tr
-                                        className="whitespace-nowrap border-b border-gray-200"
-                                        {...props}
-                                    />
-                                ),
-                                th: ({ node, ...props }) => (
-                                    <th
-                                        className="px-6 py-2 text-xs text-gray-500 border-r border-gray-200"
-                                        {...props}
-                                    />
-                                ),
-                                td: ({ node, ...props }) => (
-                                    <td
-                                        className="px-6 py-4 text-sm text-gray-900 border-r border-gray-200"
-                                        {...props}
-                                    />
-                                ),
-                            }}
-                            remarkPlugins={[remarkGfm]}
-                            rehypePlugins={[
-                                rehypeSanitize,
-                                rehypeRaw,
-                                rehypeHighlight,
-                            ]}
-                        >
-                            {conversationItem.content}
-                        </ReactMarkdown>
-                    ) : (
+                    {conversationItem.role === "assistant" ? <CodeBlockCard content={conversationItem.content} /> : (
                         <p className="py-1 text-gray-700 whitespace-pre-wrap">
                             {conversationItem.content}
                         </p>
@@ -334,120 +164,15 @@ export default function ChatProvider({ children }: IContextProvider) {
         });
     };
 
-    const submitQuestionStream = async () => {
-        try {
-            setDone(false);
-            setLoading(true);
-            responseRef.current = "";
-            setResponse("");
-            submitCleanUp();
-
-            const config = {
-                model: chatPayload.model,
-                messages:
-                    chatPayload.retrieval.index_name &&
-                    !acceptRagSystemMessage.has(chatPayload.model)
-                        ? messages
-                        : combinePrompts(chatPayload, messages, userInput),
-                tools: chatPayload.tools,
-                retrieval: chatPayload.retrieval,
-                temperature: chatPayload.temperature,
-                streaming: true,
-            };
-
-            const source = new SSE(API_URL + "/api/v1/chat", {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`, // set this yourself
-                },
-                payload: JSON.stringify(config),
-            });
-
-            source.addEventListener("error", (e: any) => {
-                console.error("Error received from server:", e);
-                alert(JSON.parse(e.data).detail);
-                setLoading(false);
-                setDone(true);
-                source.close();
-                return;
-            });
-
-            const tempAssistantMessage = {
-                role: "assistant",
-                content: "",
-                model: chatPayload.model,
-            };
-            const updatedMessages = [...messages, tempAssistantMessage];
-            setMessages(updatedMessages);
-            const tempIndex = updatedMessages.length - 1;
-
-            source.addEventListener("message", (e: any) => {
-                const jsonObjectsRegExp = /{[\s\S]+?}(?=data:|$)/g;
-                const jsonObjectsMatches = e.data.match(jsonObjectsRegExp);
-
-                if (jsonObjectsMatches) {
-                    const objectsArray = jsonObjectsMatches.map((json: any) =>
-                        JSON.parse(json)
-                    );
-
-                    if (objectsArray) {
-                        if (
-                            objectsArray[0].type === "stream" ||
-                            objectsArray[0].type === "end"
-                        ) {
-                            responseRef.current += objectsArray[0].message;
-                            setLoading(false);
-                            setResponse(responseRef.current);
-                            if (objectsArray[0].type === "end") {
-                                // Replace the temporary message with the actual response
-                                const finalMessages = [...updatedMessages];
-                                finalMessages[tempIndex] = {
-                                    role: "assistant",
-                                    content: responseRef.current,
-                                    model: chatPayload.model,
-                                };
-                                setMessages(finalMessages);
-
-                                updateMessages(
-                                    chatPayload.system,
-                                    finalMessages,
-                                    chatPayload.retrieval,
-                                    chatPayload.tools
-                                );
-                                setDone(true);
-                            }
-                        }
-
-                        if (objectsArray[0].type === "doc") {
-                            console.log(objectsArray[0].message);
-                        }
-                    }
-                } else {
-                    source.close();
-                    setLoading(false);
-                    setDone(true);
-                }
-            });
-
-            source.stream();
-        } catch (error) {
-            console.error("An unexpected error occurred:", error);
-            alert("An unexpected error occurred. Please try again later.");
-            setLoading(false);
-            setDone(true);
-        }
-    };
-
     useEffect(() => {
         response.length &&
-            setMessages((prevConversationContext) => {
-                const lastMessage =
-                    prevConversationContext[prevConversationContext.length - 1];
+            setMessages((prev) => {
+                const lastMessage = prev[prev.length - 1];
 
                 if (lastMessage && lastMessage.role === "assistant") {
                     // Update the last message from the assistant with the new content
-                    return prevConversationContext.map((item, index) =>
-                        index === prevConversationContext.length - 1
+                    return prev.map((item, index) =>
+                        index === prev.length - 1
                             ? {
                                   role: "assistant",
                                   content: response,
@@ -458,7 +183,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                 } else {
                     // If the last message is not from the server, add a new server message
                     return [
-                        ...prevConversationContext,
+                        ...prev,
                         {
                             role: "assistant",
                             content: response,
