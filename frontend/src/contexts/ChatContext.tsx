@@ -272,7 +272,7 @@ export default function ChatProvider({ children }: IContextProvider) {
             // setMessages([...newMessages, messageAtIndex]);
             setUserInput(messageAtIndex.content);
             // submitQuestionStream();
-        }, 500);
+        }, 200);
     };
 
     const parseCSV = (text: string) => {

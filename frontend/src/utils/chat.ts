@@ -346,31 +346,6 @@ export function readStreamResponse(
         });
 }
 
-export const filterChatHistory = (list: any[], type?: string) => {
-    // If no type is provided, return the entire list
-    if (!type) {
-        return list;
-    }
-
-    let filteredList = [];
-
-    switch (type) {
-        case "agent":
-            filteredList = list.filter((item) => item.tools.length > 0);
-            break;
-        case "vectorstore":
-            filteredList = list.filter((item) => item.vectorstore);
-            break;
-        default:
-            filteredList = list.filter(
-                (item) => item.tools.length === 0 && !item.vectorstore
-            );
-            break;
-    }
-
-    return filteredList;
-};
-
 export function filterModels(
     source: { [key: string]: string },
     compare: { [key: string]: string },
