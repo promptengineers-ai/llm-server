@@ -1,56 +1,24 @@
 import { useEffect } from "react";
-import equal from "fast-deep-equal";
-import { ChatPayload, LLM } from "@/types/chat";
+import equal from "fast-deep-equal/react";
+import { ChatPayload, LLM, Message } from "@/types/chat";
 
-const useChatEffects = (
-    response: string,
-    userInput: string,
+export const useFetchModelsEffect = (models: LLM[], fetchModels: any) => {
+    useEffect(() => {
+        if (models.length === 0) {
+            fetchModels();
+        }
+
+        return () => {
+            // Cleanup logic if needed
+        };
+    }, []);
+};
+
+export const useCheckIfSaveEnabledEffect = (
     initChatPayload: any,
     chatPayload: ChatPayload,
-    models: LLM[],
-    fetchModels: any,
-    submitQuestionStream: any,
-    setMessages: any,
     setIsSaveEnabled: any
 ) => {
-    useEffect(() => {
-        if (response.length) {
-            setMessages((prevConversationContext: any) => {
-                const lastMessage =
-                    prevConversationContext[prevConversationContext.length - 1];
-
-                if (lastMessage && lastMessage.role === "assistant") {
-                    // Update the last message from the assistant with the new content
-                    return prevConversationContext.map((item: any, index: number) =>
-                        index === prevConversationContext.length - 1
-                            ? {
-                                  role: "assistant",
-                                  content: response,
-                                  model: chatPayload.model,
-                              }
-                            : item
-                    );
-                } else {
-                    // If the last message is not from the server, add a new server message
-                    return [
-                        ...prevConversationContext,
-                        {
-                            role: "assistant",
-                            content: response,
-                            model: chatPayload.model,
-                        },
-                    ];
-                }
-            });
-        }
-    }, [response, setMessages, chatPayload.model]);
-
-    useEffect(() => {
-        if (userInput.length) {
-            submitQuestionStream();
-        }
-    }, [userInput, submitQuestionStream]);
-
     useEffect(() => {
         if (
             !equal(initChatPayload, {
@@ -63,13 +31,64 @@ const useChatEffects = (
         } else {
             setIsSaveEnabled(false);
         }
-    }, [initChatPayload, chatPayload, setIsSaveEnabled]);
 
-    useEffect(() => {
-        if (models.length === 0) {
-            fetchModels();
-        }
-    }, [models, fetchModels]);
+        return () => {
+            // Cleanup logic if needed
+        };
+    }, [initChatPayload, chatPayload]);
 };
 
-export default useChatEffects;
+export const useUpdateMessageOnResponesEffect = (
+    response: string,
+    chatPayload: ChatPayload,
+    setMessages: any
+) => {
+    useEffect(() => {
+        response.length &&
+            setMessages((prev: Message[]) => {
+                const lastMessage = prev[prev.length - 1];
+
+                if (lastMessage && lastMessage.role === "assistant") {
+                    // Update the last message from the assistant with the new content
+                    return prev.map((item: Message, index: number) =>
+                        index === prev.length - 1
+                            ? {
+                                  role: "assistant",
+                                  content: response,
+                                  model: chatPayload.model,
+                              }
+                            : item
+                    );
+                } else {
+                    // If the last message is not from the server, add a new server message
+                    return [
+                        ...prev,
+                        {
+                            role: "assistant",
+                            content: response,
+                            model: chatPayload.model,
+                        },
+                    ];
+                }
+            });
+        return () => {
+            // Cleanup logic if needed
+        };
+    }, [response]);
+};
+
+export const useSubmitQuestionStreamEffect = (
+    userInput: string,
+    messages: Message[],
+    submitQuestionStream: any
+) => {
+    useEffect(() => {
+        if (userInput.length) {
+            submitQuestionStream();
+        }
+
+        return () => {
+            // Cleanup logic if needed
+        };
+    }, [messages]);
+};

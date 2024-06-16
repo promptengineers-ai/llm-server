@@ -4,25 +4,23 @@ import { ChatClient } from "../utils/api";
 import { Message } from "../types/chat";
 import { IContextProvider } from "../interfaces/provider";
 import { ChatPayload } from "@/types/chat";
-import { acceptRagSystemMessage } from "@/types/llm";
 import { useSearchParams } from "next/navigation";
-import { SSE } from "sse.js";
-import {
-    combinePrompts,
-    constructBubbleMessage,
-    shallowUrl,
-} from "@/utils/chat";
+import { constructBubbleMessage, shallowUrl } from "@/utils/chat";
 import { userMessageTitleStyle } from "@/config/message";
-import { API_URL } from "@/config/app";
 import { useAppContext } from "./AppContext";
 import DocumentSection from "@/components/sections/DocumentSection";
 import equal from "fast-deep-equal/react";
 import { useChatState } from "@/hooks/state/useChatState";
 import ResponseToolBar from "@/components/sections/ResponseToolBar";
-import SourceCard from "@/components/cards/SourceCard";
 import CodeBlockCard from "@/components/cards/CodeBlockCard";
 import ImageList from "@/components/lists/ImageList";
 import SourceList from "@/components/lists/SourceList";
+import {
+    useFetchModelsEffect,
+    useCheckIfSaveEnabledEffect,
+    useUpdateMessageOnResponesEffect,
+    useSubmitQuestionStreamEffect,
+} from "@/hooks/effect/useChatEffects";
 
 const ChatContext = createContext({});
 export default function ChatProvider({ children }: IContextProvider) {
@@ -164,61 +162,10 @@ export default function ChatProvider({ children }: IContextProvider) {
         });
     };
 
-    useEffect(() => {
-        response.length &&
-            setMessages((prev) => {
-                const lastMessage = prev[prev.length - 1];
-
-                if (lastMessage && lastMessage.role === "assistant") {
-                    // Update the last message from the assistant with the new content
-                    return prev.map((item, index) =>
-                        index === prev.length - 1
-                            ? {
-                                  role: "assistant",
-                                  content: response,
-                                  model: chatPayload.model,
-                              }
-                            : item
-                    );
-                } else {
-                    // If the last message is not from the server, add a new server message
-                    return [
-                        ...prev,
-                        {
-                            role: "assistant",
-                            content: response,
-                            model: chatPayload.model,
-                        },
-                    ];
-                }
-            });
-    }, [response]);
-
-    useEffect(() => {
-        if (userInput.length) {
-            submitQuestionStream();
-        }
-    }, [messages]);
-
-    useEffect(() => {
-        if (
-            !equal(initChatPayload, {
-                system: chatPayload.system,
-                retrieval: chatPayload.retrieval,
-                tools: chatPayload.tools,
-            })
-        ) {
-            setIsSaveEnabled(true);
-        } else {
-            setIsSaveEnabled(false);
-        }
-    }, [initChatPayload, chatPayload]);
-
-    useEffect(() => {
-        if (models.length === 0) {
-            fetchModels();
-        }
-    }, []);
+    useUpdateMessageOnResponesEffect(response, chatPayload, setMessages);
+    useSubmitQuestionStreamEffect(userInput, messages, submitQuestionStream);
+    useCheckIfSaveEnabledEffect(initChatPayload, chatPayload, setIsSaveEnabled);
+    useFetchModelsEffect(models, fetchModels);
 
     return (
         <ChatContext.Provider
