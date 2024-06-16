@@ -2,7 +2,6 @@
 import {
     useContext,
     createContext,
-    useEffect,
     useMemo,
 } from "react";
 import { ChatClient } from "../utils/api";
@@ -36,6 +35,7 @@ import ExpandIcon from "@/components/icons/ExpandIcon";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import equal from "fast-deep-equal/react";
 import { useChatState } from "@/hooks/state/useChatState";
+import useChatEffects from "@/hooks/effect/useChatEffects";
 
 const ChatContext = createContext({});
 export default function ChatProvider({ children }: IContextProvider) {
@@ -546,62 +546,18 @@ export default function ChatProvider({ children }: IContextProvider) {
         }
     };
 
-    useEffect(() => {
-        response.length &&
-            setMessages((prevConversationContext) => {
-                const lastMessage =
-                    prevConversationContext[prevConversationContext.length - 1];
-
-                if (lastMessage && lastMessage.role === "assistant") {
-                    // Update the last message from the assistant with the new content
-                    return prevConversationContext.map((item, index) =>
-                        index === prevConversationContext.length - 1
-                            ? {
-                                  role: "assistant",
-                                  content: response,
-                                  model: chatPayload.model,
-                              }
-                            : item
-                    );
-                } else {
-                    // If the last message is not from the server, add a new server message
-                    return [
-                        ...prevConversationContext,
-                        {
-                            role: "assistant",
-                            content: response,
-                            model: chatPayload.model,
-                        },
-                    ];
-                }
-            });
-    }, [response]);
-
-    useEffect(() => {
-        if (userInput.length) {
-            submitQuestionStream();
-        }
-    }, [messages]);
-
-    useEffect(() => {
-        if (
-            !equal(initChatPayload, {
-                system: chatPayload.system,
-                retrieval: chatPayload.retrieval,
-                tools: chatPayload.tools,
-            })
-        ) {
-            setIsSaveEnabled(true);
-        } else {
-            setIsSaveEnabled(false);
-        }
-    }, [initChatPayload, chatPayload]);
-
-    useEffect(() => {
-        if (models.length === 0) {
-            fetchModels();
-        }
-    }, []);
+    // Use the custom hook for effects
+    useChatEffects(
+        response,
+        userInput,
+        initChatPayload,
+        chatPayload,
+        models,
+        fetchModels,
+        submitQuestionStream,
+        setMessages,
+        setIsSaveEnabled
+    );
 
     return (
         <ChatContext.Provider
