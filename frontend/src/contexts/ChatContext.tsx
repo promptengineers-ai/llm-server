@@ -1,9 +1,5 @@
 "use client";
-import {
-    useContext,
-    createContext,
-    useMemo,
-} from "react";
+import { useContext, createContext, useEffect, useMemo } from "react";
 import { ChatClient } from "../utils/api";
 import { Message } from "../types/chat";
 import { IContextProvider } from "../interfaces/provider";
@@ -24,18 +20,12 @@ import {
 import { userMessageTitleStyle } from "@/config/message";
 import { API_URL } from "@/config/app";
 import CopyCodeButton from "@/components/buttons/CopyCodeButton";
-import CopyIcon from "@/components/icons/CopyIcon";
-import RegenerateIcon from "@/components/icons/RegenerateIcon";
-import ThumbDownIcon from "@/components/icons/ThumbDownIcon";
 import { useAppContext } from "./AppContext";
-import DocumentIcon from "@/components/icons/DocumentIcon";
 import DocumentSection from "@/components/sections/DocumentSection";
-import CollapseIcon from "@/components/icons/CollapseIcon";
-import ExpandIcon from "@/components/icons/ExpandIcon";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import equal from "fast-deep-equal/react";
 import { useChatState } from "@/hooks/state/useChatState";
-import useChatEffects from "@/hooks/effect/useChatEffects";
+import ResponseToolBar from "@/components/sections/ResponseToolBar";
+import SourceCard from "@/components/cards/SourceCard";
 
 const ChatContext = createContext({});
 export default function ChatProvider({ children }: IContextProvider) {
@@ -188,73 +178,11 @@ export default function ChatProvider({ children }: IContextProvider) {
                             className="my-2"
                         >
                             {sources.map((source) => (
-                                <div
-                                    key={source.id}
-                                    className="relative overflow-hidden rounded-xl border border-token-border-dark bg-white"
-                                >
-                                    <div className="p-2 w-52">
-                                        <div className="flex flex-row items-center gap-2">
-                                            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md">
-                                                <DocumentIcon />
-                                            </div>
-                                            <div className="overflow-hidden">
-                                                <div className="truncate font-medium">
-                                                    {source.name}
-                                                </div>
-                                                <div className="truncate text-token-text-tertiary">
-                                                    {source.type
-                                                        .split("/")[1]
-                                                        .toUpperCase()}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="absolute bottom-1 right-2 flex gap-1">
-                                        {!isMobile() &&
-                                            !noContent &&
-                                            (expand ? (
-                                                <div
-                                                    onClick={() =>
-                                                        setExpand(!expand)
-                                                    }
-                                                >
-                                                    <CollapseIcon size="18" />
-                                                </div>
-                                            ) : (
-                                                <div
-                                                    onClick={() =>
-                                                        setExpand(!expand)
-                                                    }
-                                                >
-                                                    <ExpandIcon size="18" />
-                                                </div>
-                                            ))}
-                                        {noContent ? (
-                                            <FaRegEye
-                                                size="18"
-                                                className="cursor-pointer"
-                                                onClick={() =>
-                                                    handleDocumentClick(
-                                                        i,
-                                                        source
-                                                    )
-                                                }
-                                            />
-                                        ) : (
-                                            <FaRegEyeSlash
-                                                size="18"
-                                                className="cursor-pointer"
-                                                onClick={() => {
-                                                    handleDocumentClick(
-                                                        i,
-                                                        source
-                                                    );
-                                                    setExpand(false);
-                                                }}
-                                            />
-                                        )}
-                                    </div>
-                                </div>
+                                <SourceCard
+                                    source={source}
+                                    noContent={noContent}
+                                    index={i}
+                                />
                             ))}
                         </div>
                     )}
@@ -396,46 +324,10 @@ export default function ChatProvider({ children }: IContextProvider) {
                     )}
 
                     {conversationItem.role === "assistant" && !loading && (
-                        <div className="cursor-pointer mt-2 flex items-center gap-3">
-                            <div
-                                className="flex items-center justify-center"
-                                onClick={() => {
-                                    const textToCopy =
-                                        conversationItem.content ||
-                                        "No content to copy";
-                                    navigator.clipboard
-                                        .writeText(textToCopy)
-                                        .then(() => {
-                                            alert("Copied to clipboard!");
-                                        })
-                                        .catch((err) => {
-                                            console.error(
-                                                "Failed to copy: ",
-                                                err
-                                            );
-                                        });
-                                }}
-                            >
-                                <CopyIcon />
-                            </div>
-                            <div
-                                className="flex items-center justify-center"
-                                onClick={() => handleRegenerateClick(i)}
-                            >
-                                <RegenerateIcon />
-                            </div>
-                            <div
-                                className="flex items-center justify-center"
-                                onClick={() => alert("Will downvote")}
-                            >
-                                <ThumbDownIcon />
-                            </div>
-                            {conversationItem.model && (
-                                <div className="flex items-center justify-center bg-black text-white px-1 rounded">
-                                    <small>{conversationItem.model}</small>
-                                </div>
-                            )}
-                        </div>
+                        <ResponseToolBar
+                            index={i}
+                            conversationItem={conversationItem}
+                        />
                     )}
                 </div>
             );
@@ -546,18 +438,62 @@ export default function ChatProvider({ children }: IContextProvider) {
         }
     };
 
-    // Use the custom hook for effects
-    useChatEffects(
-        response,
-        userInput,
-        initChatPayload,
-        chatPayload,
-        models,
-        fetchModels,
-        submitQuestionStream,
-        setMessages,
-        setIsSaveEnabled
-    );
+    useEffect(() => {
+        response.length &&
+            setMessages((prevConversationContext) => {
+                const lastMessage =
+                    prevConversationContext[prevConversationContext.length - 1];
+
+                if (lastMessage && lastMessage.role === "assistant") {
+                    // Update the last message from the assistant with the new content
+                    return prevConversationContext.map((item, index) =>
+                        index === prevConversationContext.length - 1
+                            ? {
+                                  role: "assistant",
+                                  content: response,
+                                  model: chatPayload.model,
+                              }
+                            : item
+                    );
+                } else {
+                    // If the last message is not from the server, add a new server message
+                    return [
+                        ...prevConversationContext,
+                        {
+                            role: "assistant",
+                            content: response,
+                            model: chatPayload.model,
+                        },
+                    ];
+                }
+            });
+    }, [response]);
+
+    useEffect(() => {
+        if (userInput.length) {
+            submitQuestionStream();
+        }
+    }, [messages]);
+
+    useEffect(() => {
+        if (
+            !equal(initChatPayload, {
+                system: chatPayload.system,
+                retrieval: chatPayload.retrieval,
+                tools: chatPayload.tools,
+            })
+        ) {
+            setIsSaveEnabled(true);
+        } else {
+            setIsSaveEnabled(false);
+        }
+    }, [initChatPayload, chatPayload]);
+
+    useEffect(() => {
+        if (models.length === 0) {
+            fetchModels();
+        }
+    }, []);
 
     return (
         <ChatContext.Provider
@@ -602,6 +538,8 @@ export default function ChatProvider({ children }: IContextProvider) {
                     setExpand,
                     setInitChatPayload,
                     setIsSaveEnabled,
+                    handleRegenerateClick,
+                    handleDocumentClick,
                 };
             }, [
                 chats,
