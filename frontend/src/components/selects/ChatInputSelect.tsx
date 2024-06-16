@@ -15,7 +15,6 @@ const ChatInputSelect: React.FC = () => {
         setImages,
         adjustHeight,
         chatPayload,
-        messagesContainsSources,
     } = useChatContext();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -137,21 +136,6 @@ const ChatInputSelect: React.FC = () => {
                             <span className="mr-2">Web</span>
                             <FaGlobe fontSize={"20px"} />
                         </a>
-
-                        {/* {messagesContainsSources() && (
-                            <a
-                                onClick={() =>
-                                    alert("Will open Web Loader Modal")
-                                }
-                                href="#"
-                                className={`flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100`}
-                                role="menuitem"
-                                tabIndex={-1}
-                            >
-                                <span className="mr-2">Create Index</span>
-                                <FaDatabase fontSize={"20px"} />
-                            </a>
-                        )} */}
 
                         {isMobile() &&
                             chatPayload.model in multiModalModels && (
