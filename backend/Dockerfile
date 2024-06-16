@@ -11,13 +11,15 @@ COPY . .
 
 # install system dependencies required by spaCy
 RUN apt-get update && apt-get install -y \
-    wget \
     build-essential \
     python3-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && pip install --upgrade pip \
-    && pip install -v --no-cache-dir -r requirements.txt
+    && pip install uv \
+    && uv venv \
+    && . .venv/bin/activate \
+    && uv pip install -v --no-cache-dir -r requirements.txt
 
 # Copy entrypoint script
 COPY ./entrypoint.sh /app/entrypoint.sh
