@@ -13,6 +13,7 @@ const SourceList = ({
 
     return (
         <div
+            key={messageIndex}
             style={{
                 display: "flex",
                 flexWrap: "wrap",

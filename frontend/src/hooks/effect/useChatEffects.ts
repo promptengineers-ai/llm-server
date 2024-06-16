@@ -93,3 +93,15 @@ export const useSubmitQuestionStreamEffect = (
         };
     }, [messages]);
 };
+
+export const useUpdateInitChatPayloadEffect = (setInitChatPayload: any) => {
+    useEffect(() => {
+        const system = sessionStorage.getItem("system");
+        if (system) {
+            setInitChatPayload((prev: ChatPayload) => ({
+                ...prev,
+                system,
+            }));
+        }
+    }, []);
+};
