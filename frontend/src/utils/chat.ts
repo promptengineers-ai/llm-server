@@ -67,3 +67,7 @@ export const parseCSV = (text: string) => {
     const rows = text.split("\n").map((row) => row.split(","));
     return rows;
 };
+
+export const messagesContainsSources = (messages: Message[]) => {
+    return messages.some((message) => message.sources);
+};

@@ -2,24 +2,14 @@
 import {
     useContext,
     createContext,
-    useState,
-    useRef,
     useEffect,
-    useCallback,
     useMemo,
 } from "react";
 import { ChatClient } from "../utils/api";
-import { ChatContextType, Message } from "../types/chat";
+import { Message } from "../types/chat";
 import { IContextProvider } from "../interfaces/provider";
-import { log } from "../utils/log";
-import { ChatPayload, LLM } from "@/types/chat";
-import {
-    EmbeddingModel,
-    ModelType,
-    SearchProvider,
-    SearchType,
-    acceptRagSystemMessage,
-} from "@/types/llm";
+import { ChatPayload } from "@/types/chat";
+import { acceptRagSystemMessage } from "@/types/llm";
 import { useSearchParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import rehypeSanitize from "rehype-sanitize";
@@ -27,99 +17,77 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
 import { SSE } from "sse.js";
-import { combinePrompts, constructBubbleMessage, parseCSV, shallowUrl } from "@/utils/chat";
+import {
+    combinePrompts,
+    constructBubbleMessage,
+    shallowUrl,
+} from "@/utils/chat";
 import { userMessageTitleStyle } from "@/config/message";
-import { API_URL, ON_PREM } from "@/config/app";
+import { API_URL } from "@/config/app";
 import CopyCodeButton from "@/components/buttons/CopyCodeButton";
 import CopyIcon from "@/components/icons/CopyIcon";
 import RegenerateIcon from "@/components/icons/RegenerateIcon";
 import ThumbDownIcon from "@/components/icons/ThumbDownIcon";
 import { useAppContext } from "./AppContext";
 import DocumentIcon from "@/components/icons/DocumentIcon";
-import { Default } from "@/config/default";
-import { formatDate } from "@/utils/datetime";
 import DocumentSection from "@/components/sections/DocumentSection";
 import CollapseIcon from "@/components/icons/CollapseIcon";
 import ExpandIcon from "@/components/icons/ExpandIcon";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import equal from "fast-deep-equal/react";
+import { useChatState } from "@/hooks/state/useChatState";
 
 const ChatContext = createContext({});
 export default function ChatProvider({ children }: IContextProvider) {
     const { setLoading, loading, isMobile } = useAppContext();
+    const {
+        chatboxRef,
+        chatInputRef,
+        userInputRef,
+        responseRef,
+        done,
+        setDone,
+        chatPayload,
+        setChatPayload,
+        initChatPayload,
+        setInitChatPayload,
+        isSaveEnabled,
+        setIsSaveEnabled,
+        response,
+        setResponse,
+        models,
+        userInput,
+        setUserInput,
+        messages,
+        setMessages,
+        images,
+        setImages,
+        files,
+        setFiles,
+        chats,
+        setChats,
+        expand,
+        setExpand,
+        selectedImage,
+        setSelectedImage,
+        selectedDocument,
+        setSelectedDocument,
+        csvContent,
+        setCsvContent,
+        fetchChats,
+        deleteChat,
+        handleImageClick,
+        sendChatPayload,
+        handleRegenerateClick,
+        fetchModels,
+        resetChat,
+        handleDocumentClick,
+        submitCleanUp,
+        updateMessages,
+        adjustHeight,
+    } = useChatState();
     const searchParams = useSearchParams();
     const chatClient = new ChatClient();
-    const chatInputRef = useRef<HTMLInputElement | null>(null);
-    const chatboxRef = useRef<HTMLInputElement | null>(null);
-    const [chatboxRefIsEmpty, setChatboxRefIsEmpty] = useState(true);
-    const userInputRef = useRef<HTMLInputElement | null>(null);
-    const [models, setModels] = useState<LLM[]>([]);
-    const [embeddings, setEmbeddings] = useState<LLM[]>([]);
-    const [chatPayload, setChatPayload] = useState<ChatPayload>({
-        query: "",
-        history_id: "",
-        system: Default.SYSTEM_MESSAGE,
-        model: (
-            ON_PREM 
-            ? ModelType.OLLAMA_LLAMA_3_CHAT 
-            : ModelType.OPENAI_GPT_4_OMNI
-        ),
-        temperature: 0.5,
-        tools: [],
-        retrieval: {
-            provider: SearchProvider.REDIS,
-            embedding: (
-                ON_PREM 
-                ? EmbeddingModel.OLLAMA_NOMIC_EMBED_TEXT 
-                : EmbeddingModel.OPENAI_TEXT_EMBED_3_LARGE
-            ),
-            index_name: "",
-            search_type: SearchType.MMR,
-            search_kwargs: {
-                k: 20,
-                fetch_k: null,
-                score_threshold: null,
-            },
-        },
-    });
-    const [initChatPayload, setInitChatPayload] = useState({
-        system: chatPayload.system,
-        retrieval: chatPayload.retrieval,
-        tools: chatPayload.tools,
-    });
-    const [isSaveEnabled, setIsSaveEnabled] = useState(false);
-    const [chats, setChats] = useState<any[]>([]);
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [images, setImages] = useState<any[]>([]);
-    const [files, setFiles] = useState<any[]>([]);
-    const [expand, setExpand] = useState(false);
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
-    const [selectedDocument, setSelectedDocument] = useState<any | null>(null);
-    const [csvContent, setCsvContent] = useState<string[][] | null>(null);
-
-    const responseRef = useRef("");
-    const [userInput, setUserInput] = useState("");
-    const [response, setResponse] = useState("");
-    const [done, setDone] = useState(true);
-
-    const fetchChats = async () => {
-        try {
-            const data = await chatClient.list();
-            setChats(data.chats);
-        } catch (err) {
-            alert(err);
-            console.error(err);
-        }
-    };
-
-    const fetchModels = async () => {
-        const res = await chatClient.listModels();
-        setModels(
-            res.models.sort((a: LLM, b: LLM) =>
-                a.model_name.localeCompare(b.model_name)
-            )
-        );
-    }
 
     const findChat = async (chatId: string) => {
         try {
@@ -144,131 +112,6 @@ export default function ChatProvider({ children }: IContextProvider) {
         } catch (err) {
             alert(err); // Display error message from the exception
             console.error(err);
-        }
-    };
-
-    const deleteChat = async (chatId: string) => {
-        // Ask for confirmation before deleting
-        const confirmDelete = confirm(
-            "Are you sure you want to delete this chat?"
-        );
-        if (!confirmDelete) {
-            return; // If user clicks 'Cancel', exit the function
-        }
-
-        try {
-            await chatClient.delete(chatId);
-            setChats(chats.filter((chat) => chat.id !== chatId));
-            if (chatId === chatPayload.history_id) {
-                setMessages([]);
-            }
-        } catch (err) {
-            alert(err); // Display error message from the exception
-            console.error(err);
-        }
-    };
-
-    const handleImageClick = (src: string) => {
-        setSelectedImage(src);
-    };
-
-    const sendChatPayload = async (event: any) => {
-        event.preventDefault();
-
-        const messageContent: Message = { role: "user", content: userInput };
-
-        if (images.length > 0) {
-            messageContent.images = images.map((image) => image.src);
-        }
-
-        if (files.length > 0) {
-            messageContent.sources = files.map((file) => file);
-        }
-
-        setMessages([...messages, messageContent]);
-        setImages([]);
-    };
-
-    const messagesContainsSources = () => {
-        return messages.some((message) => message.sources);
-    };
-
-    const resetChat = (event: any) => {
-        event.preventDefault();
-        setUserInput("");
-        shallowUrl("/chat");
-        setMessages([]);
-        setChatPayload({
-            ...chatPayload,
-            query: "",
-            history_id: "",
-            retrieval: {
-                ...chatPayload.retrieval,
-                index_name: "",
-            },
-        });
-        setDone(true);
-    };
-
-    const adjustHeight = (height?: string) => {
-        const textarea = chatInputRef.current as unknown as HTMLTextAreaElement; // Type assertion
-        if (textarea) {
-            textarea.style.height = "auto";
-            textarea.style.height = height
-                ? height
-                : `${textarea.scrollHeight}px`;
-        }
-    };
-
-    const handleRegenerateClick = (index: number) => {
-        if (index === 0) {
-            alert("Cannot regenerate from the first message.");
-            return;
-        }
-
-        // Update chatPayload with the content of the message just before the clicked one
-        const messageAtIndex = messages[index - 1];
-        const newMessages = messages.slice(0, index - 1);
-        setMessages(newMessages);
-
-        setTimeout(() => {
-            // setMessages([...newMessages, messageAtIndex]);
-            setUserInput(messageAtIndex.content);
-            // submitQuestionStream();
-        }, 200);
-    };
-
-    const handleDocumentClick = async (messageIndex: number, source: any) => {
-        if (selectedDocument || csvContent) {
-            setSelectedDocument(null);
-            setCsvContent(null);
-            return;
-        } else {
-            if (source.type === "text/plain") {
-                try {
-                    const response = await fetch(source.src);
-                    const text = await response.text();
-                    const blob = new Blob([text], { type: "text/plain" });
-                    const blobUrl = URL.createObjectURL(blob);
-                    setSelectedDocument(blobUrl);
-                    setCsvContent(null);
-                } catch (error) {
-                    console.error("Failed to fetch text content:", error);
-                }
-            } else if (source.type === "text/csv") {
-                try {
-                    const response = await fetch(source.src);
-                    const text = await response.text();
-                    const parsedCSV = parseCSV(text);
-                    setCsvContent(parsedCSV);
-                    setSelectedDocument(null);
-                } catch (error) {
-                    console.error("Failed to fetch CSV content:", error);
-                }
-            } else {
-                setSelectedDocument({ ...source, id: messageIndex });
-                setCsvContent(null);
-            }
         }
     };
 
@@ -599,12 +442,6 @@ export default function ChatProvider({ children }: IContextProvider) {
         });
     };
 
-    const submitCleanUp = () => {
-        setChatPayload({ ...chatPayload, query: "" });
-        setUserInput("");
-        chatInputRef.current?.focus();
-    };
-
     const submitQuestionStream = async () => {
         try {
             setDone(false);
@@ -625,8 +462,6 @@ export default function ChatProvider({ children }: IContextProvider) {
                 temperature: chatPayload.temperature,
                 streaming: true,
             };
-
-            
 
             const source = new SSE(API_URL + "/api/v1/chat", {
                 headers: {
@@ -711,44 +546,6 @@ export default function ChatProvider({ children }: IContextProvider) {
         }
     };
 
-
-    async function updateMessages(
-        system: string,
-        messages: Message[],
-        retrieval?: any,
-        tools?: string[]
-    ) {
-        if (!chatPayload.history_id) {
-            const history = await chatClient.create({
-                system,
-                messages,
-                retrieval,
-                tools,
-            });
-            log("contexts.ChatContext.updateCallback", history, "Created");
-            setChatPayload({
-                ...chatPayload,
-                query: "",
-                history_id: history.chat.id,
-            });
-            let updatedUrl = `/chat/${history.chat.id}`;
-            if (searchParams.toString()) {
-                updatedUrl += `?${searchParams.toString()}`;
-            }
-            shallowUrl(updatedUrl);
-        } else {
-            const history = await chatClient.update(chatPayload.history_id, {
-                system,
-                messages,
-                retrieval,
-                tools,
-            });
-            log("contexts.ChatContext.updateCallback", history, "Updated");
-        }
-        chatInputRef.current?.focus();
-        fetchChats();
-    }
-
     useEffect(() => {
         response.length &&
             setMessages((prevConversationContext) => {
@@ -787,7 +584,13 @@ export default function ChatProvider({ children }: IContextProvider) {
     }, [messages]);
 
     useEffect(() => {
-        if (!equal(initChatPayload, {system: chatPayload.system, retrieval: chatPayload.retrieval, tools: chatPayload.tools})) {
+        if (
+            !equal(initChatPayload, {
+                system: chatPayload.system,
+                retrieval: chatPayload.retrieval,
+                tools: chatPayload.tools,
+            })
+        ) {
             setIsSaveEnabled(true);
         } else {
             setIsSaveEnabled(false);
@@ -811,7 +614,6 @@ export default function ChatProvider({ children }: IContextProvider) {
                     chats,
                     images,
                     chatPayload,
-                    chatboxRefIsEmpty,
                     userInput,
                     selectedImage,
                     files,
@@ -831,7 +633,6 @@ export default function ChatProvider({ children }: IContextProvider) {
                     setImages,
                     setChatPayload,
                     sendChatPayload,
-                    setChatboxRefIsEmpty,
                     deleteChat,
                     findChat,
                     renderConversation,
@@ -842,7 +643,6 @@ export default function ChatProvider({ children }: IContextProvider) {
                     adjustHeight,
                     setDone,
                     setSelectedDocument,
-                    messagesContainsSources,
                     setExpand,
                     setInitChatPayload,
                     setIsSaveEnabled,
@@ -850,7 +650,6 @@ export default function ChatProvider({ children }: IContextProvider) {
             }, [
                 chats,
                 done,
-                embeddings,
                 expand,
                 userInput,
                 chatboxRef,
@@ -860,7 +659,6 @@ export default function ChatProvider({ children }: IContextProvider) {
                 models,
                 images,
                 chatPayload,
-                chatboxRefIsEmpty,
                 selectedImage,
                 files,
                 selectedDocument,
