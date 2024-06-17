@@ -4,7 +4,7 @@ services:
   # API
   api:
     container_name: api
-    image: promptengineers/llm-server:725c36c
+    image: promptengineers/llm-server:2c46645
     volumes:
       - ./backend/data:/app/data  # Mount for SQLite database to host directory
     ports:
