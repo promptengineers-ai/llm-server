@@ -10,7 +10,7 @@ ENV PYTHONUNBUFFERED 1
 COPY . .
 
 # install system dependencies required by spaCy
-RUN apt-get update 
+RUN apt-get update \
     && apt-get install --no-install-recommends -y wget build-essential python3-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
