@@ -10,15 +10,18 @@ ENV PYTHONUNBUFFERED 1
 COPY . .
 
 # install system dependencies required by spaCy
-RUN useradd -m user && chown -R user . \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends build-essential \
+RUN apt-get update && apt-get install -y \
+    wget \
+    build-essential \
+    python3-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && pip install --upgrade pip \
-    && pip install uv \
-    && uv pip install -v --system --no-cache-dir -r requirements.txt
+    && pip install -v --no-cache-dir -r requirements.txt
 
-# Copy entrypoint script and ensure correct permissions
+# Copy entrypoint script
 COPY ./entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
+
+# Set entrypoint
+ENTRYPOINT ["/app/entrypoint.sh"]
