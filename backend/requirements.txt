@@ -4,7 +4,6 @@ langchain-anthropic
 langchain-pinecone
 langchain-groq
 langchain_experimental 
-# litellm
 pandas
 pinecone-client
 uvicorn

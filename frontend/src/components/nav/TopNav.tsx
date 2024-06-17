@@ -42,6 +42,7 @@ const TopNav: React.FC = () => {
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
                                 strokeWidth="2"
+                                style={{ transform: "scaleX(-1)" }}
                             >
                                 <path
                                     strokeLinecap="round"
@@ -151,7 +152,9 @@ const TopNav: React.FC = () => {
                                 aria-haspopup="true"
                                 aria-expanded="false"
                                 data-headlessui-state=""
-                                onMouseDown={() => setIsPopoverOpen(!isPopoverOpen)}
+                                onMouseDown={() =>
+                                    setIsPopoverOpen(!isPopoverOpen)
+                                }
                             >
                                 <div className="flex-shrink-0">
                                     <div className="flex items-center justify-center rounded">

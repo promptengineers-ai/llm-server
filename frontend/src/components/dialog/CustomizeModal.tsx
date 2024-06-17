@@ -12,6 +12,7 @@ import {
 } from "@headlessui/react";
 import { ChatPayload } from "@/types/chat";
 import RetrievalForm from "../forms/RetrievalForm";
+import { useUpdateInitChatPayloadEffect } from "@/hooks/effect/useChatEffects";
 
 const CustomizeModal = () => {
     const { isOpen, setIsOpen, setIsPopoverOpen, setIsDrawerOpen } =
@@ -23,6 +24,8 @@ const CustomizeModal = () => {
         setInitChatPayload,
         isSaveEnabled,
     } = useChatContext();
+
+    useUpdateInitChatPayloadEffect(setInitChatPayload);
 
     if (!isOpen) {
         return null;
@@ -37,16 +40,6 @@ const CustomizeModal = () => {
         sessionStorage.removeItem("fetch_k");
         sessionStorage.removeItem("score_threshold");
     }
-
-    useEffect(() => {
-        const system = sessionStorage.getItem("system");
-        if (system) {
-            setInitChatPayload((prev: ChatPayload) => ({
-                ...prev,
-                system,
-            }));
-        }
-    }, []);
 
     return (
         <div
