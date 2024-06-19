@@ -14,12 +14,19 @@ import ResponseToolBar from "@/components/sections/ResponseToolBar";
 import MarkdownCard from "@/components/cards/MarkdownCard";
 import ImageList from "@/components/lists/ImageList";
 import SourceList from "@/components/lists/SourceList";
+import { MdSource } from "react-icons/md";
+import { FaChevronDown } from "react-icons/fa";
 import {
     useFetchModelsEffect,
     useCheckIfSaveEnabledEffect,
     useUpdateMessageOnResponesEffect,
     useSubmitQuestionStreamEffect,
 } from "@/hooks/effect/useChatEffects";
+import {
+    Disclosure,
+    DisclosureButton,
+    DisclosurePanel,
+} from "@headlessui/react";
 
 const ChatContext = createContext({});
 export default function ChatProvider({ children }: IContextProvider) {
@@ -149,7 +156,54 @@ export default function ChatProvider({ children }: IContextProvider) {
                             </div>
                         )}
                     {conversationItem.role === "assistant" ? (
-                        <MarkdownCard content={conversationItem.content} />
+                        <>
+                            <Disclosure className="mb-1" as="div">
+                                <DisclosureButton className="bg-white group flex items-center justify-between px-2 py-1 mt-2 border rounded-md">
+                                    <MdSource
+                                        size={16}
+                                        className="text-black mr-2"
+                                    />
+                                    <label className="font-semibold mr-12">
+                                        Sources
+                                    </label>
+                                    <FaChevronDown
+                                        size={12}
+                                        className="group-data-[open]:rotate-180 mr-1"
+                                    />
+                                </DisclosureButton>
+                                <DisclosurePanel
+                                    className="bg-white p-2 rounded-md flex overflow-x-auto gap-2"
+                                    style={{ transform: "translate(0%, -2%)" }}
+                                >
+                                    <div className="p-2 h-12 w-48 bg-gray-200 rounded-md text-center">
+                                        Hello
+                                    </div>
+                                    <div className="p-2 h-12 w-48 bg-gray-200 rounded-md text-center">
+                                        Hello
+                                    </div>
+                                    <div className="p-2 h-12 w-48 bg-gray-200 rounded-md text-center">
+                                        Hello
+                                    </div>
+                                    <div className="p-2 h-12 w-48 bg-gray-200 rounded-md text-center">
+                                        Hello
+                                    </div>
+                                    <div className="p-2 h-12 w-48 bg-gray-200 rounded-md text-center">
+                                        Hello
+                                    </div>
+                                    <div className="p-2 h-12 w-48 bg-gray-200 rounded-md text-center">
+                                        Hello
+                                    </div>
+                                    <div className="p-2 h-12 w-48 bg-gray-200 rounded-md text-center">
+                                        Hello
+                                    </div>
+                                    <div className="p-2 h-12 w-48 bg-gray-200 rounded-md text-center">
+                                        Hello
+                                    </div>
+                                </DisclosurePanel>
+                            </Disclosure>
+
+                            <MarkdownCard content={conversationItem.content} />
+                        </>
                     ) : (
                         <p className="py-1 whitespace-pre-wrap">
                             {conversationItem.content}
