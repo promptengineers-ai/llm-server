@@ -22,8 +22,9 @@ const SourceList = ({
             }}
             className="my-2"
         >
-            {sources.map((source: any) => (
+            {sources.map((source: any, index: number) => (
                 <SourceCard
+                    key={index}
                     source={source}
                     noContent={noContent}
                     index={messageIndex}

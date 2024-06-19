@@ -11,6 +11,7 @@ import { jwtDecode } from "jwt-decode";
 import { IContextProvider } from "../interfaces/provider";
 import { useRouter } from "next/navigation";
 import { API_URL } from "@/config/app";
+import { useInitAuthFromStorageEffect } from "@/hooks/effect/useAuthEffects";
 
 export const AuthContext = createContext({});
 
@@ -47,30 +48,6 @@ function authReducer(state: any, action: any) {
 export default function AuthProvider({ children }: IContextProvider) {
     const router = useRouter();
     const [state, dispatch] = useReducer(authReducer, initialState);
-
-    // Effect to initialize state from localStorage on client side only
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        const user = localStorage.getItem("user") || "{}";
-        if (token || user) {
-            // Optionally validate the token and fetch user details
-            dispatch({
-                type: "LOGIN",
-                payload: { user: JSON.parse(user), token: token },
-            });
-        }
-
-        // Check token expiration
-        if (token) {
-            const decodedToken = jwtDecode<{ exp: number }>(token);
-            const expirationTime = decodedToken.exp * 1000 - Date.now();
-            if (expirationTime <= 0) {
-                logout();
-            } else {
-                setTimeout(logout, expirationTime);
-            }
-        }
-    }, []);
 
     const login = useCallback(async (email: string, password: string) => {
         try {
@@ -135,6 +112,8 @@ export default function AuthProvider({ children }: IContextProvider) {
             return JSON.parse(user);
         }
     };
+
+    useInitAuthFromStorageEffect(dispatch, logout);
 
     const value = useMemo(
         () => ({
