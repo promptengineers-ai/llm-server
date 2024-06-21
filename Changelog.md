@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - bugfix/42-redis-is-default-vector-db (2024-05-26)
   - bugfix/33-groq-rag-not-working (2024-05-19)
 ### Changed 
+  - feature/80-able-to-configure-tools (2024-06-20)
   - feature/74-clean-up-frontend (2024-06-15)
   - feature/71-models-avail-based-on-secrets (2024-06-09)
   - feature/63-embedding-added-to-retrieval-params (2024-06-09)
