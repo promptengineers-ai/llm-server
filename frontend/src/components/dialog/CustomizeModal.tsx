@@ -14,6 +14,7 @@ import { ChatPayload } from "@/types/chat";
 import RetrievalForm from "../forms/RetrievalForm";
 import { useUpdateInitChatPayloadEffect } from "@/hooks/effect/useChatEffects";
 import ToolDisclosure from "../disclosures/ToolDisclosure";
+import ToolList from "../lists/ToolList";
 
 const CustomizeModal = () => {
     const { isOpen, setIsOpen, setIsPopoverOpen, setIsDrawerOpen } =
@@ -113,58 +114,7 @@ const CustomizeModal = () => {
                                             <RetrievalForm />
                                         </TabPanel>
                                         <TabPanel>
-                                            <ToolDisclosure
-                                                title="Basic"
-                                                tools={[
-                                                    {
-                                                        name: "Summarization",
-                                                        description:
-                                                            "Summarize long texts into short summaries.",
-                                                        link: "#",
-                                                        enabled: true,
-                                                    },
-                                                    {
-                                                        name: "Translation",
-                                                        description:
-                                                            "Translate text from one language to another.",
-                                                        link: "#",
-                                                        enabled: false,
-                                                    },
-                                                    {
-                                                        name: "Text Generation",
-                                                        description:
-                                                            "Generate text based on a given prompt.",
-                                                        link: "#",
-                                                        enabled: true,
-                                                    },
-                                                ]}
-                                            />
-                                            <ToolDisclosure
-                                                title="YFinance"
-                                                tools={[
-                                                    {
-                                                        name: "Stock Price",
-                                                        description:
-                                                            "Get the current stock price.",
-                                                        link: "#",
-                                                        enabled: true,
-                                                    },
-                                                    {
-                                                        name: "Stock Info",
-                                                        description:
-                                                            "Get detailed stock information.",
-                                                        link: "#",
-                                                        enabled: false,
-                                                    },
-                                                    {
-                                                        name: "Stock News",
-                                                        description:
-                                                            "Get the latest news about a stock.",
-                                                        link: "#",
-                                                        enabled: true,
-                                                    },
-                                                ]}
-                                            />
+                                            <ToolList />
                                         </TabPanel>
                                     </TabPanels>
                                 </div>

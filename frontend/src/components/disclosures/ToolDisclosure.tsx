@@ -4,15 +4,33 @@ import {
     DisclosurePanel,
 } from "@headlessui/react";
 import { FaChevronDown } from "react-icons/fa";
+import { useChatContext } from "@/contexts/ChatContext";
 
 interface Tool {
     name: string;
+    value: string;
     description: string;
     link: string;
     enabled: boolean;
 }
 
 const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
+    const { chatPayload, setChatPayload } = useChatContext();
+
+    const toggleTool = (toolValue: string) => {
+        setChatPayload((prevPayload: any) => {
+            const isToolEnabled = prevPayload.tools.includes(toolValue);
+            const updatedTools = isToolEnabled
+                ? prevPayload.tools.filter((tool: string) => tool !== toolValue)
+                : [...prevPayload.tools, toolValue];
+
+            return {
+                ...prevPayload,
+                tools: updatedTools,
+            };
+        });
+    };
+
     return (
         <Disclosure as="div" className="border rounded-md w-full">
             <DisclosureButton className="group flex items-center justify-between p-3 w-full">
@@ -41,16 +59,15 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                                 <div className="text-sm overflow-hidden overflow-ellipsis h-[60px] line-clamp-3">
                                     {tool.description}
                                 </div>
-                                {/* <div className="hidden group-hover:block absolute bg-gray-800 text-white text-xs rounded-md p-2 shadow-lg z-10 w-full max-w-xs -top-10 transform -translate-y-5">
-                                    {tool.description}
-                                </div> */}
                             </div>
                             <div className="flex items-center mt-2">
                                 <input
                                     type="checkbox"
-                                    checked={tool.enabled}
+                                    checked={chatPayload.tools.includes(
+                                        tool.value
+                                    )}
                                     className="mr-2"
-                                    onChange={() => {}}
+                                    onChange={() => toggleTool(tool.value)}
                                 />
                             </div>
                         </li>

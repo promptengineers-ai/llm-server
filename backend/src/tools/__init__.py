@@ -67,3 +67,38 @@ AVAILABLE_TOOLS = {
     'pdf_fill_form_fields': pdf_fill_form_fields,
     # 'playwright_toolkit': playwright_toolkit(),
 }
+
+TOOL_DESCRIPTIONS = {
+    'repl_tool': {
+        'description': 'Interactive Python REPL tool.',
+        'link': '/tools/repl_tool',
+        'toolkit': 'Basic'
+    },
+    'csv_tool': {
+        'description': 'Tool for processing CSV files.',
+        'link': '/tools/csv_tool',
+        'toolkit': 'Basic'
+    },
+    'pdf_get_field_names': {
+        'description': 'Extract field names from PDF forms.',
+        'link': '/tools/pdf_get_field_names',
+        'toolkit': 'Advanced'
+    },
+    'pdf_fill_form_fields': {
+        'description': 'Fill form fields in PDF documents.',
+        'link': '/tools/pdf_fill_form_fields',
+        'toolkit': 'Advanced'
+    },
+}
+
+def tool_details():
+    return [
+        {
+            'name': key.replace('_', ' ').title(),
+            'value': key,
+            'description': TOOL_DESCRIPTIONS[key]['description'],
+            'link': TOOL_DESCRIPTIONS[key]['link'],
+            'toolkit': TOOL_DESCRIPTIONS[key]['toolkit']
+        }
+        for key in AVAILABLE_TOOLS
+    ]
