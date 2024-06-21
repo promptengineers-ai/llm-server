@@ -73,7 +73,7 @@ const CustomizeModal = () => {
                                         Retrieval
                                     </Tab>
                                     <Tab
-                                        disabled
+                                        // disabled
                                         className="disabled:opacity-50 rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white"
                                     >
                                         Tools
@@ -108,7 +108,7 @@ const CustomizeModal = () => {
                                         <TabPanel>
                                             <RetrievalForm />
                                         </TabPanel>
-                                        {/* <TabPanel>Content 3</TabPanel> */}
+                                        <TabPanel>Content 3</TabPanel>
                                     </TabPanels>
                                 </div>
                             </TabGroup>
