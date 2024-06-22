@@ -1,6 +1,9 @@
 import { useEffect } from "react";
 import equal from "fast-deep-equal/react";
+import { Hook, Console, Decode, Unhook } from "console-feed";
 import { ChatPayload, LLM, Message } from "@/types/chat";
+import { logFilter } from "@/utils/log";
+import { HookedConsole } from "console-feed/lib/definitions/Console";
 
 export const useFetchModelsEffect = (models: LLM[], fetchModels: any) => {
     useEffect(() => {
@@ -104,4 +107,48 @@ export const useUpdateInitChatPayloadEffect = (setInitChatPayload: any) => {
             }));
         }
     }, []);
+};
+
+
+// TODO: This logFilter mechanism is dirty dirty, and should be replaced with a more robust solution
+export const usePrintActionsToLogsEffect = (
+    actions: any[],
+    setActions: any,
+    logs: any[],
+    setLogs: any,
+    done: boolean
+) => {
+    useEffect(() => {
+        if (actions.length > 0) {
+            Hook(
+                window.console as HookedConsole,
+                (log: any) => {
+                    if (logFilter(log, logs)) {
+                        setLogs((currentLogs: any[]) => [...currentLogs, log]);
+                    }
+                },
+                false
+            );
+
+            for (const action of actions) {
+                const message =
+                    typeof action.message === "object"
+                        ? JSON.stringify(action.message, null, 2)
+                        : action.message;
+                console.info(
+                    `%c[${action.tool}] - ${action.type}:%c ${message}`,
+                    "color:white;",
+                    "color:#33FF33;"
+                );
+            }
+            
+        }
+        if (done) {
+            Unhook(window.console as HookedConsole);
+            setActions([]);
+        }
+        return () => {
+            Unhook(window.console as HookedConsole);
+        };
+    }, [actions.length, done]);
 };

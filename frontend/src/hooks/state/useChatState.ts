@@ -25,6 +25,8 @@ export const defaultState = {
     messages: [],
     images: [],
     files: [],
+    actions: [],
+    logs: [],
     expand: false,
     done: true,
     selectedImage: null,
@@ -73,6 +75,8 @@ export const useChatState = () => {
     const [messages, setMessages] = useState<Message[]>(defaultState.messages);
     const [images, setImages] = useState<any[]>(defaultState.images);
     const [files, setFiles] = useState<any[]>(defaultState.files);
+    const [actions, setActions] = useState<any[]>(defaultState.actions);
+    const [logs, setLogs] = useState<any[]>(defaultState.logs);
     const [userInput, setUserInput] = useState(defaultState.userInput);
     const [response, setResponse] = useState(defaultState.response);
     const [models, setModels] = useState<LLM[]>(defaultState.models);
@@ -168,6 +172,8 @@ export const useChatState = () => {
         setUserInput("");
         shallowUrl("/chat");
         setMessages([]);
+        setActions([]);
+        setLogs([]);
         setChatPayload({
             ...chatPayload,
             query: "",
@@ -354,6 +360,13 @@ export const useChatState = () => {
                         if (objectsArray[0].type === "doc") {
                             console.log(objectsArray[0].message);
                         }
+
+                        if ("tool" in objectsArray[0]) {
+                            setActions((prevActions) => [
+                                ...prevActions,
+                                objectsArray[0],
+                            ]);
+                        }
                     }
                 } else {
                     source.close();
@@ -372,12 +385,18 @@ export const useChatState = () => {
     };
 
     return {
+        // Constants
+        defaultState,
         // Refs
         chatInputRef,
         chatboxRef,
         userInputRef,
         responseRef,
         // States
+        actions,
+        setActions,
+        logs,
+        setLogs,
         done,
         setDone,
         expand,

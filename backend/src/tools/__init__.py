@@ -79,22 +79,22 @@ defined in the PDF form, and each value is the value to set for that field.
 AVAILABLE_TOOLS = {
     'image_summary': multi_modal_tool,
 	'repl_tool': repl_tool,
-    'csv_tool': csv_tool,
-    'pdf_get_field_names': pdf_get_field_names,
-    'pdf_fill_form_fields': pdf_fill_form_fields,
+    # 'csv_tool': csv_tool,
+    # 'pdf_get_field_names': pdf_get_field_names,
+    # 'pdf_fill_form_fields': pdf_fill_form_fields,
     # 'playwright_toolkit': playwright_toolkit(),
 }
 
 TOOL_DESCRIPTIONS = {
     'image_summary': {
-        'description': 'Tool for understanding context in an image.',
+        'description': 'Tool for understanding context in an image. Uses GPT-4o (currently).',
         'link': '/tools/image_summary',
-        'toolkit': 'Basic'
+        'toolkit': 'Advanced'
     },
     'repl_tool': {
-        'description': 'Interactive Python REPL tool.',
+        'description': 'Python REPL can execute arbitrary code. Use with caution',
         'link': '/tools/repl_tool',
-        'toolkit': 'Basic'
+        'toolkit': 'Advanced'
     },
     'csv_tool': {
         'description': 'Tool for processing CSV files.',
