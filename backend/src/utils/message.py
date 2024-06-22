@@ -70,7 +70,7 @@ def _move_system_to_front(messages):
 
 #     return result
 
-def retrieve_chat_messages(body, use_class=False):
+def retrieve_chat_messages(body, use_class=False, return_system=True):
     """Retrieve chat messages and wrap them in HumanMessage or AIMessage based on the sender."""
     result = []
     for msg in body.messages:
@@ -97,11 +97,11 @@ def retrieve_chat_messages(body, use_class=False):
                             "url": img,
                             "detail": "auto"
                         }
-                })
+                    })
 
         # Create message object based on role and append to result
         if content_list:
-            if msg["role"] == "system":
+            if msg["role"] == "system" and return_system:
                 content = " ".join([c["text"] for c in content_list if c["type"] == "text"])
                 result.append(SystemMessage(content))
             if msg["role"] == "user":

@@ -2,7 +2,7 @@
 import { API_URL, ON_PREM } from "@/config/app";
 import { Default } from "@/config/default";
 import { useAppContext } from "@/contexts/AppContext";
-import { LLM, Message } from "@/types/chat";
+import { LLM, Message, Tool } from "@/types/chat";
 import { EmbeddingModel, ModelType, SearchProvider, SearchType, acceptRagSystemMessage } from "@/types/llm";
 import { ChatClient } from "@/utils/api";
 import { combinePrompts, parseCSV, shallowUrl } from "@/utils/chat";
@@ -25,6 +25,9 @@ export const defaultState = {
     messages: [],
     images: [],
     files: [],
+    actions: [],
+    logs: [],
+    tools: [],
     expand: false,
     done: true,
     selectedImage: null,
@@ -73,6 +76,9 @@ export const useChatState = () => {
     const [messages, setMessages] = useState<Message[]>(defaultState.messages);
     const [images, setImages] = useState<any[]>(defaultState.images);
     const [files, setFiles] = useState<any[]>(defaultState.files);
+    const [actions, setActions] = useState<any[]>(defaultState.actions);
+    const [logs, setLogs] = useState<any[]>(defaultState.logs);
+    const [tools, setTools] = useState<Tool[]>(defaultState.tools);
     const [userInput, setUserInput] = useState(defaultState.userInput);
     const [response, setResponse] = useState(defaultState.response);
     const [models, setModels] = useState<LLM[]>(defaultState.models);
@@ -168,6 +174,8 @@ export const useChatState = () => {
         setUserInput("");
         shallowUrl("/chat");
         setMessages([]);
+        setActions([]);
+        setLogs([]);
         setChatPayload({
             ...chatPayload,
             query: "",
@@ -354,6 +362,13 @@ export const useChatState = () => {
                         if (objectsArray[0].type === "doc") {
                             console.log(objectsArray[0].message);
                         }
+
+                        if ("tool" in objectsArray[0]) {
+                            setActions((prevActions) => [
+                                ...prevActions,
+                                objectsArray[0],
+                            ]);
+                        }
                     }
                 } else {
                     source.close();
@@ -372,12 +387,20 @@ export const useChatState = () => {
     };
 
     return {
+        // Constants
+        defaultState,
         // Refs
         chatInputRef,
         chatboxRef,
         userInputRef,
         responseRef,
         // States
+        actions,
+        setActions,
+        logs,
+        setLogs,
+        tools,
+        setTools,
         done,
         setDone,
         expand,
