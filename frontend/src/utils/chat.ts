@@ -46,9 +46,9 @@ export const combinePrompts = (
     userInput: string
 ) => {
     const sysPrompt = prompt(chatPayload);
-    const initialUserInput = { role: "user", content: userInput };
+    // const initialUserInput = { role: "user", content: userInput };
 
-    return [sysPrompt, ...messages, initialUserInput];
+    return [sysPrompt, ...messages];
 };
 
 export const shallowUrl = (url: string) => {

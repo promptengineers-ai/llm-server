@@ -24,8 +24,8 @@ repl_tool = StructuredTool.from_function(
 
 
 class HumanQuery(BaseModel):
-    image: str = Field(
-        description="The is a base64 string or url to image to be processed."
+    images: list[str] = Field(
+        description="The is a base64 string or url list of images to be processed."
     )
 
 multi_modal_tool = StructuredTool.from_function(
