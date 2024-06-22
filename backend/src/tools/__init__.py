@@ -78,7 +78,7 @@ defined in the PDF form, and each value is the value to set for that field.
 
 AVAILABLE_TOOLS = {
     'image_summary': multi_modal_tool,
-	'repl_tool': repl_tool,
+	# 'repl_tool': repl_tool,
     # 'csv_tool': csv_tool,
     # 'pdf_get_field_names': pdf_get_field_names,
     # 'pdf_fill_form_fields': pdf_fill_form_fields,
