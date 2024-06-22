@@ -4,6 +4,7 @@ import { Hook, Console, Decode, Unhook } from "console-feed";
 import { ChatPayload, LLM, Message } from "@/types/chat";
 import { logFilter } from "@/utils/log";
 import { HookedConsole } from "console-feed/lib/definitions/Console";
+import { API_URL } from "@/config/app";
 
 export const useFetchModelsEffect = (models: LLM[], fetchModels: any) => {
     useEffect(() => {
@@ -163,3 +164,23 @@ export const usePrintActionsToLogsEffect = (
         };
     }, [actions.length, done]);
 };
+
+export const useFetchToolsEffect = (setTools: any) => {
+    useEffect(() => {
+        const fetchTools = async () => {
+            try {
+                const response = await fetch(`${API_URL}/tools`);
+                const data = await response.json();
+                setTools(data.tools);
+            } catch (error) {
+                console.error("Error fetching tools:", error);
+            }
+        };
+
+        fetchTools();
+        return () => {
+            // Cleanup logic if needed
+        };
+    }, []);
+
+}

@@ -12,8 +12,10 @@ import {
 } from "@headlessui/react";
 import { ChatPayload } from "@/types/chat";
 import RetrievalForm from "../forms/RetrievalForm";
-import { useUpdateInitChatPayloadEffect } from "@/hooks/effect/useChatEffects";
-import ToolDisclosure from "../disclosures/ToolDisclosure";
+import {
+    useUpdateInitChatPayloadEffect,
+    useFetchToolsEffect,
+} from "@/hooks/effect/useChatEffects";
 import ToolList from "../lists/ToolList";
 
 const CustomizeModal = () => {
@@ -25,9 +27,11 @@ const CustomizeModal = () => {
         initChatPayload,
         setInitChatPayload,
         isSaveEnabled,
+        setTools,
     } = useChatContext();
 
     useUpdateInitChatPayloadEffect(setInitChatPayload);
+    useFetchToolsEffect(setTools);
 
     if (!isOpen) {
         return null;
@@ -139,6 +143,8 @@ const CustomizeModal = () => {
                                                 (prev: ChatPayload) => ({
                                                     ...prev,
                                                     system: chatPayload.system,
+                                                    retrieval: chatPayload.retrieval,
+                                                    tools: chatPayload.tools,
                                                 })
                                             );
                                             resetOnCancel();

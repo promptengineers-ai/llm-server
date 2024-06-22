@@ -2,7 +2,7 @@
 import { API_URL, ON_PREM } from "@/config/app";
 import { Default } from "@/config/default";
 import { useAppContext } from "@/contexts/AppContext";
-import { LLM, Message } from "@/types/chat";
+import { LLM, Message, Tool } from "@/types/chat";
 import { EmbeddingModel, ModelType, SearchProvider, SearchType, acceptRagSystemMessage } from "@/types/llm";
 import { ChatClient } from "@/utils/api";
 import { combinePrompts, parseCSV, shallowUrl } from "@/utils/chat";
@@ -27,6 +27,7 @@ export const defaultState = {
     files: [],
     actions: [],
     logs: [],
+    tools: [],
     expand: false,
     done: true,
     selectedImage: null,
@@ -77,6 +78,7 @@ export const useChatState = () => {
     const [files, setFiles] = useState<any[]>(defaultState.files);
     const [actions, setActions] = useState<any[]>(defaultState.actions);
     const [logs, setLogs] = useState<any[]>(defaultState.logs);
+    const [tools, setTools] = useState<Tool[]>(defaultState.tools);
     const [userInput, setUserInput] = useState(defaultState.userInput);
     const [response, setResponse] = useState(defaultState.response);
     const [models, setModels] = useState<LLM[]>(defaultState.models);
@@ -397,6 +399,8 @@ export const useChatState = () => {
         setActions,
         logs,
         setLogs,
+        tools,
+        setTools,
         done,
         setDone,
         expand,

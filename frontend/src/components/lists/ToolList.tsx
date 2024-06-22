@@ -1,35 +1,12 @@
-import React, { useEffect, useState } from "react";
 import ToolDisclosure from "@/components/disclosures/ToolDisclosure";
-import { API_URL } from "@/config/app";
-
-interface Tool {
-    name: string;
-    value: string;
-    description: string;
-    link: string;
-    enabled: boolean;
-    toolkit: string;
-}
+import { useChatContext } from "@/contexts/ChatContext";
+import { Tool } from "@/types/chat";
 
 const ToolsList = () => {
-    const [tools, setTools] = useState<Tool[]>([]);
-
-    useEffect(() => {
-        const fetchTools = async () => {
-            try {
-                const response = await fetch(`${API_URL}/tools`);
-                const data = await response.json();
-                setTools(data.tools);
-            } catch (error) {
-                console.error("Error fetching tools:", error);
-            }
-        };
-
-        fetchTools();
-    }, []);
-
+    const {tools} = useChatContext();
+    
     const groupedTools = tools.reduce(
-        (acc: { [key: string]: Tool[] }, tool) => {
+        (acc: { [key: string]: Tool[] }, tool: Tool) => {
             if (!acc[tool.toolkit]) {
                 acc[tool.toolkit] = [];
             }
