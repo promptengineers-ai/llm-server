@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import equal from "fast-deep-equal/react";
 import { Hook, Console, Decode, Unhook } from "console-feed";
 import { ChatPayload, LLM, Message } from "@/types/chat";
@@ -110,43 +110,54 @@ export const useUpdateInitChatPayloadEffect = (setInitChatPayload: any) => {
 };
 
 
-// TODO: This logFilter mechanism is dirty dirty, and should be replaced with a more robust solution
 export const usePrintActionsToLogsEffect = (
     actions: any[],
     setActions: any,
-    logs: any[],
     setLogs: any,
     done: boolean
 ) => {
+    const previousActionsLengthRef = useRef(0);
+    const actionsSetRef = useRef(new Set());
+
     useEffect(() => {
-        if (actions.length > 0) {
+        const newActions = actions.slice(previousActionsLengthRef.current);
+
+        if (newActions.length > 0) {
             Hook(
                 window.console as HookedConsole,
                 (log: any) => {
-                    if (logFilter(log, logs)) {
+                    if (logFilter(log)) {
                         setLogs((currentLogs: any[]) => [...currentLogs, log]);
                     }
                 },
                 false
             );
 
-            for (const action of actions) {
-                const message =
-                    typeof action.message === "object"
-                        ? JSON.stringify(action.message, null, 2)
-                        : action.message;
-                console.info(
-                    `%c[${action.tool}] - ${action.type}:%c ${message}`,
-                    "color:white;",
-                    "color:#33FF33;"
-                );
-            }
-            
+            newActions.forEach((action) => {
+                if (!actionsSetRef.current.has(action)) {
+                    const message =
+                        typeof action.message === "object"
+                            ? JSON.stringify(action.message, null, 2)
+                            : action.message;
+                    console.info(
+                        `%c[${action.tool}] - ${action.type}:%c ${message}`,
+                        "color:white;",
+                        "color:#33FF33;"
+                    );
+                    actionsSetRef.current.add(action);
+                }
+            });
+
+            previousActionsLengthRef.current = actions.length;
         }
+
         if (done) {
             Unhook(window.console as HookedConsole);
             setActions([]);
+            previousActionsLengthRef.current = 0;
+            actionsSetRef.current.clear();
         }
+
         return () => {
             Unhook(window.console as HookedConsole);
         };

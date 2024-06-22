@@ -180,7 +180,7 @@ export default function ChatProvider({ children }: IContextProvider) {
     useSubmitQuestionStreamEffect(userInput, messages, done, submitQuestionStream);
     useCheckIfSaveEnabledEffect(initChatPayload, chatPayload, setIsSaveEnabled);
     useFetchModelsEffect(models, fetchModels);
-    usePrintActionsToLogsEffect(actions, setActions, logs, setLogs, done);
+    usePrintActionsToLogsEffect(actions, setActions, setLogs, done);
 
     return (
         <ChatContext.Provider
