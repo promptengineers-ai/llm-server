@@ -5,17 +5,13 @@ import {
 } from "@headlessui/react";
 import { FaChevronDown } from "react-icons/fa";
 import { useChatContext } from "@/contexts/ChatContext";
+import { Tool } from "@/types/chat";
+import { useEffect } from "react";
 
-interface Tool {
-    name: string;
-    value: string;
-    description: string;
-    link: string;
-    enabled: boolean;
-}
 
 const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
-    const { initChatPayload, setInitChatPayload } = useChatContext();
+    const { initChatPayload, setInitChatPayload, setChatPayload } =
+        useChatContext();
 
     const toggleTool = (toolValue: string) => {
         setInitChatPayload((prevPayload: any) => {
@@ -24,12 +20,29 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                 ? prevPayload.tools.filter((tool: string) => tool !== toolValue)
                 : [...prevPayload.tools, toolValue];
 
+            sessionStorage.setItem("tools", JSON.stringify(updatedTools));
+
             return {
                 ...prevPayload,
                 tools: updatedTools,
             };
         });
     };
+
+    useEffect(() => {
+        const savedTools = sessionStorage.getItem("tools");
+        if (savedTools) {
+            const parsedTools = JSON.parse(savedTools);
+            setInitChatPayload((prevPayload: any) => ({
+                ...prevPayload,
+                tools: parsedTools,
+            }));
+            setChatPayload((prevPayload: any) => ({
+                ...prevPayload,
+                tools: parsedTools,
+            }));
+        }
+    }, [setInitChatPayload]);
 
     return (
         <Disclosure as="div" className="border rounded-md w-full">

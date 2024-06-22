@@ -44,7 +44,7 @@ const CustomizeModal = () => {
         sessionStorage.removeItem("search_type");
         sessionStorage.removeItem("k");
         sessionStorage.removeItem("fetch_k");
-        sessionStorage.removeItem("score_threshold");
+        sessionStorage.setItem("tools", JSON.stringify(chatPayload.tools));
     }
 
     return (
