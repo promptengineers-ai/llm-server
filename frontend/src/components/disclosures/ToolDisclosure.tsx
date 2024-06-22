@@ -15,10 +15,10 @@ interface Tool {
 }
 
 const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
-    const { chatPayload, setChatPayload } = useChatContext();
+    const { initChatPayload, setInitChatPayload } = useChatContext();
 
     const toggleTool = (toolValue: string) => {
-        setChatPayload((prevPayload: any) => {
+        setInitChatPayload((prevPayload: any) => {
             const isToolEnabled = prevPayload.tools.includes(toolValue);
             const updatedTools = isToolEnabled
                 ? prevPayload.tools.filter((tool: string) => tool !== toolValue)
@@ -63,7 +63,7 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                             <div className="flex items-center mt-2">
                                 <input
                                     type="checkbox"
-                                    checked={chatPayload.tools.includes(
+                                    checked={initChatPayload.tools.includes(
                                         tool.value
                                     )}
                                     className="mr-2"

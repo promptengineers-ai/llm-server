@@ -14,6 +14,7 @@ from langchain_community.chat_models import ChatOllama
 from langchain_anthropic import ChatAnthropic
 
 from src.models import MemoryType
+from src.utils.format import flatten_tuples
 
 class LLMService:
 	def __init__(self, model_list=[]):
@@ -32,22 +33,6 @@ class LLMService:
 	):
 		return self.select(temperature, streaming, callbacks, cache)
 
-	# def chat_router(
-	# 	self, 
-	# 	temperature=0, 
-	# 	streaming=False, 
-	# 	callbacks=None, 
-	# 	cache=False
-	# ):
-	# 	litellm_router = Router(model_list=self.model_list)
-	# 	return ChatLiteLLMRouter(
-	# 		router=litellm_router,
-	# 		temperature=temperature,
-	# 		streaming=streaming,
-	# 		callbacks=callbacks,
-	# 		cache=cache,
-	# 	)
- 	
 	def agent_csv(
 		self, 
 		csv_path: str,
@@ -82,12 +67,8 @@ class LLMService:
 								  		llm=self.chat(**kwargs), 
 										return_messages=True)
 		if len(history) > 0:
-			for message in history:
-				if message[0] and message[1]:
-					memory.chat_memory.add_user_message(message[0])
-					memory.chat_memory.add_ai_message(message[1])
-				else:
-					memory.chat_memory.add_user_message(message[0])
+			history = flatten_tuples(history)
+			memory.chat_memory.add_messages(history)
 		agent = OpenAIFunctionsAgent(llm=self.chat(**kwargs), tools=tools, prompt=prompt)
 		return AgentExecutor(
 			agent=agent,

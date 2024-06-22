@@ -1,9 +1,11 @@
 # import nest_asyncio
+from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_core.tools import StructuredTool
 from langchain_experimental.utilities import PythonREPL
 from langchain_community.tools.playwright.utils import create_async_playwright_browser
 from langchain_community.agent_toolkits.playwright.toolkit import PlayWrightBrowserToolkit
 
+from .llm import multi_modal_llm
 from .csv import csv_agent
 from .pdf import get_form_field_names, fill_pdf_fields
 
@@ -17,6 +19,20 @@ repl_tool = StructuredTool.from_function(
                 Input should be a valid python command. If you want to 
                 see the output of a value, you should print it out with 
                 `print(...)`.""",
+    handle_tool_error=True,
+)
+
+
+class HumanQuery(BaseModel):
+    image: str = Field(
+        description="The is a base64 string or url to image to be processed."
+    )
+
+multi_modal_tool = StructuredTool.from_function(
+    args_schema=HumanQuery,
+    name="multi_modal_tool",
+    func=multi_modal_llm,
+    description="If you need to understand context in an image use this tool to get a summary.",
     handle_tool_error=True,
 )
 
@@ -61,6 +77,7 @@ defined in the PDF form, and each value is the value to set for that field.
 
 
 AVAILABLE_TOOLS = {
+    'image_summary': multi_modal_tool,
 	'repl_tool': repl_tool,
     'csv_tool': csv_tool,
     'pdf_get_field_names': pdf_get_field_names,
@@ -69,6 +86,11 @@ AVAILABLE_TOOLS = {
 }
 
 TOOL_DESCRIPTIONS = {
+    'image_summary': {
+        'description': 'Tool for understanding context in an image.',
+        'link': '/tools/image_summary',
+        'toolkit': 'Basic'
+    },
     'repl_tool': {
         'description': 'Interactive Python REPL tool.',
         'link': '/tools/repl_tool',
