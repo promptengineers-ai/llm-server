@@ -19,7 +19,9 @@ import {
     useCheckIfSaveEnabledEffect,
     useUpdateMessageOnResponesEffect,
     useSubmitQuestionStreamEffect,
+    usePrintActionsToLogsEffect,
 } from "@/hooks/effect/useChatEffects";
+import ActionDisclosure from "@/components/disclosures/ActionDisclosure";
 
 const ChatContext = createContext({});
 export default function ChatProvider({ children }: IContextProvider) {
@@ -50,6 +52,12 @@ export default function ChatProvider({ children }: IContextProvider) {
         setChats,
         expand,
         setExpand,
+        actions,
+        setActions,
+        logs,
+        setLogs,
+        tools,
+        setTools,
         selectedImage,
         setSelectedImage,
         selectedDocument,
@@ -149,7 +157,10 @@ export default function ChatProvider({ children }: IContextProvider) {
                             </div>
                         )}
                     {conversationItem.role === "assistant" ? (
-                        <MarkdownCard content={conversationItem.content} />
+                        <>
+                            {logs.length > 0 && <ActionDisclosure />}
+                            <MarkdownCard content={conversationItem.content} />
+                        </>
                     ) : (
                         <p className="py-1 whitespace-pre-wrap">
                             {conversationItem.content}
@@ -171,6 +182,7 @@ export default function ChatProvider({ children }: IContextProvider) {
     useSubmitQuestionStreamEffect(userInput, messages, done, submitQuestionStream);
     useCheckIfSaveEnabledEffect(initChatPayload, chatPayload, setIsSaveEnabled);
     useFetchModelsEffect(models, fetchModels);
+    usePrintActionsToLogsEffect(actions, setActions, setLogs, done);
 
     return (
         <ChatContext.Provider
@@ -186,6 +198,9 @@ export default function ChatProvider({ children }: IContextProvider) {
                     userInput,
                     selectedImage,
                     files,
+                    actions,
+                    logs,
+                    tools,
                     done,
                     selectedDocument,
                     csvContent,
@@ -196,6 +211,9 @@ export default function ChatProvider({ children }: IContextProvider) {
                     fetchModels,
                     setCsvContent,
                     setFiles,
+                    setActions,
+                    setLogs,
+                    setTools,
                     resetChat,
                     setChats,
                     setMessages,
@@ -222,6 +240,9 @@ export default function ChatProvider({ children }: IContextProvider) {
                 chats,
                 done,
                 expand,
+                actions,
+                logs,
+                tools,
                 userInput,
                 chatboxRef,
                 chatInputRef,

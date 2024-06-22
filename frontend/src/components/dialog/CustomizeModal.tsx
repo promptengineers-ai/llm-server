@@ -12,7 +12,11 @@ import {
 } from "@headlessui/react";
 import { ChatPayload } from "@/types/chat";
 import RetrievalForm from "../forms/RetrievalForm";
-import { useUpdateInitChatPayloadEffect } from "@/hooks/effect/useChatEffects";
+import {
+    useUpdateInitChatPayloadEffect,
+    useFetchToolsEffect,
+} from "@/hooks/effect/useChatEffects";
+import ToolList from "../lists/ToolList";
 
 const CustomizeModal = () => {
     const { isOpen, setIsOpen, setIsPopoverOpen, setIsDrawerOpen } =
@@ -23,9 +27,11 @@ const CustomizeModal = () => {
         initChatPayload,
         setInitChatPayload,
         isSaveEnabled,
+        setTools,
     } = useChatContext();
 
     useUpdateInitChatPayloadEffect(setInitChatPayload);
+    useFetchToolsEffect(setTools);
 
     if (!isOpen) {
         return null;
@@ -38,7 +44,7 @@ const CustomizeModal = () => {
         sessionStorage.removeItem("search_type");
         sessionStorage.removeItem("k");
         sessionStorage.removeItem("fetch_k");
-        sessionStorage.removeItem("score_threshold");
+        sessionStorage.setItem("tools", JSON.stringify(chatPayload.tools));
     }
 
     return (
@@ -73,7 +79,7 @@ const CustomizeModal = () => {
                                         Retrieval
                                     </Tab>
                                     <Tab
-                                        disabled
+                                        // disabled
                                         className="disabled:opacity-50 rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white"
                                     >
                                         Tools
@@ -101,14 +107,19 @@ const CustomizeModal = () => {
                                                                 .value,
                                                         })
                                                     );
-                                                    sessionStorage.setItem('system', e.target.value)
+                                                    sessionStorage.setItem(
+                                                        "system",
+                                                        e.target.value
+                                                    );
                                                 }}
                                             />
                                         </TabPanel>
                                         <TabPanel>
                                             <RetrievalForm />
                                         </TabPanel>
-                                        {/* <TabPanel>Content 3</TabPanel> */}
+                                        <TabPanel>
+                                            <ToolList />
+                                        </TabPanel>
                                     </TabPanels>
                                 </div>
                             </TabGroup>
@@ -132,6 +143,8 @@ const CustomizeModal = () => {
                                                 (prev: ChatPayload) => ({
                                                     ...prev,
                                                     system: chatPayload.system,
+                                                    retrieval: chatPayload.retrieval,
+                                                    tools: chatPayload.tools,
                                                 })
                                             );
                                             resetOnCancel();

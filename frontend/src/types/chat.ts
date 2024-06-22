@@ -1,12 +1,21 @@
 import { SearchProvider, ModelType, SearchType, EmbeddingModel } from "./llm";
 
+export interface Tool {
+    name: string;
+    value: string;
+    description: string;
+    link: string;
+    enabled: boolean;
+    toolkit: string;
+}
+
 export type ChatPayload = {
     query: string;
     history_id: string;
     system: string;
     model: ModelType;
     temperature: number;
-    tools: string[];
+    tools: Tool[];
     retrieval: {
         provider: SearchProvider;
         embedding: EmbeddingModel;

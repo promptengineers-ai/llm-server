@@ -4,13 +4,11 @@ from src.services import LLMService, RetrievalService
 from src.utils import retrieve_system_message, retrieve_chat_messages
 from src.utils.tool import gather_tools
 
-from src.models import Agent
-
 retrieval_service = RetrievalService()
 
 def agent_chain(body: Agent):
     system = retrieve_system_message(body.messages, use_class=True if not body.tools else False)
-    filtered_messages = retrieve_chat_messages(body)
+    filtered_messages = retrieve_chat_messages(body, use_class=True, return_system=False)
     chat_history = list(zip(filtered_messages[::2], filtered_messages[1::2]))
     vectorstore = None
     if body.retrieval.provider and body.retrieval.index_name:
@@ -18,7 +16,8 @@ def agent_chain(body: Agent):
         chunks = retrieval_service.split(documents, 'char', 500, 0)
         vectorstore = retrieval_service.db('faiss', chunks)
     
-    llm = LLMService(model_list=filter_models(body.model)).chat()
+    llm_service = LLMService(model_list=filter_models(body.model))
+    llm = llm_service.chat()
     if body.tools:
         tools = gather_tools(
             tools=body.tools,
@@ -28,7 +27,7 @@ def agent_chain(body: Agent):
                 'search_kwargs': body.retrieval.search_kwargs
             },
         )
-        agent = llm.agent(
+        agent = llm_service.agent(
             system=system,
             tools=tools,
             history=chat_history,
