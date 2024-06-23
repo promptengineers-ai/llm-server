@@ -75,6 +75,7 @@ export default function ChatProvider({ children }: IContextProvider) {
         submitQuestionStream,
         adjustHeight,
         resetOnCancel,
+        defaultState,
     } = useChatState();
     const searchParams = useSearchParams();
     const chatClient = new ChatClient();
@@ -87,6 +88,7 @@ export default function ChatProvider({ children }: IContextProvider) {
             setIsPopoverOpen(false);
             setChatPayload((prev: ChatPayload) => ({
                 ...prev,
+                history_id: defaultState.chatPayload.history_id,
                 system: res.chat.system,
                 retrieval: res.chat.retrieval,
                 tools: res.chat.tools,
