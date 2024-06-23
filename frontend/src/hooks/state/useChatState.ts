@@ -293,6 +293,7 @@ export const useChatState = () => {
     };
 
     const submitQuestionStream = async () => {
+
         try {
             // setDone(false);
             setLoading(true);
@@ -321,6 +322,33 @@ export const useChatState = () => {
                 payload: JSON.stringify(config),
             });
 
+            let streamTimeout: ReturnType<typeof setTimeout>;
+
+            const resetStreamTimeout = () => {
+                clearTimeout(streamTimeout);
+                streamTimeout = setTimeout(() => {
+                    console.error("Stream timed out. Closing connection.");
+                    if (!done) {
+                        setDone(true);
+                        source.close();
+                        const finalMessages = [...updatedMessages];
+                        finalMessages[tempIndex] = {
+                            role: "assistant",
+                            content: responseRef.current,
+                            model: chatPayload.model,
+                        };
+                        setMessages(finalMessages);
+
+                        updateMessages(
+                            chatPayload.system,
+                            finalMessages,
+                            chatPayload.retrieval,
+                            chatPayload.tools
+                        );
+                    }
+                }, 5 * 1000);
+            };
+
             source.addEventListener("error", (e: any) => {
                 console.error("Error received from server:", e);
                 setLoading(false);
@@ -341,6 +369,7 @@ export const useChatState = () => {
             const tempIndex = updatedMessages.length - 1;
 
             source.addEventListener("message", (e: any) => {
+                resetStreamTimeout();
                 const jsonObjectsRegExp = /{[\s\S]+?}(?=data:|$)/g;
                 const jsonObjectsMatches = e.data.match(jsonObjectsRegExp);
 
