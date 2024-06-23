@@ -1,12 +1,13 @@
 import ChatIcon from "@/components/icons/ChatIcon";
-import EditIcon from "@/components/icons/EditIcon";
 import TrashIcon from "@/components/icons/TrashIcon";
+import { IoDuplicateOutline } from "react-icons/io5";
 import { useAppContext } from "@/contexts/AppContext";
 import { useChatContext } from "@/contexts/ChatContext";
 
 export default function ChatHistoryButton({ chat }: { chat: any }) {
     const { isMobile, closeDrawer } = useAppContext();
-    const { deleteChat, findChat, chatPayload, setChatPayload } = useChatContext();
+    const { deleteChat, findChat, chatPayload, setChatPayload, duplicateChat } =
+        useChatContext();
 
     // Determine the background color based on the condition
     const bgColorClass =
@@ -42,9 +43,10 @@ export default function ChatHistoryButton({ chat }: { chat: any }) {
                     className="hover:text-token-text-primary p-1"
                     onClick={(e) => {
                         e.stopPropagation();
+                        duplicateChat(chat.id);
                     }}
                 >
-                    <EditIcon />
+                    <IoDuplicateOutline />
                 </button>
                 <button
                     className="hover:text-token-text-primary p-1 z-999"

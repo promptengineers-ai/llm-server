@@ -74,23 +74,43 @@ export default function ChatProvider({ children }: IContextProvider) {
         handleDocumentClick,
         submitQuestionStream,
         adjustHeight,
+        resetOnCancel,
     } = useChatState();
     const searchParams = useSearchParams();
     const chatClient = new ChatClient();
 
-    function resetOnCancel(clear: boolean = false) {
-        sessionStorage.removeItem("system");
-        sessionStorage.removeItem("provider");
-        sessionStorage.removeItem("embedding");
-        sessionStorage.removeItem("search_type");
-        sessionStorage.removeItem("k");
-        sessionStorage.removeItem("fetch_k");
-        if (clear) {
-            sessionStorage.removeItem("tools");
-        } else {
-            sessionStorage.setItem("tools", JSON.stringify(chatPayload.tools));
+    const duplicateChat = async (chatId: string) => {
+        try {
+            const res = await chatClient.find(chatId);
+            setMessages([]);
+            resetOnCancel(true);
+            setIsPopoverOpen(false);
+            setChatPayload((prev: ChatPayload) => ({
+                ...prev,
+                system: res.chat.system,
+                retrieval: res.chat.retrieval,
+                tools: res.chat.tools,
+            }));
+            setInitChatPayload((prev) => ({
+                ...prev,
+                system: res.chat.system,
+                retrieval: res.chat.retrieval,
+                tools: res.chat.tools,
+            }));
+            setLogs([]);
+            setExpand(false);
+            setSelectedDocument(null);
+            setCsvContent(null);
+            let updatedUrl = `/chat`;
+            if (searchParams.toString()) {
+                updatedUrl += `?${searchParams.toString()}`;
+            }
+            shallowUrl(updatedUrl);
+        } catch (err) {
+            alert(err); // Display error message from the exception
+            console.error(err);
         }
-    }
+    };
 
     const findChat = async (chatId: string) => {
         try {
@@ -248,6 +268,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                     setChatPayload,
                     sendChatPayload,
                     deleteChat,
+                    duplicateChat,
                     findChat,
                     renderConversation,
                     setUserInput,
