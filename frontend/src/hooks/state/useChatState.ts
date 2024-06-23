@@ -346,7 +346,7 @@ export const useChatState = () => {
                             chatPayload.tools
                         );
                     }
-                }, 5 * 1000);
+                }, 1000 * 1000);
             };
 
             source.addEventListener("error", (e: any) => {
