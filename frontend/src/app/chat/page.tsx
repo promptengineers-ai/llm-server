@@ -12,6 +12,7 @@ import MessageSection from "@/components/sections/MessageSection";
 import DocumentSection from "@/components/sections/DocumentSection";
 import { useAppContext } from "@/contexts/AppContext";
 import CustomizeModal from "@/components/dialog/CustomizeModal";
+import { FaTools } from "react-icons/fa";
 
 const useDefaultOpenState = () => {
     const isClient = typeof window === "object";
@@ -42,7 +43,7 @@ const Chat = () => {
     const [showScrollButton, setShowScrollButton] = useState(false);
     const { isOpen, setIsOpen } = useDefaultOpenState();
     const { isMobile } = useAppContext();
-    const { messages, fetchChats, expand, selectedDocument } = useChatContext();
+    const { messages, fetchChats, expand, selectedDocument, chatPayload } = useChatContext();
 
     const toggleSideSection = () => setIsOpen(!isOpen);
 
@@ -138,18 +139,33 @@ const Chat = () => {
                     >
                         <CustomizeModal />
                         {!isMobile() && (
-                            <div
-                                style={{
-                                    margin: `10px 0px 0px ${
-                                        expand ? "10px" : "0px"
-                                    }`,
-                                    top: 0,
-                                    left: 0,
-                                    position: "absolute",
-                                }}
-                            >
-                                <ModelSelect />
-                            </div>
+                            <>
+                                <div
+                                    style={{
+                                        margin: `10px 0px 0px ${
+                                            expand ? "10px" : "0px"
+                                        }`,
+                                        top: 0,
+                                        left: 0,
+                                        position: "absolute",
+                                    }}
+                                >
+                                    <ModelSelect />
+                                </div>
+                                {chatPayload.tools.length > 0 && (
+                                    <div style={{ position: 'absolute', right: 0, margin: '5px 10px' }}>
+                                        <div className="text-center flex">
+                                            <div className="text-xl">
+                                                {chatPayload.tools.length}
+                                            </div>
+                                            <FaTools className="mt-[6.5px] ml-1" />
+                                        </div>
+                                        <div>
+                                            <div className="text-xs">Tools</div>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
                         )}
                         <div
                             className={`flex-1 overflow-auto px-2 mt-16 ${
