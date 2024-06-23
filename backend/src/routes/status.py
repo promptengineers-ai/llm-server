@@ -7,7 +7,7 @@ from fastapi.responses import StreamingResponse
 
 from src.config import APP_VERSION, REDIS_URL
 from src.services.cache import CacheService
-from src.config.llm import available_models
+from src.utils.llm import available_models
 from src.tools import tool_details
 
 TAG = "Status"

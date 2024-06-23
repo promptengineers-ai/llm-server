@@ -10,7 +10,7 @@ from src.middleware.auth import current_user
 from src.chains.agent import agent_chain
 from src.chains.retrieval import retrieval_chain
 from src.models import Agent, Chat
-from src.config.llm import available_models, filter_models
+from src.utils.llm import filter_models
 from src.services import ClientService, LLMService, RetrievalService
 from src.utils import chain_stream, format_agent_actions, retrieve_chat_messages
 from src.utils.exception import NotFoundException

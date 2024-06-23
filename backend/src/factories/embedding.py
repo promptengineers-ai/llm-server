@@ -4,7 +4,8 @@ from typing import Any
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.embeddings import OllamaEmbeddings
 
-from src.config.llm import ACCEPTED_EMBEDDING_MODELS, ACCEPTED_OLLAMA_MODELS, filter_models
+from src.config.llm import ACCEPTED_EMBEDDING_MODELS, ACCEPTED_OLLAMA_MODELS
+from src.utils.llm import filter_models
 
 class EmbeddingFactory:
     def __init__(self, llm: str = "text-embedding-3-small", token: str = None, base_url: str = None):

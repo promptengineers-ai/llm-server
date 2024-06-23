@@ -1,5 +1,5 @@
 from src.models import Agent
-from src.config.llm import filter_models
+from src.utils.llm import filter_models
 from src.services import LLMService, RetrievalService
 from src.utils import retrieve_system_message, retrieve_chat_messages
 from src.utils.tool import gather_tools

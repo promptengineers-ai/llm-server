@@ -1,15 +1,15 @@
 export enum ModelType {
-    OPENAI_EMBED_ADA = 'openai-text-embedding-ada',
-    OPENAI_TEXT_EMBED_3_SMALL = 'openai-text-embedding-3-small',
-    OPENAI_TEXT_EMBED_3_LARGE = 'openai-text-embedding-3-large',
+    OPENAI_EMBED_ADA = "openai-text-embedding-ada",
+    OPENAI_TEXT_EMBED_3_SMALL = "openai-text-embedding-3-small",
+    OPENAI_TEXT_EMBED_3_LARGE = "openai-text-embedding-3-large",
     OPENAI_GPT_3_5_TURBO_16K = "openai-gpt-3.5-turbo-16k",
     // OPENAI_GPT_4_TURBO_PREVIEW = "openai-gpt-4-turbo-preview",
     // OPENAI_GPT_4_VISION_PREVIEW = "openai-gpt-4-vision-preview",
     OPENAI_GPT_4_OMNI = "openai-gpt-4o",
-    OLLAMA_NOMIC_EMBED_TEXT = 'ollama-nomic-embed-text',
-    OLLAMA_MXBAI_EMBED_LARGE = 'ollama-mxbai-embed-large',
-    OLLAMA_PHI3 = 'ollama-phi3',
-    OLLAMA_PHI3_14B = 'ollama-phi3-14b',
+    OLLAMA_NOMIC_EMBED_TEXT = "ollama-nomic-embed-text",
+    OLLAMA_MXBAI_EMBED_LARGE = "ollama-mxbai-embed-large",
+    OLLAMA_PHI3 = "ollama-phi3",
+    OLLAMA_PHI3_14B = "ollama-phi3-14b",
     OLLAMA_LLAVA = "ollama-llava",
     OLLAMA_BAKLLAVA = "ollama-bakllava",
     OLLAMA_MISTRAL = "ollama-mistral",
@@ -20,9 +20,9 @@ export enum ModelType {
     GROQ_MIXTRAL = "groq-mixtral",
     GROQ_GEMMA_7B_IT = "groq-gemma-7b-it",
     GROQ_LLAMA_3_70B = "groq-llama3-70b",
-    ANTHROPIC_HAIKU = 'anthorpic-claude-3-haiku',
-    ANTHROPIC_OPUS = "anthorpic-claude-3-opus",
-    ANTHROPIC_SONNET = "anthorpic-claude-3-sonnet",
+    ANTHROPIC_HAIKU = "anthropic-claude-3-haiku",
+    ANTHROPIC_OPUS = "anthropic-claude-3-opus",
+    ANTHROPIC_SONNET = "anthropic-claude-3.5-sonnet",
 }
 
 export const modelLabels: { [key in ModelType]: string } = {
@@ -48,8 +48,8 @@ export const modelLabels: { [key in ModelType]: string } = {
     [ModelType.GROQ_GEMMA_7B_IT]: "Groq - Gemma 7b IT",
     [ModelType.GROQ_LLAMA_3_70B]: "Groq - LLaMA 3",
     [ModelType.ANTHROPIC_HAIKU]: "Anthropic - Claude 3 Haiku",
-    [ModelType.ANTHROPIC_OPUS]: "Anthropic - Opus",
-    [ModelType.ANTHROPIC_SONNET]: "Anthropic - Sonnet",
+    [ModelType.ANTHROPIC_OPUS]: "Anthropic - Claude 3 Opus",
+    [ModelType.ANTHROPIC_SONNET]: "Anthropic - Claude 3.5 Sonnet",
 };
 
 export const acceptRagSystemMessage = new Set<string>([
@@ -72,7 +72,8 @@ export const multiModalModels = {
     [ModelType.OLLAMA_BAKLLAVA]: "Ollama - BakLLaVA",
     // [ModelType.OPENAI_GPT_4_VISION_PREVIEW]: "GPT-4 Vision",
     [ModelType.OPENAI_GPT_4_OMNI]: "OpenAI - GPT-4 Omni",
-    [ModelType.ANTHROPIC_OPUS]: "Anthropic - Opus",
+    [ModelType.ANTHROPIC_OPUS]: "Anthropic - Claude 3 Opus",
+    [ModelType.ANTHROPIC_SONNET]: "Anthropic - Claude 3.5 Sonnet",
 };
 
 export const onPremModels = {
