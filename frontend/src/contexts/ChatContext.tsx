@@ -25,7 +25,7 @@ import ActionDisclosure from "@/components/disclosures/ActionDisclosure";
 
 const ChatContext = createContext({});
 export default function ChatProvider({ children }: IContextProvider) {
-    const { loading } = useAppContext();
+    const { loading, setIsPopoverOpen } = useAppContext();
     const {
         chatboxRef,
         chatInputRef,
@@ -97,6 +97,7 @@ export default function ChatProvider({ children }: IContextProvider) {
             const res = await chatClient.find(chatId);
             setMessages(res.chat.messages);
             resetOnCancel(true);
+            setIsPopoverOpen(false);
             setChatPayload((prev: ChatPayload) => ({
                 ...prev,
                 system: res.chat.system,

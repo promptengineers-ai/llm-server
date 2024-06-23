@@ -60,7 +60,7 @@ const TopNav: React.FC = () => {
             <div
                 id="drawer" // Add an ID here for the drawer
                 style={{ padding: "0px", width: "65%" }}
-                className={`z-50 fixed top-0 h-full w-65 transform bg-black p-4 text-gray-100 shadow-md transition-transform shadow-xl ${
+                className={`z-50 fixed top-0 h-full w-65 transform bg-black p-4 text-gray-100 shadow-md transition-transform ${
                     isDrawerOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
             >
@@ -73,7 +73,7 @@ const TopNav: React.FC = () => {
                                 router.push("/chat");
                                 resetChat(event);
                             }}
-                            className="flex px-3 min-h-[44px] py-1 items-center gap-3 transition-colors duration-200 cursor-pointer text-sm rounded-md border-solid border-2 border-secondary-outline-dark dark:border-white/20 hover:bg-gray-500/10 h-11 gizmo:rounded-lg bg-primary-800 dark:bg-transparent flex-grow overflow-hidden"
+                            className="flex px-3 min-h-[44px] py-1 items-center gap-3 transition-colors duration-200 cursor-pointer text-sm rounded-md border-solid border-2 border-secondary-outline-dark dark:border-white/20 hover:bg-gray-500 h-11 gizmo:rounded-lg bg-primary-800 dark:bg-transparent flex-grow overflow-hidden"
                         >
                             <PlusIcon />
                             <span className="truncate text-secondary-100">
