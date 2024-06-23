@@ -13,6 +13,7 @@ import { useChatContext } from "@/contexts/ChatContext";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "@/contexts/AppContext";
 import SettingsPopover from "../dialog/SettingsPopover";
+import { FaTools } from "react-icons/fa";
 
 const TopNav: React.FC = () => {
     const router = useRouter();
@@ -24,7 +25,7 @@ const TopNav: React.FC = () => {
         setIsPopoverOpen,
     } = useAppContext();
     const { retrieveUser } = useAuthContext();
-    const { chats, setDone, resetChat } = useChatContext();
+    const { chats, resetChat, chatPayload } = useChatContext();
 
     return (
         <>
@@ -53,14 +54,26 @@ const TopNav: React.FC = () => {
                         </button>
                         <ModelSelect />
                         {/* <ToggleThemeButton /> */}
-                        <NewChatIcon />
+                        {chatPayload.tools.length > 0 ? (
+                            <div>
+                                <div className="text-center flex">
+                                    <div className="text-xl">{chatPayload.tools.length}</div>
+                                    <FaTools className="mt-[6.5px] ml-1" />
+                                </div>
+                                <div>
+                                    <div className="text-xs">Tools</div>
+                                </div>
+                            </div>
+                        ) : (
+                            <NewChatIcon />
+                        )}
                     </div>
                 </div>
             </nav>
             <div
                 id="drawer" // Add an ID here for the drawer
                 style={{ padding: "0px", width: "65%" }}
-                className={`z-50 fixed top-0 h-full w-65 transform bg-black p-4 text-gray-100 shadow-md transition-transform shadow-xl ${
+                className={`z-50 fixed top-0 h-full w-65 transform bg-black p-4 text-gray-100 shadow-md transition-transform ${
                     isDrawerOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
             >
@@ -73,7 +86,7 @@ const TopNav: React.FC = () => {
                                 router.push("/chat");
                                 resetChat(event);
                             }}
-                            className="flex px-3 min-h-[44px] py-1 items-center gap-3 transition-colors duration-200 cursor-pointer text-sm rounded-md border-solid border-2 border-secondary-outline-dark dark:border-white/20 hover:bg-gray-500/10 h-11 gizmo:rounded-lg bg-primary-800 dark:bg-transparent flex-grow overflow-hidden"
+                            className="flex px-3 min-h-[44px] py-1 items-center gap-3 transition-colors duration-200 cursor-pointer text-sm rounded-md border-solid border-2 border-secondary-outline-dark dark:border-white/20 hover:bg-gray-500 h-11 gizmo:rounded-lg bg-primary-800 dark:bg-transparent flex-grow overflow-hidden"
                         >
                             <PlusIcon />
                             <span className="truncate text-secondary-100">

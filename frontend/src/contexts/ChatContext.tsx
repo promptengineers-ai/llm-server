@@ -25,7 +25,7 @@ import ActionDisclosure from "@/components/disclosures/ActionDisclosure";
 
 const ChatContext = createContext({});
 export default function ChatProvider({ children }: IContextProvider) {
-    const { loading } = useAppContext();
+    const { loading, setIsPopoverOpen } = useAppContext();
     const {
         chatboxRef,
         chatInputRef,
@@ -74,14 +74,50 @@ export default function ChatProvider({ children }: IContextProvider) {
         handleDocumentClick,
         submitQuestionStream,
         adjustHeight,
+        resetOnCancel,
     } = useChatState();
     const searchParams = useSearchParams();
     const chatClient = new ChatClient();
+
+    const duplicateChat = async (chatId: string) => {
+        try {
+            const res = await chatClient.find(chatId);
+            setMessages([]);
+            resetOnCancel(true);
+            setIsPopoverOpen(false);
+            setChatPayload((prev: ChatPayload) => ({
+                ...prev,
+                system: res.chat.system,
+                retrieval: res.chat.retrieval,
+                tools: res.chat.tools,
+            }));
+            setInitChatPayload((prev) => ({
+                ...prev,
+                system: res.chat.system,
+                retrieval: res.chat.retrieval,
+                tools: res.chat.tools,
+            }));
+            setLogs([]);
+            setExpand(false);
+            setSelectedDocument(null);
+            setCsvContent(null);
+            let updatedUrl = `/chat`;
+            if (searchParams.toString()) {
+                updatedUrl += `?${searchParams.toString()}`;
+            }
+            shallowUrl(updatedUrl);
+        } catch (err) {
+            alert(err); // Display error message from the exception
+            console.error(err);
+        }
+    };
 
     const findChat = async (chatId: string) => {
         try {
             const res = await chatClient.find(chatId);
             setMessages(res.chat.messages);
+            resetOnCancel(true);
+            setIsPopoverOpen(false);
             setChatPayload((prev: ChatPayload) => ({
                 ...prev,
                 system: res.chat.system,
@@ -89,6 +125,13 @@ export default function ChatProvider({ children }: IContextProvider) {
                 retrieval: res.chat.retrieval,
                 tools: res.chat.tools,
             }));
+            setInitChatPayload((prev) => ({
+                ...prev,
+                system: res.chat.system,
+                retrieval: res.chat.retrieval,
+                tools: res.chat.tools,
+            }));
+            setLogs([]);
             renderConversation(res.chat.messages);
             setExpand(false);
             setSelectedDocument(null);
@@ -113,6 +156,8 @@ export default function ChatProvider({ children }: IContextProvider) {
 
         return filteredConvo.map((conversationItem, i) => {
             const isLastMessage = i === filteredConvo.length - 1;
+            const isLastAssistantMessage =
+                isLastMessage && conversationItem.role === "assistant";
             const images = conversationItem.images || [];
             const sources = conversationItem.sources || [];
             const noContent = !selectedDocument && !csvContent;
@@ -140,7 +185,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                             <span className="ml-2">Processing...</span>
                         </div>
                     ) : null}
-                    <ImageList images={images} />
+                    <ImageList images={images} />   
                     <SourceList
                         sources={sources}
                         noContent={noContent}
@@ -158,7 +203,9 @@ export default function ChatProvider({ children }: IContextProvider) {
                         )}
                     {conversationItem.role === "assistant" ? (
                         <>
-                            {logs.length > 0 && <ActionDisclosure />}
+                            {isLastAssistantMessage && logs.length > 0 && (
+                                <ActionDisclosure />
+                            )}
                             <MarkdownCard content={conversationItem.content} />
                         </>
                     ) : (
@@ -221,6 +268,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                     setChatPayload,
                     sendChatPayload,
                     deleteChat,
+                    duplicateChat,
                     findChat,
                     renderConversation,
                     setUserInput,
@@ -235,6 +283,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                     setIsSaveEnabled,
                     handleRegenerateClick,
                     handleDocumentClick,
+                    resetOnCancel
                 };
             }, [
                 chats,

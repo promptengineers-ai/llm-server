@@ -89,6 +89,20 @@ export const useChatState = () => {
         tools: chatPayload.tools,
     });
 
+    function resetOnCancel(clear: boolean = false) {
+        sessionStorage.removeItem("system");
+        sessionStorage.removeItem("provider");
+        sessionStorage.removeItem("embedding");
+        sessionStorage.removeItem("search_type");
+        sessionStorage.removeItem("k");
+        sessionStorage.removeItem("fetch_k");
+        if (clear) {
+            sessionStorage.removeItem("tools");
+        } else {
+            sessionStorage.setItem("tools", JSON.stringify(chatPayload.tools));
+        }
+    }
+
     const fetchModels = async () => {
         const res = await chatClient.listModels();
         setModels(
@@ -148,6 +162,7 @@ export const useChatState = () => {
         }
 
         setMessages([...messages, messageContent]);
+        setLogs([]);
         setImages([]);
     };
 
@@ -176,6 +191,7 @@ export const useChatState = () => {
         setMessages([]);
         setActions([]);
         setLogs([]);
+        resetOnCancel(true);
         setChatPayload({
             ...chatPayload,
             query: "",
@@ -184,6 +200,7 @@ export const useChatState = () => {
                 ...chatPayload.retrieval,
                 index_name: "",
             },
+            tools: [],
         });
         setDone(true);
     };
@@ -306,9 +323,10 @@ export const useChatState = () => {
 
             source.addEventListener("error", (e: any) => {
                 console.error("Error received from server:", e);
-                alert(JSON.parse(e.data).detail);
                 setLoading(false);
                 setDone(true);
+                const errData = JSON.parse(e?.data);
+                alert(errData?.detail);
                 source.close();
                 return;
             });
@@ -439,6 +457,7 @@ export const useChatState = () => {
         sendChatPayload,
         handleRegenerateClick,
         resetChat,
+        resetOnCancel,
         handleDocumentClick,
         submitCleanUp,
         updateMessages,
