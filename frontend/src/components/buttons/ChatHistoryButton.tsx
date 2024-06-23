@@ -6,7 +6,7 @@ import { useChatContext } from "@/contexts/ChatContext";
 
 export default function ChatHistoryButton({ chat }: { chat: any }) {
     const { isMobile, closeDrawer } = useAppContext();
-    const { deleteChat, findChat, chatPayload, setChatPayload, duplicateChat } =
+    const { deleteChat, findChat, chatPayload, setChatPayload, duplicateChat, chats } =
         useChatContext();
 
     // Determine the background color based on the condition
@@ -45,7 +45,18 @@ export default function ChatHistoryButton({ chat }: { chat: any }) {
                         e.stopPropagation();
                         duplicateChat(chat.id);
                     }}
-                    title="Duplicate Settings"
+                    title={`Duplicate Settings: ${JSON.stringify(
+                        {
+                            system: chats.find((c: any) => c.id === chat.id)
+                                ?.system,
+                            tools: chats.find((c: any) => c.id === chat.id)
+                                ?.tools,
+                            retrieval: chats.find((c: any) => c.id === chat.id)
+                                ?.retrieval,
+                        },
+                        null,
+                        2
+                    )}`}
                 >
                     <IoDuplicateOutline />
                 </button>
