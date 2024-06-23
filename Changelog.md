@@ -7,10 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v0.0.1
 ### Fixed
+  - bugfix/88-submit-button-not-enabled-on-stream-done (2024-06-23)
   - bugfix/54-back-to-login-on-jwt-expire (2024-06-06)
   - bugfix/42-redis-is-default-vector-db (2024-05-26)
   - bugfix/33-groq-rag-not-working (2024-05-19)
 ### Changed 
+  - feature/92-open-source-whisper (2024-06-23)
+  - feature/89-add-claude-3.5-sonnet (2024-06-23)
   - feature/83-visible-tool-count (2024-06-22)
   - feature/80-able-to-configure-tools (2024-06-20)
   - feature/74-clean-up-frontend (2024-06-15)

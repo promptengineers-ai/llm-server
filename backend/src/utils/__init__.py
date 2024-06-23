@@ -26,9 +26,9 @@ async def chain_stream(chain: Runnable, query, config: dict = {}):
                 content = event["data"]["chunk"].content
                 if content:
                     yield token_stream(token=content)
-            elif kind == "on_chat_model_end":
-            #     print(event)
-                pass
+            # elif kind == "on_chat_model_end": ### This causes normal chat not to end correctly. Unneeded for RAG and Agents.
+            # #     print(event)
+            #     pass
             elif kind == "on_chain_start":    
                 # print(event)
                 pass

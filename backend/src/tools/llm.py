@@ -1,4 +1,4 @@
-from src.config.llm import filter_models
+from src.utils.llm import filter_models
 from src.services.llm import LLMService
 from langchain_core.messages import HumanMessage
 
