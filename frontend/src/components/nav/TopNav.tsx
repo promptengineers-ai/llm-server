@@ -13,6 +13,7 @@ import { useChatContext } from "@/contexts/ChatContext";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "@/contexts/AppContext";
 import SettingsPopover from "../dialog/SettingsPopover";
+import { FaTools } from "react-icons/fa";
 
 const TopNav: React.FC = () => {
     const router = useRouter();
@@ -24,7 +25,7 @@ const TopNav: React.FC = () => {
         setIsPopoverOpen,
     } = useAppContext();
     const { retrieveUser } = useAuthContext();
-    const { chats, setDone, resetChat } = useChatContext();
+    const { chats, resetChat, chatPayload } = useChatContext();
 
     return (
         <>
@@ -53,7 +54,19 @@ const TopNav: React.FC = () => {
                         </button>
                         <ModelSelect />
                         {/* <ToggleThemeButton /> */}
-                        <NewChatIcon />
+                        {chatPayload.tools.length > 0 ? (
+                            <div>
+                                <div className="text-center flex">
+                                    <div className="text-xl">{chatPayload.tools.length}</div>
+                                    <FaTools className="mt-[6.5px] ml-1" />
+                                </div>
+                                <div>
+                                    <div className="text-xs">Tools</div>
+                                </div>
+                            </div>
+                        ) : (
+                            <NewChatIcon />
+                        )}
                     </div>
                 </div>
             </nav>
