@@ -8,7 +8,7 @@ from src.factories.retrieval import RetrievalFactory
 from src.config import OPENAI_API_KEY, PINECONE_API_KEY, PINECONE_ENV, PINECONE_INDEX, REDIS_URL
 from src.factories.embedding import EmbeddingFactory
 from src.models import Agent, Retrieval
-from src.config.llm import filter_models
+from src.utils.llm import filter_models
 from src.services import LLMService, RetrievalService
 
 retrieval_service = RetrievalService()
