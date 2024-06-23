@@ -33,6 +33,22 @@ services:
     ports:
       - 6379:6379
 
+  # OpenAI Whisper ASR Service
+  # https://github.com/ahmetoner/whisper-asr-webservice/
+  # whisper_asr:
+  #   image: onerahmet/openai-whisper-asr-webservice:latest-gpu
+  #   container_name: whisper_asr
+  #   ports:
+  #     - 9000:9000
+  #   environment:
+  #     ASR_MODEL: base
+  #     ASR_ENGINE: openai_whisper
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - capabilities: [gpu]
+
   # Ollama (AI Service)
   # ollama:
   #   container_name: ollama
