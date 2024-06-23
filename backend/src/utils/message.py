@@ -1,7 +1,5 @@
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
-from src.config.llm import ACCEPTED_MULTIMODAL_MODELS
-
 def retrieve_system_message(messages, use_class=False):
     """Retrieve the system message"""
     try:
@@ -72,6 +70,7 @@ def _move_system_to_front(messages):
 
 def retrieve_chat_messages(body, use_class=False, return_system=True):
     """Retrieve chat messages and wrap them in HumanMessage or AIMessage based on the sender."""
+    from src.config.llm import ACCEPTED_MULTIMODAL_MODELS
     result = []
     for msg in body.messages:
         content_list = []  # This will hold all content items (text and image)

@@ -1,5 +1,4 @@
 from typing import Any
-from src.config.llm import MODEL_LIST
 
 def filter_models(model_names):
 	"""
@@ -13,6 +12,7 @@ def filter_models(model_names):
 	:rtype: List[Dict[str, Any]]
 	:raises ValueError: If model_names is neither a string nor a list.
 	"""
+	from src.config.llm import MODEL_LIST
 	# Check if model_names is a single string or a list of strings
 	if isinstance(model_names, str):
 		# Find the model dictionary by name and return it
@@ -25,32 +25,32 @@ def filter_models(model_names):
 		raise ValueError("Input must be a string or a list of strings.")
 	
 def available_models(model_type: str = None)-> list[dict[str, Any]]:
-    """
-    Retrieve a list of available models based on the specified model type.
+	"""
+	Retrieve a list of available models based on the specified model type.
 
-    Args:
-        model_type (str, optional): The type of model to filter by. If not provided, all models are returned.
+	Args:
+		model_type (str, optional): The type of model to filter by. If not provided, all models are returned.
 
-    Returns:
-        list: A list of dictionaries containing the available models. Each dictionary contains the model name and its corresponding parameters, excluding 'litellm_params'.
-    """
-
-    # If a model type is specified, filter models based on type and availability of API key or base URL
-    if model_type:
-        # Retrieve models matching the specified type with credentials, excluding 'litellm_params'
-        return [
-            {key: value for key, value in model.items() if key != "litellm_params"}
-            for model in MODEL_LIST
-            if model.get(model_type) and (model['litellm_params'].get('api_key') or model['litellm_params'].get('api_base'))
-        ]
-    else:
-        # Retrieve all models with credentials, excluding 'litellm_params'
-        return [
-            {key: value for key, value in model.items() if key != "litellm_params"}
-            for model in MODEL_LIST
-            if model['litellm_params'].get('api_key') or model['litellm_params'].get('api_base')
-        ]
-        
+	Returns:
+		list: A list of dictionaries containing the available models. Each dictionary contains the model name and its corresponding parameters, excluding 'litellm_params'.
+	"""
+	from src.config.llm import MODEL_LIST
+	# If a model type is specified, filter models based on type and availability of API key or base URL
+	if model_type:
+		# Retrieve models matching the specified type with credentials, excluding 'litellm_params'
+		return [
+			{key: value for key, value in model.items() if key != "litellm_params"}
+			for model in MODEL_LIST
+			if model.get(model_type) and (model['litellm_params'].get('api_key') or model['litellm_params'].get('api_base'))
+		]
+	else:
+		# Retrieve all models with credentials, excluding 'litellm_params'
+		return [
+			{key: value for key, value in model.items() if key != "litellm_params"}
+			for model in MODEL_LIST
+			if model['litellm_params'].get('api_key') or model['litellm_params'].get('api_base')
+		]
+		
 def model_sets(model_type: str = None):
 	"""
 	Return a set of model names based on the specified model type.
