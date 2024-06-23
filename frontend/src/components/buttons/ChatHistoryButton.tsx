@@ -45,6 +45,7 @@ export default function ChatHistoryButton({ chat }: { chat: any }) {
                         e.stopPropagation();
                         duplicateChat(chat.id);
                     }}
+                    title="Duplicate Settings"
                 >
                     <IoDuplicateOutline />
                 </button>
@@ -54,6 +55,7 @@ export default function ChatHistoryButton({ chat }: { chat: any }) {
                         e.stopPropagation();
                         deleteChat(chat.id);
                     }}
+                    title="Delete chat"
                 >
                     <TrashIcon />
                 </button>
