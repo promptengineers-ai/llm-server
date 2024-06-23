@@ -148,6 +148,7 @@ export const useChatState = () => {
         }
 
         setMessages([...messages, messageContent]);
+        setLogs([]);
         setImages([]);
     };
 
@@ -306,9 +307,10 @@ export const useChatState = () => {
 
             source.addEventListener("error", (e: any) => {
                 console.error("Error received from server:", e);
-                alert(JSON.parse(e.data).detail);
                 setLoading(false);
                 setDone(true);
+                const errData = JSON.parse(e?.data);
+                alert(errData?.detail);
                 source.close();
                 return;
             });

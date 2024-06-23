@@ -78,10 +78,25 @@ export default function ChatProvider({ children }: IContextProvider) {
     const searchParams = useSearchParams();
     const chatClient = new ChatClient();
 
+    function resetOnCancel(clear: boolean = false) {
+        sessionStorage.removeItem("system");
+        sessionStorage.removeItem("provider");
+        sessionStorage.removeItem("embedding");
+        sessionStorage.removeItem("search_type");
+        sessionStorage.removeItem("k");
+        sessionStorage.removeItem("fetch_k");
+        if (clear) {
+            sessionStorage.removeItem("tools");
+        } else {
+            sessionStorage.setItem("tools", JSON.stringify(chatPayload.tools));
+        }
+    }
+
     const findChat = async (chatId: string) => {
         try {
             const res = await chatClient.find(chatId);
             setMessages(res.chat.messages);
+            resetOnCancel(true);
             setChatPayload((prev: ChatPayload) => ({
                 ...prev,
                 system: res.chat.system,
@@ -89,6 +104,13 @@ export default function ChatProvider({ children }: IContextProvider) {
                 retrieval: res.chat.retrieval,
                 tools: res.chat.tools,
             }));
+            setInitChatPayload((prev) => ({
+                ...prev,
+                system: res.chat.system,
+                retrieval: res.chat.retrieval,
+                tools: res.chat.tools,
+            }));
+            setLogs([]);
             renderConversation(res.chat.messages);
             setExpand(false);
             setSelectedDocument(null);
@@ -113,6 +135,8 @@ export default function ChatProvider({ children }: IContextProvider) {
 
         return filteredConvo.map((conversationItem, i) => {
             const isLastMessage = i === filteredConvo.length - 1;
+            const isLastAssistantMessage =
+                isLastMessage && conversationItem.role === "assistant";
             const images = conversationItem.images || [];
             const sources = conversationItem.sources || [];
             const noContent = !selectedDocument && !csvContent;
@@ -140,7 +164,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                             <span className="ml-2">Processing...</span>
                         </div>
                     ) : null}
-                    <ImageList images={images} />
+                    <ImageList images={images} />   
                     <SourceList
                         sources={sources}
                         noContent={noContent}
@@ -158,7 +182,9 @@ export default function ChatProvider({ children }: IContextProvider) {
                         )}
                     {conversationItem.role === "assistant" ? (
                         <>
-                            {logs.length > 0 && <ActionDisclosure />}
+                            {isLastAssistantMessage && logs.length > 0 && (
+                                <ActionDisclosure />
+                            )}
                             <MarkdownCard content={conversationItem.content} />
                         </>
                     ) : (
@@ -235,6 +261,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                     setIsSaveEnabled,
                     handleRegenerateClick,
                     handleDocumentClick,
+                    resetOnCancel
                 };
             }, [
                 chats,
