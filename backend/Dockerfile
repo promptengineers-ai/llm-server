@@ -17,6 +17,7 @@ RUN apt-get update \
     && pip install --upgrade pip \
     && pip install uv \
     && uv pip install -v --system --no-cache-dir -r requirements.txt
+    && uv pip uninstall uvloop
 
 # Copy entrypoint script
 COPY ./entrypoint.sh /app/entrypoint.sh

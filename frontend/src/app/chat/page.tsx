@@ -13,6 +13,7 @@ import DocumentSection from "@/components/sections/DocumentSection";
 import { useAppContext } from "@/contexts/AppContext";
 import CustomizeModal from "@/components/dialog/CustomizeModal";
 import { FaTools } from "react-icons/fa";
+import WebLoaderModal from "@/components/dialog/WebLoaderModal";
 
 const useDefaultOpenState = () => {
     const isClient = typeof window === "object";
@@ -138,6 +139,7 @@ const Chat = () => {
                         className="flex h-full flex-col position-relative"
                     >
                         <CustomizeModal />
+                        <WebLoaderModal />
                         {!isMobile() && (
                             <>
                                 <div
