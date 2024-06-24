@@ -1,0 +1,2 @@
+
+type Loader = "text" | "gitbook";

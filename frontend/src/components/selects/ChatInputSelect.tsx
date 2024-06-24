@@ -9,7 +9,7 @@ import { multiModalModels } from "@/types/llm";
 import { generateRandomNumber } from "@/utils/random";
 
 const ChatInputSelect: React.FC = () => {
-    const { isMobile } = useAppContext();
+    const { isMobile, setIsWebLoaderOpen } = useAppContext();
     const {
         setFiles,
         setImages,
@@ -127,7 +127,7 @@ const ChatInputSelect: React.FC = () => {
                         />
 
                         <a
-                            onClick={() => alert("Will open Web Loader Modal")}
+                            onClick={() => setIsWebLoaderOpen(true)}
                             href="#"
                             className={`flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-100`}
                             role="menuitem"

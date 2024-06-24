@@ -9,6 +9,7 @@ export default function AppProvider({ children }: IContextProvider) {
     const [loading, setLoading] = useState(false); // App state
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+    const [isWebLoaderOpen, setIsWebLoaderOpen] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
 
     const isMobile = () => {
@@ -57,6 +58,7 @@ export default function AppProvider({ children }: IContextProvider) {
                     isDrawerOpen,
                     isOpen,
                     isPopoverOpen,
+                    isWebLoaderOpen,
                     // App method that alters the state
                     setLoading,
                     isMobile,
@@ -65,12 +67,14 @@ export default function AppProvider({ children }: IContextProvider) {
                     closeDrawer,
                     setIsOpen,
                     setIsPopoverOpen,
+                    setIsWebLoaderOpen,
                 };
             }, [
                 loading,
                 isDrawerOpen,
                 isOpen,
                 isPopoverOpen,
+                isWebLoaderOpen,
             ])}
         >
             {children}
