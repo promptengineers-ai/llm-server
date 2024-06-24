@@ -24,7 +24,7 @@ const SettingsPopover = () => {
                     className="h-px bg-token-border-light my-1.5 bg-gray-400"
                     role="none"
                 ></div>
-                <a
+                {/* <a
                     className="hover:bg-gray-200 flex gap-2 rounded p-2.5 text-sm cursor-pointer focus:ring-0 radix-disabled:pointer-events-none radix-disabled:opacity-50 group items-center hover:bg-token-sidebar-surface-secondary"
                     id="headlessui-menu-item-:rmh:"
                     role="menuitem"
@@ -49,7 +49,7 @@ const SettingsPopover = () => {
                         ></path>
                     </svg>
                     My plan
-                </a>
+                </a> */}
                 <a
                     // href="/gpts/mine"
                     className="hover:bg-gray-200 flex gap-2 rounded p-2.5 text-sm cursor-pointer focus:ring-0 radix-disabled:pointer-events-none radix-disabled:opacity-50 group items-center hover:bg-token-sidebar-surface-secondary"
@@ -102,7 +102,7 @@ const SettingsPopover = () => {
                             fill="currentColor"
                         ></circle>
                     </svg>
-                    My GPTs
+                    My Assistants
                 </a>
                 <a
                     className="hover:bg-gray-200 flex gap-2 rounded p-2.5 text-sm cursor-pointer focus:ring-0 radix-disabled:pointer-events-none radix-disabled:opacity-50 group items-center hover:bg-token-sidebar-surface-secondary"
@@ -130,7 +130,7 @@ const SettingsPopover = () => {
                             fill="currentColor"
                         ></path>
                     </svg>
-                    Customize ChatGPT
+                    Customize Chat
                 </a>
                 <a
                     className="hover:bg-gray-200 flex gap-2 rounded p-2.5 text-sm cursor-pointer focus:ring-0 radix-disabled:pointer-events-none radix-disabled:opacity-50 group items-center hover:bg-token-sidebar-surface-secondary"
