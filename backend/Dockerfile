@@ -16,7 +16,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && pip install --upgrade pip \
     && pip install uv \
-    && uv pip install -v --system --no-cache-dir -r requirements.txt
+    && uv pip install -v --system --no-cache-dir -r requirements.txt \
     && uv pip uninstall uvloop
 
 # Copy entrypoint script
