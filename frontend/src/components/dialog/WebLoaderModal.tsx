@@ -3,6 +3,7 @@ import { useAppContext } from "@/contexts/AppContext";
 import { useState } from "react";
 import GitbookLoaderForm from "../forms/loaders/GitbookLoaderForm";
 import TextLoaderForm from "../forms/loaders/TextLoaderForm";
+import { Loader } from "@/types/chat";
 
 export function FormSelector({ loader }: { loader: Loader }) {
     if (loader === "text") return <TextLoaderForm />;

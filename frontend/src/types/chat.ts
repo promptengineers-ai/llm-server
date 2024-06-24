@@ -59,3 +59,5 @@ export type ChatContextType = {
     setChatboxRefIsEmpty: (isEmpty: boolean) => void;
     resetChat: (event: any) => void;
 };
+
+export type Loader = "text" | "gitbook";
