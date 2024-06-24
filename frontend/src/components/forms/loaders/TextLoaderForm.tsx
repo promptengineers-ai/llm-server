@@ -1,6 +1,9 @@
+import { useChatContext } from "@/contexts/ChatContext";
 import { Field, Fieldset } from "@headlessui/react";
 
-const GitbookLoaderForm = () => {
+const TextLoaderForm = () => {
+    const {loaders, setLoaders} = useChatContext();
+
     return (
         <Fieldset>
             <Field className={"border rounded-md p-2"}>
@@ -11,18 +14,20 @@ const GitbookLoaderForm = () => {
                 <textarea
                     className="w-full resize-y rounded p-2 placeholder:text-gray-300 border text-sm"
                     rows={6}
-                    // value={initChatPayload.system}
-                    // onChange={(e) => {
-                    //     setInitChatPayload((prev: ChatPayload) => ({
-                    //         ...prev,
-                    //         system: e.target.value,
-                    //     }));
-                    //     sessionStorage.setItem("system", e.target.value);
-                    // }}
+                    onChange={(e) =>
+                        setLoaders((prev: any) => [
+                            ...prev,
+                            {
+                                type: "copy",
+                                text: e.target.value,
+                            },
+                        ])
+                    }
+                    value={loaders.find((l: any) => l.type === "copy")?.text}
                 />
             </Field>
         </Fieldset>
     );
 };
 
-export default GitbookLoaderForm;
+export default TextLoaderForm;

@@ -4,6 +4,7 @@ import { useState } from "react";
 import GitbookLoaderForm from "../forms/loaders/GitbookLoaderForm";
 import TextLoaderForm from "../forms/loaders/TextLoaderForm";
 import { Loader } from "@/types/chat";
+import { useChatContext } from "@/contexts/ChatContext";
 
 export function FormSelector({ loader }: { loader: Loader }) {
     if (loader === "text") return <TextLoaderForm />;
@@ -11,9 +12,19 @@ export function FormSelector({ loader }: { loader: Loader }) {
 }
 
 const WebLoaderModal = () => {
-    const {isWebLoaderOpen, setIsWebLoaderOpen} = useAppContext();
-    const [disabled, setDisabled] = useState<boolean>(false);
+    const {
+        isWebLoaderOpen,
+        setIsWebLoaderOpen,
+    } = useAppContext();
+    const { loaders, setLoaders, createIndexFromLoaders } = useChatContext();
+    // const [disabled, setDisabled] = useState<boolean>(false);
     const [loader, setLoader] = useState<Loader>("text");
+
+    const createIndex = async (e: any) => {
+        if (loaders.length > 0) {
+            await createIndexFromLoaders(e);
+        }
+    };
 
     if (!isWebLoaderOpen) {
         return null;
@@ -66,14 +77,17 @@ const WebLoaderModal = () => {
                             <FormSelector loader={loader} />
                             <div className="mt-4 md:mt-5 flex gap-4">
                                 <button
-                                    onClick={() => setIsWebLoaderOpen(false)}
+                                    onClick={() => {
+                                        setIsWebLoaderOpen(false);
+                                        setLoaders([]);
+                                    }}
                                 >
                                     Cancel
                                 </button>
                                 <button
-                                    onClick={() => console.log("save")}
+                                    onClick={createIndex}
                                     className={`px-4 py-2 rounded-3xl ${
-                                        !disabled
+                                        loaders.length > 0
                                             ? "bg-gray-500 text-white"
                                             : "bg-gray-300 text-gray-500 cursor-not-allowed"
                                     }`}

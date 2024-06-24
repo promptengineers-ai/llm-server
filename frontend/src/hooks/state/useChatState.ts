@@ -28,6 +28,7 @@ export const defaultState = {
     actions: [],
     logs: [],
     tools: [],
+    loaders: [],
     expand: false,
     done: true,
     selectedImage: null,
@@ -79,6 +80,7 @@ export const useChatState = () => {
     const [actions, setActions] = useState<any[]>(defaultState.actions);
     const [logs, setLogs] = useState<any[]>(defaultState.logs);
     const [tools, setTools] = useState<Tool[]>(defaultState.tools);
+    const [loaders, setLoaders] = useState<Tool[]>(defaultState.loaders);
     const [userInput, setUserInput] = useState(defaultState.userInput);
     const [response, setResponse] = useState(defaultState.response);
     const [models, setModels] = useState<LLM[]>(defaultState.models);
@@ -369,7 +371,7 @@ export const useChatState = () => {
             const tempIndex = updatedMessages.length - 1;
 
             source.addEventListener("message", (e: any) => {
-                resetStreamTimeout();
+                // resetStreamTimeout();
                 const jsonObjectsRegExp = /{[\s\S]+?}(?=data:|$)/g;
                 const jsonObjectsMatches = e.data.match(jsonObjectsRegExp);
 
@@ -442,6 +444,8 @@ export const useChatState = () => {
         userInputRef,
         responseRef,
         // States
+        loaders,
+        setLoaders,
         actions,
         setActions,
         logs,

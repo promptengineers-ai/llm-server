@@ -22,6 +22,7 @@ import {
     usePrintActionsToLogsEffect,
 } from "@/hooks/effect/useChatEffects";
 import ActionDisclosure from "@/components/disclosures/ActionDisclosure";
+import { generateRandomNumber } from "@/utils/random";
 
 const ChatContext = createContext({});
 export default function ChatProvider({ children }: IContextProvider) {
@@ -42,6 +43,8 @@ export default function ChatProvider({ children }: IContextProvider) {
         models,
         userInput,
         setUserInput,
+        loaders,
+        setLoaders,
         messages,
         setMessages,
         images,
@@ -79,6 +82,41 @@ export default function ChatProvider({ children }: IContextProvider) {
     } = useChatState();
     const searchParams = useSearchParams();
     const chatClient = new ChatClient();
+
+    const createIndexFromLoaders = (e: any) => {
+        return new Promise<void>(async (resolve, reject) => {
+            e.preventDefault();
+
+            // If index exists, use it, otherwise generate a random number
+            const index_name =
+                chatPayload.retrieval.index_name ||
+                generateRandomNumber().toString();
+
+            try {
+                const chatClient = new ChatClient();
+                const docs = await chatClient.createDocs({ loaders });
+                await chatClient.upsert({
+                    documents: docs.documents,
+                    index_name: index_name,
+                    provider: chatPayload.retrieval.provider,
+                    embedding: chatPayload.retrieval.embedding,
+                });
+                setChatPayload((prev: any) => ({
+                    ...prev,
+                    retrieval: {
+                        ...prev.retrieval,
+                        index_name: index_name,
+                    },
+                }));
+                setLoaders([]);
+                resolve();
+            } catch (error) {
+                console.error(error);
+                alert("Error uploading the file");
+                reject(error);
+            }
+        });
+    };
 
     const duplicateChat = async (chatId: string) => {
         try {
@@ -242,6 +280,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                     userInputRef,
                     messages,
                     chats,
+                    loaders,
                     images,
                     chatPayload,
                     userInput,
@@ -262,6 +301,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                     setFiles,
                     setActions,
                     setLogs,
+                    setLoaders,
                     setTools,
                     resetChat,
                     setChats,
@@ -285,10 +325,12 @@ export default function ChatProvider({ children }: IContextProvider) {
                     setIsSaveEnabled,
                     handleRegenerateClick,
                     handleDocumentClick,
-                    resetOnCancel
+                    resetOnCancel,
+                    createIndexFromLoaders,
                 };
             }, [
                 chats,
+                loaders,
                 done,
                 expand,
                 actions,

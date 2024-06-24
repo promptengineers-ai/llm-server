@@ -1,4 +1,5 @@
 import uvicorn
+import asyncio
 
 from src.config import APP_ENV
 
