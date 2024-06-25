@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - bugfix/42-redis-is-default-vector-db (2024-05-26)
   - bugfix/33-groq-rag-not-working (2024-05-19)
 ### Changed 
+  - feature/105-configure-mysql-for-db (2024-06-25)
   - feature/98-web-loader-modal (2024-06-23)
   - feature/92-open-source-whisper (2024-06-23)
   - feature/89-add-claude-3.5-sonnet (2024-06-23)

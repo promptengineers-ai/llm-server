@@ -24,7 +24,7 @@ def upgrade() -> None:
     op.create_table('chats',
         sa.Column('id', sa.String(36), primary_key=True),
         sa.Column('user_id', sa.String(36), nullable=False),
-        sa.Column('organization_id', sa.INTEGER(), nullable=True),
+        # sa.Column('organization_id', sa.INTEGER(), nullable=True),
         sa.Column('retrieval', sa.JSON(), nullable=True),
         sa.Column('tools', sa.JSON(), nullable=True),
         sa.Column('system', sa.TEXT(), nullable=True),
@@ -32,7 +32,7 @@ def upgrade() -> None:
         sa.Column('updated_at', sa.DATETIME(), nullable=False),
     )
     op.create_index('ix_chats_user_id', 'chats', ['user_id'])
-    op.create_index('ix_chats_organization_id', 'chats', ['organization_id'])
+    # op.create_index('ix_chats_organization_id', 'chats', ['organization_id'])
     
     op.create_table('indexes',
         sa.Column('id', sa.String(36), primary_key=True),
@@ -93,6 +93,6 @@ def downgrade() -> None:
     op.drop_table('indexes')
     
     op.drop_index('ix_chats_user_id', table_name='chats')
-    op.drop_index('ix_chats_organization_id', table_name='chats')
+    # op.drop_index('ix_chats_organization_id', table_name='chats')
     op.drop_table('chats')
     # ### end Alembic commands ###
