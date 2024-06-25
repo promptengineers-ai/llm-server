@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-# Ensure the SQLite database file has the correct permissions
-chown -R appuser:appuser /app/data
-
 # Run migrations
 alembic upgrade head
 
