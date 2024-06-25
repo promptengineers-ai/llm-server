@@ -4,5 +4,5 @@ set -e
 # Run migrations
 alembic upgrade head
 
-# Start the API
-uvicorn src.api:app --host 0.0.0.0
+# Start the API with multiple Uvicorn workers
+exec uvicorn src.api:app --host 0.0.0.0 --workers 4
