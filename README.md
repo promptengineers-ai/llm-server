@@ -134,6 +134,16 @@ vercel login
 vercel .
 ```
 
+3. Deploy to Cloud Run
+```bash
+gcloud run deploy llm-server \
+    --image docker.io/promptengineers/llm-server:cb064a4 \
+    --platform managed \
+    --region us-central1 \
+    --allow-unauthenticated \
+    --set-env-vars REDIS_URL=value,DATABASE_URL=another_value,OPENAI_API_KEY=open_api_key,GROQ_API_KEY=groq_api_key,ANTHROPIC_API_KEY=anthropic_api_key
+```
+
 ## 🚀 Roadmap
 
 Here are the upcoming features we're excited to bring to Prompt Engineers AI - LLM Server (More to come):

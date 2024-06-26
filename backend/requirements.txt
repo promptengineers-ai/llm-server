@@ -28,3 +28,4 @@ python-jose[cryptography]
 aioredis
 redis
 alembic
+aiomysql
