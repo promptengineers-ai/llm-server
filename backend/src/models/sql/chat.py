@@ -2,6 +2,7 @@ import datetime
 import uuid
 from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, JSON, String
 from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.dialects.mysql import LONGTEXT
 
 Base = declarative_base()
 
@@ -10,7 +11,7 @@ class Chat(Base):
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(String(36))
-    organization_id = Column(Integer, nullable=True)
+    # organization_id = Column(Integer, nullable=True)
     retrieval = Column(JSON, nullable=True)
     tools = Column(JSON, nullable=True)
     system = Column(Text, nullable=True)
@@ -50,7 +51,7 @@ class Image(Base):
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     message_id = Column(String(36), ForeignKey('messages.id', ondelete='CASCADE'), nullable=False)
-    content = Column(Text, nullable=False)
+    content = Column(LONGTEXT, nullable=False)
     message = relationship("Message", back_populates="images")
 
 class Source(Base):
@@ -61,5 +62,5 @@ class Source(Base):
     index_id = Column(String(36), ForeignKey('indexes.id'), nullable=True)
     name = Column(String(100), nullable=False)
     type = Column(String(100), nullable=False)
-    src = Column(Text, nullable=False)
+    src = Column(LONGTEXT, nullable=False)
     message = relationship('Message', back_populates='sources')

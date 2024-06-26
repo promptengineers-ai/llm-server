@@ -9,7 +9,7 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects.sqlite import BLOB
+from sqlalchemy.dialects.mysql import LONGTEXT
 
 
 # revision identifiers, used by Alembic.
@@ -24,7 +24,7 @@ def upgrade() -> None:
     op.create_table('chats',
         sa.Column('id', sa.String(36), primary_key=True),
         sa.Column('user_id', sa.String(36), nullable=False),
-        sa.Column('organization_id', sa.INTEGER(), nullable=True),
+        # sa.Column('organization_id', sa.INTEGER(), nullable=True),
         sa.Column('retrieval', sa.JSON(), nullable=True),
         sa.Column('tools', sa.JSON(), nullable=True),
         sa.Column('system', sa.TEXT(), nullable=True),
@@ -32,7 +32,7 @@ def upgrade() -> None:
         sa.Column('updated_at', sa.DATETIME(), nullable=False),
     )
     op.create_index('ix_chats_user_id', 'chats', ['user_id'])
-    op.create_index('ix_chats_organization_id', 'chats', ['organization_id'])
+    # op.create_index('ix_chats_organization_id', 'chats', ['organization_id'])
     
     op.create_table('indexes',
         sa.Column('id', sa.String(36), primary_key=True),
@@ -59,7 +59,7 @@ def upgrade() -> None:
     op.create_table('images',
         sa.Column('id', sa.String(36), primary_key=True),
         sa.Column('message_id', sa.String(36), nullable=False),
-        sa.Column('content', sa.TEXT(), nullable=False),
+        sa.Column('content', LONGTEXT, nullable=False),
         sa.ForeignKeyConstraint(['message_id'], ['messages.id'], ondelete='CASCADE'),
     )
     op.create_index('ix_images_message_id', 'images', ['message_id'])
@@ -70,7 +70,7 @@ def upgrade() -> None:
         sa.Column('index_id', sa.String(36), nullable=True),
         sa.Column('name', sa.String(100), nullable=False),
         sa.Column('type', sa.String(50), nullable=False),
-        sa.Column('src', sa.TEXT(), nullable=False),
+        sa.Column('src', LONGTEXT, nullable=False),
         sa.ForeignKeyConstraint(['message_id'], ['messages.id'], ondelete='CASCADE'),
     )
     op.create_index('ix_sources_message_id', 'sources', ['message_id'])
@@ -93,6 +93,6 @@ def downgrade() -> None:
     op.drop_table('indexes')
     
     op.drop_index('ix_chats_user_id', table_name='chats')
-    op.drop_index('ix_chats_organization_id', table_name='chats')
+    # op.drop_index('ix_chats_organization_id', table_name='chats')
     op.drop_table('chats')
     # ### end Alembic commands ###

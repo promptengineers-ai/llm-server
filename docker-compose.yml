@@ -1,37 +1,64 @@
 version: '3'
 
 services:
-  # API
-  api:
-    container_name: api
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend/data:/app/data  # Mount for SQLite database to host directory
-    ports:
-      - 8000:8000
-    env_file:
-      - ./backend/.env
-
-  # Proxy (Nginx)
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    volumes:
-      - ./docker/nginx:/etc/nginx/conf.d
-    ports:
-      - 80:80
-      - 443:443
-    depends_on:
-      - api
-
   # Redis (Cache / Broker / Vector Index / Stream)
   redis:
     container_name: redis
     image: redis/redis-stack-server:latest
     ports:
       - 6379:6379
+
+  # Database (MySQL)
+  mysql:
+    image: mysql:8.2.0
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: llm_server
+      
+  # phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmymadmin
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_PASSWORD: password
+      MYSQL_USER: admin
+
+  # # API
+  # api:
+  #   container_name: api
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   # volumes:
+  #   #   - ./backend/data:/app/data  # Mount for SQLite database to host directory
+  #   ports:
+  #     - 8000:8000
+  #   env_file:
+  #     - ./backend/.env
+
+  # # Proxy (Nginx)
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: nginx
+  #   volumes:
+  #     - ./docker/nginx:/etc/nginx/conf.d
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   depends_on:
+  #     - api
 
   # OpenAI Whisper ASR Service
   # https://github.com/ahmetoner/whisper-asr-webservice/

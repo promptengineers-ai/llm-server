@@ -4,6 +4,7 @@ import os
 APP_ENV = os.environ.get("APP_ENV", "local")
 APP_VERSION = os.environ.get("APP_VERSION", "0.0.1")
 APP_SECRET = os.environ.get("APP_SECRET", "my-super-secret-key")
+APP_WORKERS = os.environ.get("APP_WORKERS", 1)
 
 ## DB
 DATABASE_URL = os.environ.get("DATABASE_URL", 'sqlite+aiosqlite:///./data/test.sqlite')
