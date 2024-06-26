@@ -9,7 +9,7 @@ echo "Starting Cloud Run Server"
 VARS="REDIS_URL=$REDIS_URL,DATABASE_URL=$DATABASE_URL,OPENAI_API_KEY=$OPENAI_API_KEY,GROQ_API_KEY=$GROQ_API_KEY,ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
 
 gcloud run deploy llm-server \
-    --image docker.io/promptengineers/llm-server:1049a99 \
+    --image docker.io/promptengineers/llm-server:5526505 \
     --platform managed \
     --region us-central1 \
     --allow-unauthenticated \
