@@ -16,18 +16,19 @@ jobs:
         ports:
           - 9000:9000
           - 9001:9001
-        options: --env MINIO_ROOT_USER=CHANGEME --env MINIO_ROOT_PASSWORD=CHANGEME
-        volumes:
-          - /home/runner/minio/data:/data
-          - /home/runner/minio/config:/root/.minio
-        command: server /data --console-address ":9001"
+        options: > 
+          --env MINIO_ROOT_USER=CHANGEME 
+          --env MINIO_ROOT_PASSWORD=CHANGEME 
+          --volume /home/runner/minio/data:/data 
+          --volume /home/runner/minio/config:/root/.minio
+          --command "server /data --console-address ':9001'"
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
 
