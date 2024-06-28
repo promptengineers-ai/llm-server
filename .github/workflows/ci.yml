@@ -31,8 +31,8 @@ jobs:
         uv pip install -v --system --no-cache-dir -c constraints.txt -r requirements.txt
 
     - name: Docker login (if needed for private images)
-      if: $DOCKER_USERNAME != '' && $DOCKER_PASSWORD != ''
-      run: echo $DOCKER_PASSWORD" | docker login -u $DOCKER_USERNAME --password-stdin
+      if: env.DOCKER_USERNAME != '' && env.DOCKER_PASSWORD != ''
+      run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
 
     - name: Start Minio service
       run: |
