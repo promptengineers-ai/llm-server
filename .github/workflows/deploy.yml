@@ -8,6 +8,7 @@ on:
 env:
   DOCKER_USERNAME: promptengineers
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  PORT: 8000
   GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
   GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
   REDIS_URL: ${{ secrets.REDIS_URL }}
@@ -63,7 +64,7 @@ jobs:
 
         gcloud config set project ${{ env.GCP_PROJECT }}
         echo "Starting Cloud Run Server"
-        VARS="REDIS_URL=${{ env.REDIS_URL }},DATABASE_URL=${{ env.DATABASE_URL }},OPENAI_API_KEY=${{ env.OPENAI_API_KEY }},GROQ_API_KEY=${{ env.GROQ_API_KEY }},ANTHROPIC_API_KEY=${{ env.ANTHROPIC_API_KEY }}"
+        VARS="PORT=${{ env.PORT }},REDIS_URL=${{ env.REDIS_URL }},DATABASE_URL=${{ env.DATABASE_URL }},OPENAI_API_KEY=${{ env.OPENAI_API_KEY }},GROQ_API_KEY=${{ env.GROQ_API_KEY }},ANTHROPIC_API_KEY=${{ env.ANTHROPIC_API_KEY }}"
 
         gcloud run deploy llm-server \
             --image docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA} \
