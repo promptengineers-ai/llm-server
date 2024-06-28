@@ -1,24 +1,50 @@
 import unittest
+from alembic import command
+from alembic.config import Config
 
-from src.services.db import get_db
+from src.models import Agent as ChatBody
+from src.services.db import create_default_user, get_db
 from src.repositories.chat import ChatRepository
+
+async def apply_migrations():
+    alembic_cfg = Config("alembic.ini")
+    command.upgrade(alembic_cfg, "head")
 
 class TestChatRepository(unittest.IsolatedAsyncioTestCase):
     
     async def asyncSetUp(self):
         await super().asyncSetUp()
+        await apply_migrations() 
         self.db_gen = get_db()  # Get the generator
         self.db = await self.db_gen.__anext__()  # Manually advance to the next item
-        self.chat_repo = ChatRepository(db=self.db)
-        self.user_id = 1
+        default_user = await create_default_user(self.db)
+        self.user_id = default_user.id
+        
+        self.chat_repo = ChatRepository(db=self.db, user_id=self.user_id)
+
         self.chat_data = {
+            "system": "You are a helpful assistant.",
             "messages": [
                 {"role": "user", "content": "Who won the 2001 world series?"},
                 {"role": "assistant", "content": "The Arizona Diamondbacks won the 2001 World Series against the New Your Yankees."},
                 {"role": "user", "content": "Who were the pitchers?"}
-            ]
+            ],
+            "tools": [],
+            "retrieval": {
+                "provider": "redis",
+                "embedding": "openai-text-embedding-3-large",
+                "index_name": "",
+                "search_type": "mmr",
+                "search_kwargs": {
+                    "k": 20,
+                    "fetch_k": None,
+                    "score_threshold": None,
+                    "lambda_mult": None,
+                    "filter": None
+                }
+            }
         }
-        self.chat = await self.chat_repo.create(self.user_id, self.chat_data)
+        self.chat = await self.chat_repo.create(ChatBody(**self.chat_data))
 
     async def asyncTearDown(self):
         if self.db.in_transaction():
@@ -29,7 +55,7 @@ class TestChatRepository(unittest.IsolatedAsyncioTestCase):
 
     async def test_list(self):
         # Test the list function
-        chats = await self.chat_repo.list(user_id=1)
+        chats = await self.chat_repo.list()
         print(f'Chat Count: {len(chats)}')
         self.assertIsInstance(chats, list)  # Expecting a list
         if chats:
@@ -57,7 +83,7 @@ class TestChatRepository(unittest.IsolatedAsyncioTestCase):
         }
         
         # Update the chat
-        update_result = await self.chat_repo.update(chat_id, new_message)
+        update_result = await self.chat_repo.update(chat_id, ChatBody(**new_message))
         self.assertIsNotNone(update_result)
         self.assertEqual(update_result["id"], chat_id)
         
