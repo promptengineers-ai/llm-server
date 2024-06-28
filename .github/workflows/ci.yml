@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      minio:
+        image: minio/minio
+        ports:
+          - 9000:9000
+          - 9001:9001
+        options: --env MINIO_ROOT_USER=CHANGEME --env MINIO_ROOT_PASSWORD=CHANGEME
+        volumes:
+          - /home/runner/minio/data:/data
+          - /home/runner/minio/config:/root/.minio
+        command: server /data --console-address ":9001"
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      working-directory: ./backend
+      run: |
+        pip install --upgrade pip
+        pip install uv
+        uv pip install -v --system --no-cache-dir -c constraints.txt -r requirements.txt
+
+    - name: Run tests
+      working-directory: ./backend
+      env:
+        MINIO_ENDPOINT: http://localhost:9000
+        MINIO_ROOT_USER: CHANGEME
+        MINIO_ROOT_PASSWORD: CHANGEME
+      run: |
+        # Assuming your tests are run with pytest
+        pytest
