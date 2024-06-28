@@ -6,6 +6,10 @@ on:
       - main
       - 'feature/*'
 
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,8 +31,8 @@ jobs:
         uv pip install -v --system --no-cache-dir -c constraints.txt -r requirements.txt
 
     - name: Docker login (if needed for private images)
-      if: ${{ secrets.DOCKER_USERNAME && secrets.DOCKER_PASSWORD }}
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      if: $DOCKER_USERNAME != '' && $DOCKER_PASSWORD != ''
+      run: echo $DOCKER_PASSWORD" | docker login -u $DOCKER_USERNAME --password-stdin
 
     - name: Start Minio service
       run: |
