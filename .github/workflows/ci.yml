@@ -10,6 +10,9 @@ env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  BUCKET: pe-oss-bucket
+  ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+  ACCESS_SECRET_KEY: ${{ secrets.ACCESS_SECRET_KEY }}
 
 jobs:
   test:
