@@ -8,7 +8,6 @@ on:
 env:
   DOCKER_USERNAME: promptengineers
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  PORT: 8000
   GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
   GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
   REDIS_URL: ${{ secrets.REDIS_URL }}
