@@ -10,17 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      minio:
-        image: minio/minio
-        ports:
-          - 9000:9000
-        options: > 
-          --name minio
-          --env MINIO_ROOT_USER=CHANGEME 
-          --env MINIO_ROOT_PASSWORD=CHANGEME
-          minio server /data
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -37,6 +26,17 @@ jobs:
         pip install uv
         uv pip install -v --system --no-cache-dir -c constraints.txt -r requirements.txt
 
+    - name: Docker login (if needed for private images)
+      if: ${{ secrets.DOCKER_USERNAME && secrets.DOCKER_PASSWORD }}
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Start Minio service
+      run: |
+        docker run -d --name minio -p 9000:9000 \
+        -e MINIO_ROOT_USER=CHANGEME \
+        -e MINIO_ROOT_PASSWORD=CHANGEME \
+        minio/minio server /data
+
     - name: Run tests
       working-directory: ./backend
       env:
@@ -44,5 +44,7 @@ jobs:
         MINIO_ROOT_USER: CHANGEME
         MINIO_ROOT_PASSWORD: CHANGEME
       run: |
-        # Assuming your tests are run with pytest
+        # Give Minio some time to start
+        sleep 10
+        # Run your tests
         pytest
