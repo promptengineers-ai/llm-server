@@ -22,10 +22,10 @@ OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL")
 ## Storage
 TEST_USER_ID = os.environ.get("TEST_USER_ID", "000000000000000000000000")
 MINIO_HOST = os.environ.get("MINIO_HOST")
-BUCKET = os.environ.get("BUCKET")
-S3_REGION = os.environ.get("S3_REGION")
-ACCESS_KEY_ID = os.environ.get("ACCESS_KEY_ID")
-ACCESS_SECRET_KEY = os.environ.get("ACCESS_SECRET_KEY")
+BUCKET = os.environ.get("BUCKET", 'pe-oss-bucket')
+S3_REGION = os.environ.get("S3_REGION", 'us-east-1')
+ACCESS_KEY_ID = os.environ.get("ACCESS_KEY_ID", '')
+ACCESS_SECRET_KEY = os.environ.get("ACCESS_SECRET_KEY", '')
 
 default_app_tokens = {
     'OPENAI_API_KEY': OPENAI_API_KEY,
