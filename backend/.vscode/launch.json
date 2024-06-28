@@ -21,10 +21,6 @@
 			"type": "debugpy",
 			"request": "launch",
 			"module": "pytest",
-			"args": [
-				"-s",
-				"test/unit/repositories/test_chat.py"
-			],
 			"envFile": "${workspaceFolder}/.env",
 		},
 		{

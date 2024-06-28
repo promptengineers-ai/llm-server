@@ -4,6 +4,8 @@ from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, JSON, String
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy.dialects.mysql import LONGTEXT
 
+from src.config import DATABASE_URL
+
 Base = declarative_base()
 
 class Chat(Base):
@@ -51,7 +53,7 @@ class Image(Base):
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     message_id = Column(String(36), ForeignKey('messages.id', ondelete='CASCADE'), nullable=False)
-    content = Column(LONGTEXT, nullable=False)
+    content = Column(LONGTEXT if 'mysql' in DATABASE_URL else Text, nullable=False)
     message = relationship("Message", back_populates="images")
 
 class Source(Base):
@@ -62,5 +64,5 @@ class Source(Base):
     index_id = Column(String(36), ForeignKey('indexes.id'), nullable=True)
     name = Column(String(100), nullable=False)
     type = Column(String(100), nullable=False)
-    src = Column(LONGTEXT, nullable=False)
+    src = Column(LONGTEXT if 'mysql' in DATABASE_URL else Text, nullable=False)
     message = relationship('Message', back_populates='sources')
