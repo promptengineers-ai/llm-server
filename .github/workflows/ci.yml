@@ -15,15 +15,11 @@ jobs:
         image: minio/minio
         ports:
           - 9000:9000
-          - 9001:9001
         options: > 
+          --name minio
           --env MINIO_ROOT_USER=CHANGEME 
-          --env MINIO_ROOT_PASSWORD=CHANGEME 
-          --volume /home/runner/minio/data:/data 
-          --volume /home/runner/minio/config:/root/.minio
-        command: >
-          server /data --console-address ":9001"
-
+          --env MINIO_ROOT_PASSWORD=CHANGEME
+          server /data
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
