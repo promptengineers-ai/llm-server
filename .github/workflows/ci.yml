@@ -28,7 +28,10 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install uv
-        uv pip install -v --system --no-cache-dir -c constraints.txt -r requirements.txt
+        uv pip install -v --system --no-cache-dir \
+        -c constraints.txt \
+        -r requirements.txt \
+        -r requirements-dev.txt
 
     - name: Docker login (if needed for private images)
       if: env.DOCKER_USERNAME != '' && env.DOCKER_PASSWORD != ''
