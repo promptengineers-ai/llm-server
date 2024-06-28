@@ -11,7 +11,7 @@ env:
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -50,7 +50,7 @@ jobs:
         MINIO_ENDPOINT: http://localhost:9000
         MINIO_ROOT_USER: CHANGEME
         MINIO_ROOT_PASSWORD: CHANGEME
-        PYTHONPATH: ./backend/src
+        PYTHONPATH: ./src:.
       run: |
         # Give Minio some time to start
         sleep 10
