@@ -45,6 +45,11 @@ jobs:
         -e MINIO_ROOT_PASSWORD=CHANGEME \
         minio/minio server /data
 
+    - name: Create database directory
+      working-directory: ./backend
+      run: |
+        mkdir -p data
+
     - name: Run tests
       working-directory: ./backend
       env:
