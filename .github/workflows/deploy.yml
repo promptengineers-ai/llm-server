@@ -1,0 +1,65 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - development
+
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+  GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+  REDIS_URL: ${{ secrets.REDIS_URL }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ env.DOCKER_USERNAME }}
+        password: ${{ env.DOCKER_PASSWORD }}
+
+    - name: Build and push Docker image
+      run: |
+        COMMIT_SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+        docker buildx build --platform linux/amd64,linux/arm64 --push -t docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA} .
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0
+      with:
+        version: 'latest'
+        service_account_key: ${{ env.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: Deploy to Cloud Run
+      run: |
+        COMMIT_SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+
+        gcloud config set project ${{ env.GCP_PROJECT }}
+        echo "Starting Cloud Run Server"
+        VARS="REDIS_URL=${{ env.REDIS_URL }},DATABASE_URL=${{ env.DATABASE_URL }},OPENAI_API_KEY=${{ env.OPENAI_API_KEY }},GROQ_API_KEY=${{ env.GROQ_API_KEY }},ANTHROPIC_API_KEY=${{ env.ANTHROPIC_API_KEY }}"
+
+        gcloud run deploy llm-server \
+            --image docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA} \
+            --platform managed \
+            --region us-central1 \
+            --allow-unauthenticated \
+            --set-env-vars $VARS
