@@ -23,7 +23,6 @@ jobs:
       with:
         python-version: '3.10'
 
-    
     - name: Install dependencies
       working-directory: ./backend
       run: |
@@ -51,7 +50,7 @@ jobs:
         MINIO_ENDPOINT: http://localhost:9000
         MINIO_ROOT_USER: CHANGEME
         MINIO_ROOT_PASSWORD: CHANGEME
-        PYTHONPATH: ./src
+        PYTHONPATH: ./backend/src
       run: |
         # Give Minio some time to start
         sleep 10
