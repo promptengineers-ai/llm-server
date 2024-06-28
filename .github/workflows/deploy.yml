@@ -34,9 +34,14 @@ jobs:
         password: ${{ env.DOCKER_PASSWORD }}
 
     - name: Build and push Docker image
+      working-directory: ./backend
       run: |
         COMMIT_SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-        docker buildx build --platform linux/amd64,linux/arm64 --push -t docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA} .
+        DOCKER_IMAGE=docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA}
+        
+        echo "Building image: $DOCKER_IMAGE"
+        docker buildx build --platform linux/amd64,linux/arm64 --push -t $DOCKER_IMAGE .
+        docker push $DOCKER_IMAGE
 
   deploy:
     runs-on: ubuntu-latest
