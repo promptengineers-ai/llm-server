@@ -19,7 +19,7 @@ jobs:
           --name minio
           --env MINIO_ROOT_USER=CHANGEME 
           --env MINIO_ROOT_PASSWORD=CHANGEME
-        entrypoint: ["minio", "server", "/data"]
+          minio server /data
 
     steps:
     - name: Checkout code
