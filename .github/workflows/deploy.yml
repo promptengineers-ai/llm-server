@@ -69,4 +69,5 @@ jobs:
             --image docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA} \
             --platform managed \
             --region us-central1 \
-            --allow-unauthenticated
+            --allow-unauthenticated \
+            --set-env-vars $VARS
