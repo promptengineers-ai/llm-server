@@ -1,3 +1,4 @@
+import os
 import asyncio
 from logging.config import fileConfig
 
@@ -6,7 +7,6 @@ from alembic import context
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
 
 from src.models.sql import Base
-from src.config import DATABASE_URL
 
 config = context.config
 
@@ -15,7 +15,9 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
-config.set_main_option('sqlalchemy.url', DATABASE_URL)
+DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite+aiosqlite:///./data/test.sqlite')
+if not DATABASE_URL:
+    raise ValueError("No DATABASE_URL environment variable set")
 
 
 def run_migrations_offline() -> None:
