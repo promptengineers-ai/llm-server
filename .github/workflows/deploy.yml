@@ -45,7 +45,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-
+    needs: build
     steps:
     - name: Setup Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v0
