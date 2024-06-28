@@ -21,7 +21,8 @@ jobs:
           --env MINIO_ROOT_PASSWORD=CHANGEME 
           --volume /home/runner/minio/data:/data 
           --volume /home/runner/minio/config:/root/.minio
-          --command "server /data --console-address ':9001'"
+        command: >
+          server /data --console-address ":9001"
 
     steps:
     - name: Checkout code
