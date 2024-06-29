@@ -1,6 +1,6 @@
 """Storage Service using MinIO"""
 import os
-import logging
+from src.infrastructure.logger import logger as logging
 import datetime
 import threading
 import mimetypes

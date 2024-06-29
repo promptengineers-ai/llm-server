@@ -30,3 +30,4 @@ redis
 alembic
 aiomysql
 setuptools
+loguru

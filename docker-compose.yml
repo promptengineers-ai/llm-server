@@ -37,6 +37,19 @@ services:
       MYSQL_PASSWORD: password
       MYSQL_USER: admin
 
+  # SearXNG
+  searxng:
+    image: searxng/searxng
+    container_name: searxng
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./docker/searxng:/etc/searxng"
+    environment:
+      BASE_URL: "http://localhost:8080/"
+      INSTANCE_NAME: "my-instance"
+
   # Minio (File Storage) -- CURRENTLY ALL FILES AND IMAGES ARE BASE64 ENCODED
   # minio:
   #   image: minio/minio

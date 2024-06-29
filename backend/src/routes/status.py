@@ -1,5 +1,5 @@
 from enum import Enum
-import logging
+from src.infrastructure.logger import logger as logging
 from typing import Optional
 from fastapi import HTTPException, status, APIRouter, Query
 from fastapi.responses import StreamingResponse

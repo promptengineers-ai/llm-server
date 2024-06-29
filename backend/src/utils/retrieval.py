@@ -1,5 +1,5 @@
 import json
-import logging
+from src.infrastructure.logger import logger as logging
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse

@@ -21,7 +21,9 @@
 			"type": "debugpy",
 			"request": "launch",
 			"module": "pytest",
+			"args": ["-s", "-v", "test/unit/tools/test_search.py"],
 			"envFile": "${workspaceFolder}/.env",
+			"justMyCode": false
 		},
 		{
             "name": "Python: Run Script",

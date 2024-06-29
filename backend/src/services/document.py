@@ -1,5 +1,5 @@
 import ujson
-import logging
+from src.infrastructure.logger import logger as logging
 import sys
 import asyncio
 from typing import List, Any
