@@ -13,6 +13,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
+      APP_ENV: development
+      APP_SECRET: ${{ secrets.APP_SECRET }}    
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       BUCKET: pe-oss-bucket
       S3_REGION: us-east-1
