@@ -29,3 +29,4 @@ aioredis
 redis
 alembic
 aiomysql
+setuptools

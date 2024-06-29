@@ -11,10 +11,6 @@ from src.models import Agent as ChatBody
 from src.services.db import create_default_user, get_db
 from src.repositories.chat import ChatRepository
 
-async def apply_migrations():
-    alembic_cfg = Config("alembic.ini")
-    command.upgrade(alembic_cfg, "head")
-
 class TestChatRepository(unittest.IsolatedAsyncioTestCase):
     
     @classmethod

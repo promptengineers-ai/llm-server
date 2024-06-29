@@ -11,6 +11,7 @@ from sqlalchemy.sql import table, column
 from sqlalchemy import String
 
 from src.utils.auth import hash_password
+from src.config import APP_ADMIN_EMAIL, APP_ADMIN_PASS
 
 # revision identifiers, used by Alembic.
 revision = 'abc123'
@@ -49,9 +50,9 @@ def upgrade():
 
     admin_id = str(uuid.uuid4())
     admin_full_name = 'Admin User'
-    admin_email = 'admin@example.com'
+    admin_email = APP_ADMIN_EMAIL
     admin_username = 'admin'
-    admin_password, salt = hash_password('test1234')
+    admin_password, salt = hash_password(APP_ADMIN_PASS)
     
     op.bulk_insert(users_table,
         [

@@ -3,21 +3,24 @@ import os
 ## APP
 APP_ENV = os.environ.get("APP_ENV", "local")
 APP_VERSION = os.environ.get("APP_VERSION", "0.0.1")
-APP_SECRET = os.environ.get("APP_SECRET", "my-super-secret-key")
+APP_SECRET = os.environ.get("APP_SECRET")
+APP_ALGORITHM = os.environ.get("APP_ALGORITHM", "HS256")
 APP_WORKERS = os.environ.get("APP_WORKERS", 1)
+APP_ADMIN_EMAIL = os.environ.get("APP_ADMIN_EMAIL", "admin@example.com")
+APP_ADMIN_PASS= os.environ.get("APP_ADMIN_PASS", "test1234")
 
 ## DB
 DATABASE_URL = os.environ.get("DATABASE_URL", 'sqlite+aiosqlite:///./data/test.sqlite')
-REDIS_URL = os.environ.get("REDIS_URL", 'redis://localhost:6379')
 PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
 PINECONE_ENV = os.environ.get('PINECONE_ENV', 'us-east1-gcp')
 PINECONE_INDEX = os.environ.get('PINECONE_INDEX', 'default')
+REDIS_URL = os.environ.get("REDIS_URL", 'redis://localhost:6379/0')
 
 ## LLM
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
 ## Storage
 TEST_USER_ID = os.environ.get("TEST_USER_ID", "000000000000000000000000")

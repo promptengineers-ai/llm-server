@@ -1,23 +1,26 @@
 name: CI
 
-on:
-  push:
-    branches:
-      - main
-      - 'feature/*'
-
-env:
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-  BUCKET: pe-oss-bucket
-  ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
-  ACCESS_SECRET_KEY: ${{ secrets.ACCESS_SECRET_KEY }}
-
 jobs:
+
+  ###############################################################
+  ## Test Backend
+  ###############################################################
   test:
     runs-on: ubuntu-latest
-
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      BUCKET: pe-oss-bucket
+      S3_REGION: us-east-1
+      ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+      ACCESS_SECRET_KEY: ${{ secrets.ACCESS_SECRET_KEY }}
+    on:
+      push:
+        branches:
+          - master
+          - development
+          - 'feature/*'
+          - 'hotfix/*'
+          - 'bugfix/*'
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -37,31 +40,137 @@ jobs:
         -r requirements.txt \
         -r requirements-dev.txt
 
-    # - name: Docker login (if needed for private images)
-    #   if: env.DOCKER_USERNAME != '' && env.DOCKER_PASSWORD != ''
-    #   run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-
-    # - name: Start Minio service
-    #   run: |
-    #     docker run -d --name minio -p 9000:9000 \
-    #     -e MINIO_ROOT_USER=CHANGEME \
-    #     -e MINIO_ROOT_PASSWORD=CHANGEME \
-    #     minio/minio server /data
-
-    - name: Create database directory
-      working-directory: ./backend
-      run: |
-        mkdir -p data
-
     - name: Run tests
       working-directory: ./backend
       env:
-        MINIO_ENDPOINT: http://localhost:9000
-        MINIO_ROOT_USER: CHANGEME
-        MINIO_ROOT_PASSWORD: CHANGEME
         PYTHONPATH: ./src:.
       run: |
-        # Give Minio some time to start
-        sleep 10
+        # Create the database directory
+        mkdir -p data
         # Run your tests
-        pytest
+        pytest --cov-report xml --cov=.
+
+  ###############################################################
+  ## Build Docker Image
+  ###############################################################
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    on:
+      push:
+        branches:
+          - development
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ env.DOCKER_USERNAME }}
+        password: ${{ env.DOCKER_PASSWORD }}
+
+    - name: Build and push Docker image
+      working-directory: ./backend
+      run: |
+        COMMIT_SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7) >> $GITHUB_ENV
+        DOCKER_IMAGE=docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA}
+        
+        echo "Building image: $DOCKER_IMAGE"
+        # docker buildx build --platform linux/amd64,linux/arm64 --push -t $DOCKER_IMAGE .
+        docker build --push -t $DOCKER_IMAGE .
+
+  ###############################################################
+  ## Deploy to Cloud Run
+  ###############################################################
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [test, build]
+    on:
+      push:
+        branches:
+          - development
+    env:
+      APP_ENV: development
+      APP_SECRET: ${{ secrets.APP_SECRET }}
+      APP_ADMIN_EMAIL: admin@example.com
+      APP_ADMIN_PASS: password
+      APP_WORKERS: 1
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+      PINECONE_ENV: ${{ secrets.PINECONE_ENV }}
+      PINECONE_INDEX: ${{ secrets.PINECONE_INDEX }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
+      DOCKER_USERNAME: promptengineers
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
+      # MINIO_HOST: ${{ secrets.MINIO_HOST }}
+      BUCKET: ${{ secrets.BUCKET }}
+      S3_REGION: ${{ secrets.S3_REGION }}
+      ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+      ACCESS_SECRET_KEY: ${{ secrets.ACCESS_SECRET_KEY }}
+    steps:
+    - name: Authenticate to Google Cloud
+      id: 'auth'
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Setup Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        version: 'latest'
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud config set project ${{ env.GCP_PROJECT }}
+
+        echo "Starting Cloud Run Server"
+        declare -a ENV_VARS=(
+          ## App
+          "APP_ENV=$APP_ENV"
+          "APP_VERSION=$COMMIT_SHORT_SHA"
+          "APP_SECRET=$APP_SECRET"
+          "APP_ADMIN_EMAIL=$APP_ADMIN_EMAIL"
+          "APP_ADMIN_PASS=$APP_ADMIN_PASS"
+          "APP_WORKERS=$APP_WORKERS"
+
+          ## Database
+          "DATABASE_URL=$DATABASE_URL"
+          "PINECONE_API_KEY=$PINECONE_API_KEY"
+          "PINECONE_ENV=$PINECONE_ENV"
+          "PINECONE_INDEX=$PINECONE_INDEX"
+          "REDIS_URL=$REDIS_URL"
+
+          ## LLM
+          "OPENAI_API_KEY=$OPENAI_API_KEY"
+          "GROQ_API_KEY=$GROQ_API_KEY"
+          "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
+          # "OLLAMA_BASE_URL=$OLLAMA_BASE_URL" # Commented out if not using Ollama (Requires GPU server)
+
+          ## Storage
+          # "MINIO_HOST=$MINIO_HOST"           # Commented out if not using Minio (Requires Minio server)
+          "BUCKET=$BUCKET"
+          "S3_REGION=$S3_REGION"
+          "ACCESS_KEY_ID=$ACCESS_KEY_ID"
+          "ACCESS_SECRET_KEY=$ACCESS_SECRET_KEY"
+        )
+
+        # Join array elements into a comma-separated string
+        VARS=$(IFS=,; echo "${ENV_VARS[*]}")
+
+        # Deploy
+        gcloud run deploy llm-server \
+            --image docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA} \
+            --platform managed \
+            --region us-central1 \
+            --allow-unauthenticated \
+            --set-env-vars $VARS

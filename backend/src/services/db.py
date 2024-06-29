@@ -3,7 +3,7 @@ import sqlalchemy
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from src.config import DATABASE_URL
+from src.config import APP_ADMIN_EMAIL, APP_ADMIN_PASS, APP_SECRET, DATABASE_URL
 from src.models.sql.user import User 
 
 engine = create_async_engine(DATABASE_URL, echo=True)
@@ -20,8 +20,15 @@ async def create_default_user(session):
     )
     default_user = default_user.scalars().first()
     
+    if not APP_SECRET:
+        raise ValueError("env variable APP_SECRET is not set")
+    
     if not default_user:
-        user = User(full_name="admin", username="admin", email="admin@example.com", password="password", salt='test1234')
+        user = User(full_name="Super Admin", 
+                    username="super_admin", 
+                    email=APP_ADMIN_EMAIL, 
+                    password=APP_ADMIN_PASS, 
+                    salt=APP_SECRET)
         session.add(user)
         try:
             await session.commit()
