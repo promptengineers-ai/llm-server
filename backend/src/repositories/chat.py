@@ -10,9 +10,9 @@ from src.models.sql.chat import Chat, Image, Message, Source
 from src.utils.format import hash_string
 
 class ChatRepository:
-    def __init__(self, request, db):
+    def __init__(self, request=None, db=None, user_id: str = None):
         self.db = db
-        self.user_id = request.state.user_id
+        self.user_id = user_id or request.state.user_id
     
     async def list(self):
         stmt = (

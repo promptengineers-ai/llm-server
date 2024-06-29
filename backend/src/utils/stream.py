@@ -1,5 +1,5 @@
 import json
-import logging
+from src.infrastructure.logger import logger as logging
 
 def token_stream(
     token: str or dict = None,  # type: ignore

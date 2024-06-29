@@ -38,7 +38,7 @@ export const defaultState = {
     chatPayload: {
         query: "",
         history_id: "",
-        system: Default.SYSTEM_MESSAGE,
+        system: Default.SYSTEM_MESSAGE + Default.DETAILED_INSTRUCTIONS,
         model: ON_PREM
             ? ModelType.OLLAMA_LLAMA_3_CHAT
             : ModelType.OPENAI_GPT_4_OMNI,

@@ -1,6 +1,6 @@
 """Storage Service using MinIO"""
 import os
-import logging
+from src.infrastructure.logger import logger as logging
 import datetime
 import threading
 import mimetypes
@@ -71,36 +71,29 @@ class StorageService:
 			logging.error("Error deleting file %s: %s", path, err)
 			raise ValueError(f"Failed to delete file: {err}") from err
 
-	def upload_file(self, upload_file: UploadFile, bucket, directory=None, object_name=None):
-		"""Upload a file to a MinIO bucket asynchronously with appropriate content type
-
-		:param upload_file: FastAPI UploadFile object from request
-		:param bucket: Bucket to upload to
-		:param object_name: MinIO object name. If not specified then the upload_file's filename is used
-		:return: Thread handling the upload to track completion.
-		"""
+	def upload_file(self, upload_file_path, bucket, directory=None, object_name=None):
+		"""Upload a file to a MinIO bucket asynchronously with appropriate content type"""
 		if object_name is None:
-			object_name = upload_file.filename
+			object_name = os.path.basename(upload_file_path)
 
-		# Determine the MIME type
-		content_type, _ = mimetypes.guess_type(upload_file.filename)
+		content_type, _ = mimetypes.guess_type(upload_file_path)
 		if content_type is None:
 			content_type = 'application/octet-stream'  # Default MIME type if unknown
-   
+
 		# Prepend directory to object name if specified
 		object_name = os.path.join(directory, object_name) if directory else object_name
 
 		def upload_action():
 			try:
-				with upload_file.file as file_data:
-					file_stat = os.fstat(file_data.fileno())
+				with open(upload_file_path, 'rb') as file_data:
+					file_stat = os.stat(file_data.fileno())
 					self.client.put_object(
 						bucket, object_name, file_data, file_stat.st_size,
 						content_type=content_type
 					)
-					logging.info(f"Successfully uploaded {upload_file.filename} to {object_name}")
+					logging.info(f"Successfully uploaded {os.path.basename(upload_file_path)} to {object_name}")
 			except S3Error as err:
-				logging.error("Error uploading file %s: %s", upload_file.filename, err)
+				logging.error("Error uploading file %s: %s", os.path.basename(upload_file_path), err)
 
 		thread = threading.Thread(target=upload_action)
 		thread.start()

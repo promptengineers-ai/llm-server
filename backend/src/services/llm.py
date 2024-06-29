@@ -5,7 +5,7 @@ from langchain_core.messages import SystemMessage
 from langchain.agents.agent_types import AgentType
 from langchain_experimental.agents.agent_toolkits import create_csv_agent
 # from langchain_community.chat_models.litellm_router import ChatLiteLLMRouter
-from langchain.memory import ConversationKGMemory
+from langchain_community.memory.kg import ConversationKGMemory
 from langchain.agents.openai_functions_agent.agent_token_buffer_memory import AgentTokenBufferMemory
 # from litellm import Router
 from langchain_openai import ChatOpenAI

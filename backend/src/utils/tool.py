@@ -1,4 +1,4 @@
-from langchain.agents import load_tools
+from langchain_community.agent_toolkits.load_tools import load_tools
 from langchain_community.tools.plugin import AIPluginTool 
 from langchain.agents.agent_toolkits import create_retriever_tool
 

@@ -2,7 +2,7 @@
 import os
 
 from redis import Redis as RedisClient
-from langchain.vectorstores.redis import Redis
+from langchain_community.vectorstores import Redis
 
 
 class RedisDB:

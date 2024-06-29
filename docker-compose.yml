@@ -4,6 +4,7 @@ services:
   # Redis (Cache / Broker / Vector Index / Stream)
   redis:
     container_name: redis
+    restart: unless-stopped
     image: redis/redis-stack-server:latest
     ports:
       - 6379:6379
@@ -12,6 +13,7 @@ services:
   mysql:
     image: mysql:8.2.0
     container_name: mysql
+    restart: unless-stopped
     ports:
       - "3306:3306"
     environment:
@@ -32,8 +34,36 @@ services:
     environment:
       PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_PASSWORD: password
+      MYSQL_PASSWORD: ${}
       MYSQL_USER: admin
+
+  # SearXNG
+  searxng:
+    image: searxng/searxng
+    container_name: searxng
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./docker/searxng:/etc/searxng"
+    environment:
+      BASE_URL: "http://localhost:8080/"
+      INSTANCE_NAME: "my-instance"
+
+  # Minio (File Storage) -- CURRENTLY ALL FILES AND IMAGES ARE BASE64 ENCODED
+  # minio:
+  #   image: minio/minio
+  #   container_name: minio
+  #   ports:
+  #     - "9000:9000"
+  #     - "9001:9001"
+  #   environment:
+  #     MINIO_ROOT_USER: CHANGEME
+  #     MINIO_ROOT_PASSWORD: CHANGEME
+  #   volumes:
+  #     - ~/minio/data:/data
+  #     - ~/minio/config:/root/.minio
+  #   command: server /data --console-address ":9001"
 
   # # API
   # api:
@@ -90,18 +120,3 @@ services:
   #       reservations:
   #         devices:
   #           - capabilities: [gpu]
-
-  # Minio (File Storage) -- CURRENTLY ALL FILES AND IMAGES ARE BASE64 ENCODED
-  # minio:
-  #   image: minio/minio
-  #   container_name: minio
-  #   ports:
-  #     - "9000:9000"
-  #     - "9001:9001"
-  #   environment:
-  #     MINIO_ROOT_USER: CHANGEME
-  #     MINIO_ROOT_PASSWORD: CHANGEME
-  #   volumes:
-  #     - ~/minio/data:/data
-  #     - ~/minio/config:/root/.minio
-  #   command: server /data --console-address ":9001"

@@ -21,11 +21,9 @@
 			"type": "debugpy",
 			"request": "launch",
 			"module": "pytest",
-			"args": [
-				"-s",
-				"test/unit/repositories/test_chat.py"
-			],
+			"args": ["-s", "-v", "test/unit/tools/test_search.py"],
 			"envFile": "${workspaceFolder}/.env",
+			"justMyCode": false
 		},
 		{
             "name": "Python: Run Script",

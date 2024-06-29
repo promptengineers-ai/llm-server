@@ -1,4 +1,4 @@
-import logging
+from src.infrastructure.logger import logger as logging
 import traceback
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status, APIRouter, Request
@@ -88,7 +88,7 @@ async def chat(request: Request, body: Agent):
 				status_code=200
 			)
 	except ValueError as ve:
-		logging.warn("Validation Error: %s", ve)
+		logging.warning("Validation Error: %s", ve)
 		return UJSONResponse(
 			content={'detail': ve.args[0]},
 			media_type='application/json',
@@ -145,7 +145,7 @@ def get_repo(request: Request, db: AsyncSession = Depends(get_db)) -> ChatReposi
 		return ChatRepository(request=request, db=db)
 	except NotFoundException as e:
 		# Handle specific NotFoundException with a custom message or logging
-		logging.warn(f"Failed to initialize ChatRepository: {str(e)}")
+		logging.warning(f"Failed to initialize ChatRepository: {str(e)}")
 		raise HTTPException(status_code=404, detail=f"Initialization failed: {str(e)}") from e
 	except Exception as e:
 		# Catch all other exceptions
