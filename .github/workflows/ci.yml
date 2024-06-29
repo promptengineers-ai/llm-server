@@ -94,7 +94,7 @@ jobs:
       APP_ENV: development
       APP_SECRET: ${{ secrets.APP_SECRET }}
       APP_ADMIN_EMAIL: admin@example.com
-      APP_ADMIN_PASS: password
+      APP_ADMIN_PASS: test1234
       APP_WORKERS: 1
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
