@@ -76,7 +76,7 @@ jobs:
     - name: Build and push Docker image
       working-directory: ./backend
       run: |
-        COMMIT_SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7) >> $GITHUB_ENV
+        COMMIT_SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
         DOCKER_IMAGE=docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA}
         
         echo "Building image: $DOCKER_IMAGE"
@@ -128,9 +128,13 @@ jobs:
 
     - name: Deploy to Cloud Run
       run: |
+        COMMIT_SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+        DOCKER_IMAGE=docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA}
+
         gcloud config set project ${{ env.GCP_PROJECT }}
 
-        echo "Starting Cloud Run Server"
+        echo "Deploying $DOCKER_IMAGE to Cloud Run Server"
+
         declare -a ENV_VARS=(
           ## App
           "APP_ENV=$APP_ENV"
