@@ -40,9 +40,9 @@ csv_tool = StructuredTool.from_function(
     handle_tool_error=True,
 )
 
-searxng_serach_tool = StructuredTool.from_function(
+searx_search_tool = StructuredTool.from_function(
     args_schema=SearxNgSchema,
-    name="searxng_serach",
+    name="searx_search",
     func=searx_search,
     handle_tool_error=True,
     description="""SearXNG is a metasearch engine, aggregating 
@@ -85,7 +85,7 @@ defined in the PDF form, and each value is the value to set for that field.
 
 AVAILABLE_TOOLS = {
     'image_summary': multi_modal_tool,
-    "searxng_serach": searxng_serach_tool,
+    "searx_search": searx_search_tool,
 	# 'repl_tool': repl_tool,
     # 'csv_tool': csv_tool,
     # 'pdf_get_field_names': pdf_get_field_names,
@@ -99,8 +99,9 @@ TOOL_DESCRIPTIONS = {
         'link': '/tools/image_summary',
         'toolkit': 'Advanced'
     },
-    'searxng_serach': {
-        'description': searxng_serach_tool.description,
+    'searx_search': {
+        'name': 'SearxNG Search',
+        'description': searx_search_tool.description,
         'link': 'https://api.python.langchain.com/en/latest/utilities/langchain_community.utilities.searx_search.SearxSearchWrapper.html',
         'toolkit': 'Advanced'
     },
@@ -129,7 +130,7 @@ TOOL_DESCRIPTIONS = {
 def tool_details():
     return [
         {
-            'name': key.replace('_', ' ').title(),
+            'name': TOOL_DESCRIPTIONS[key].get('name') if TOOL_DESCRIPTIONS[key].get('name') else key.replace('_', ' ').title(),
             'value': key,
             'description': TOOL_DESCRIPTIONS[key]['description'],
             'link': TOOL_DESCRIPTIONS[key]['link'],

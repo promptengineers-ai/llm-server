@@ -1,6 +1,4 @@
-# Advanced Tools
-
-## [SearxNG Search](https://api.python.langchain.com/en/latest/utilities/langchain_community.utilities.searx_search.SearxSearchWrapper.html)
+# [SearxNG Search](https://api.python.langchain.com/en/latest/utilities/langchain_community.utilities.searx_search.SearxSearchWrapper.html)
 
 The `searxng_search_tool` tool is a meta-search engine that aggregates the results of various search engines while not storing information about its users. This tool provides a way to perform searches using the SearxSearchWrapper and retrieve results from multiple search engines.
 
@@ -18,10 +16,10 @@ class SearxNGSchema(BaseModel):
 ### Configuration
 
 ```python
-searxng_search_tool = StructuredTool.from_function(
+searx_search_tool = StructuredTool.from_function(
     args_schema=SearxNGSchema,
-    name="searxng_search",
-    func=searxng_search,
+    name="searx_search",
+    func=searx_search,
     handle_tool_error=True,
     description="""
     SearxNG is a meta-search engine, aggregating the results of other search engines while not storing information about its users.

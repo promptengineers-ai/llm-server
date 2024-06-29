@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Disclosure,
     DisclosureButton,
@@ -6,13 +6,22 @@ import {
 } from "@headlessui/react";
 import { FaChevronDown } from "react-icons/fa";
 import ConsoleCard from "../cards/ConsoleCard";
+import { useChatContext } from "@/contexts/ChatContext";
 
 const ActionDisclosure = () => {
+    const {actions} = useChatContext();
     const [isOpen, setIsOpen] = useState(false);
+    const [currentTool, setCurrentTool] = useState<string | null>(null);
 
     const handleToggle = () => {
         setIsOpen(!isOpen);
     };
+
+    useEffect(() => {
+        if (actions.length > 0) {
+            setCurrentTool(actions[0].tool);
+        }
+    }, [actions]);
 
     return (
         <Disclosure as="div" className="mb-1">
@@ -23,7 +32,9 @@ const ActionDisclosure = () => {
                     }`}
                     onClick={handleToggle}
                 >
-                    <label className="font-semibold mr-3">Actions</label>
+                    <label className="font-semibold mr-3">
+                        Action {currentTool ? `(${currentTool})` : ""}
+                    </label>
                     <FaChevronDown
                         size={12}
                         className={`mr-1 transition-transform duration-200 ${

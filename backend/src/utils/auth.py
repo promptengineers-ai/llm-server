@@ -8,18 +8,23 @@ import hashlib
 import os
 
 from src.config import APP_SECRET, APP_ALGORITHM
+from src.infrastructure.logger import logger
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
 def verify_password(plain_password, hashed_password, salt):
 	"""Verify a hashed password."""
-	if not APP_SECRET:
-		raise ValueError("env variable APP_SECRET is not set")
-	
-	salt_bytes = bytes.fromhex(salt)
-	peppered_password = plain_password.encode() + APP_SECRET.encode()   
-	pwdhash = hashlib.pbkdf2_hmac('sha256', peppered_password, salt_bytes, 100000)
-	return pwdhash.hex() == hashed_password
+	try:
+		if not APP_SECRET:
+			raise ValueError("env variable APP_SECRET is not set")
+		
+		salt_bytes = bytes.fromhex(salt)
+		peppered_password = plain_password.encode() + APP_SECRET.encode()   
+		pwdhash = hashlib.pbkdf2_hmac('sha256', peppered_password, salt_bytes, 100000)
+		return pwdhash.hex() == hashed_password
+	except Exception as e:
+		logger.error(e)
+		return False
 
 def create_access_token(data: dict):
 	to_encode = data.copy()
