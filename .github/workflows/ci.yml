@@ -46,7 +46,7 @@ jobs:
         # Create the database directory
         mkdir -p data
         # Run your tests
-        pytest --cov-report xml --cov=.
+        pytest
 
   ###############################################################
   ## Build Docker Image
