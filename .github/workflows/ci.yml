@@ -12,7 +12,7 @@ jobs:
   ###############################################################
   test:
     runs-on: ubuntu-latest
-    if: ${{ !contains(join(github.event.head_commit.modified, ' '), 'frontend/') }}
+    # if: ${{ !contains(join(github.event.head_commit.modified, ' '), 'frontend/') }}
     env:
       APP_ENV: development
       APP_SECRET: this-is-a-test-secret    
