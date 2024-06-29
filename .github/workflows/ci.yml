@@ -76,7 +76,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: test
-    if: github.ref == 'refs/heads/development' && contains(github.event.head_commit.modified, 'backend/')
+    if: github.ref == 'refs/heads/development'
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -109,7 +109,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: [test, build]
-    if: github.ref == 'refs/heads/development' && contains(github.event.head_commit.modified, 'backend/')
+    if: github.ref == 'refs/heads/development'
     env:
       APP_ENV: development
       APP_SECRET: ${{ secrets.APP_SECRET }}
