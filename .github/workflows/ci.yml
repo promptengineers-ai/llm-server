@@ -33,7 +33,7 @@ jobs:
 
     - name: Cache Python dependencies
       id: cache-python
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/backend/requirements.txt', '**/backend/requirements-dev.txt', '**/backend/constraints.txt') }}
@@ -49,6 +49,15 @@ jobs:
         -c constraints.txt \
         -r requirements.txt \
         -r requirements-dev.txt
+
+    - name: Save Python dependencies cache
+      if: steps.cache-python.outputs.cache-hit != 'true'
+      id: save-cache-python
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/backend/requirements.txt', '**/backend/requirements-dev.txt', '**/backend/constraints.txt') }}
+
 
     - name: Run tests
       working-directory: ./backend
