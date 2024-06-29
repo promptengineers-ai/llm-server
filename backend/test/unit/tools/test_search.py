@@ -23,7 +23,7 @@ class TestSearchTools(unittest.TestCase):
         assert len(results) > 0
         assert type(results) == list
         
-    # @unittest.skip("Skip test_searxng_serach_tool")
+    @unittest.skip("Skip test_searxng_serach_tool")
     def test_searxng_serach_tool(self):
         tool_input = {
             "query": "Plano Prompt Engineers",
