@@ -34,7 +34,7 @@ services:
     environment:
       PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_PASSWORD: password
+      MYSQL_PASSWORD: ${}
       MYSQL_USER: admin
 
   # SearXNG

@@ -134,6 +134,7 @@ jobs:
       S3_REGION: ${{ secrets.S3_REGION }}
       ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
       ACCESS_SECRET_KEY: ${{ secrets.ACCESS_SECRET_KEY }}
+      SEARX_SEARCH_HOST_URL: ${{ secrets.SEARX_SEARCH_HOST_URL }}
     steps:
     - name: Authenticate to Google Cloud
       id: 'auth'
@@ -176,6 +177,9 @@ jobs:
           "GROQ_API_KEY=$GROQ_API_KEY"
           "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
           # "OLLAMA_BASE_URL=$OLLAMA_BASE_URL" # Commented out if not using Ollama (Requires GPU server)
+
+          ## Tools
+          "SEARX_SEARCH_HOST_URL=$SEARX_SEARCH_HOST_URL"
 
           ## Storage
           # "MINIO_HOST=$MINIO_HOST"           # Commented out if not using Minio (Requires Minio server)

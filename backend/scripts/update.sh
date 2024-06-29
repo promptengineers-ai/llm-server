@@ -11,3 +11,4 @@ docker-compose stop $SERVICE
 
 # Start the service without its dependencies
 docker-compose up -d --no-deps $SERVICE
+    
