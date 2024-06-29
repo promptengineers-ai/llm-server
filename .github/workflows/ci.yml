@@ -8,7 +8,7 @@ on:
 jobs:
 
   ###############################################################
-  ## Test Backend use Cache
+  ## Test
   ###############################################################
   test:
     runs-on: ubuntu-latest
@@ -41,6 +41,7 @@ jobs:
           ${{ runner.os }}-pip-
 
     - name: Install dependencies
+      if: steps.cache-python.outputs.cache-hit != 'true'
       working-directory: ./backend
       run: |
         pip install --upgrade pip
