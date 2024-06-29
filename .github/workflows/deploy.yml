@@ -40,6 +40,7 @@ jobs:
         DOCKER_IMAGE=docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA}
         
         echo "Building image: $DOCKER_IMAGE"
+        # docker buildx build --platform linux/amd64,linux/arm64 --push -t $DOCKER_IMAGE .
         docker build --push -t $DOCKER_IMAGE .
 
   deploy:
@@ -63,7 +64,7 @@ jobs:
 
         gcloud config set project ${{ env.GCP_PROJECT }}
         echo "Starting Cloud Run Server"
-        VARS="REDIS_URL=${{ env.REDIS_URL }},DATABASE_URL=mysql+aiomysql://admin:password@64.23.161.66:3306/llm_server,OPENAI_API_KEY=${{ env.OPENAI_API_KEY }},GROQ_API_KEY=${{ env.GROQ_API_KEY }},ANTHROPIC_API_KEY=${{ env.ANTHROPIC_API_KEY }}"
+        VARS="REDIS_URL=${{ env.REDIS_URL }},DATABASE_URL=${{ env.DATABASE_URL }},OPENAI_API_KEY=${{ env.OPENAI_API_KEY }},GROQ_API_KEY=${{ env.GROQ_API_KEY }},ANTHROPIC_API_KEY=${{ env.ANTHROPIC_API_KEY }}"
 
         gcloud run deploy llm-server \
             --image docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA} \
