@@ -1,3 +1,4 @@
+# from langchain_core.tools import ToolException
 from langchain_community.utilities import SearxSearchWrapper
 
 from src.config.tool import SEARX_SEARCH_HOST_URL

@@ -1,4 +1,4 @@
-import logging
+from src.infrastructure.logger import logger as logging
 import traceback
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, status, APIRouter, Request

@@ -1,5 +1,5 @@
 import os
-import logging
+from src.infrastructure.logger import logger as logging
 import tempfile
 import traceback
 from typing import List

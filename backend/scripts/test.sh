@@ -15,5 +15,5 @@ then
     python3 -m pytest -s test
 else
    echo ">> Running single test case"
-    python3 -m pytest -s $@
+    python3 -m pytest -s $@ -rs
 fi

@@ -1,7 +1,7 @@
 from typing import List, Optional
 import traceback
 import ujson
-import logging
+from src.infrastructure.logger import logger as logging
 
 from fastapi import (APIRouter, Depends, HTTPException, Request,
 					Response, status)

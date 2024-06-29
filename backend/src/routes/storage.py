@@ -1,7 +1,7 @@
 import os
 import json
 import traceback
-import logging
+from src.infrastructure.logger import logger as logging
 import mimetypes
 from typing import List, Any
 

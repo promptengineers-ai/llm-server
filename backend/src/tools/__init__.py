@@ -1,17 +1,20 @@
 # import nest_asyncio
-from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_core.tools import StructuredTool
-from langchain_experimental.utilities import PythonREPL
+
 from langchain_community.tools.playwright.utils import create_async_playwright_browser
 from langchain_community.agent_toolkits.playwright.toolkit import PlayWrightBrowserToolkit
 
+from src.models.tools.search import SearxNgSchema
+from src.models.tools import HumanQuery
+
+from .advanced import python_repl
+from .search import searx_search
 from .llm import multi_modal_llm
 from .csv import csv_agent
 from .pdf import get_form_field_names, fill_pdf_fields
 
 # nest_asyncio.apply()
 
-python_repl = PythonREPL()
 repl_tool = StructuredTool.from_function(
 	name="python_repl",
     func=python_repl.run,
@@ -21,12 +24,6 @@ repl_tool = StructuredTool.from_function(
                 `print(...)`.""",
     handle_tool_error=True,
 )
-
-
-class HumanQuery(BaseModel):
-    images: list[str] = Field(
-        description="The is a base64 string or url list of images to be processed."
-    )
 
 multi_modal_tool = StructuredTool.from_function(
     args_schema=HumanQuery,
@@ -41,6 +38,16 @@ csv_tool = StructuredTool.from_function(
     func=csv_agent,
     description="Rewrite the query as a standalone question based on the users query.",
     handle_tool_error=True,
+)
+
+searxng_serach_tool = StructuredTool.from_function(
+    args_schema=SearxNgSchema,
+    name="searxng_serach",
+    func=searx_search,
+    handle_tool_error=True,
+    description="""SearXNG is a metasearch engine, aggregating 
+                the results of other search engines while not 
+                storing information about its users."""
 )
 
 pdf_get_field_names = StructuredTool.from_function(
@@ -78,6 +85,7 @@ defined in the PDF form, and each value is the value to set for that field.
 
 AVAILABLE_TOOLS = {
     'image_summary': multi_modal_tool,
+    "searxng_serach": searxng_serach_tool,
 	# 'repl_tool': repl_tool,
     # 'csv_tool': csv_tool,
     # 'pdf_get_field_names': pdf_get_field_names,
@@ -89,6 +97,11 @@ TOOL_DESCRIPTIONS = {
     'image_summary': {
         'description': 'Tool for understanding context in an image. Uses GPT-4o (currently).',
         'link': '/tools/image_summary',
+        'toolkit': 'Advanced'
+    },
+    'searxng_serach': {
+        'description': searxng_serach_tool.description,
+        'link': 'https://api.python.langchain.com/en/latest/utilities/langchain_community.utilities.searx_search.SearxSearchWrapper.html',
         'toolkit': 'Advanced'
     },
     'repl_tool': {

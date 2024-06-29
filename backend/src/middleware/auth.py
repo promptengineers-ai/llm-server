@@ -1,4 +1,4 @@
-import logging
+from src.infrastructure.logger import logger as logging
 from fastapi import HTTPException, Security, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
