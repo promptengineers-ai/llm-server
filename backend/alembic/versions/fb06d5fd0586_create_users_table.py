@@ -11,10 +11,7 @@ from sqlalchemy.sql import table, column
 from sqlalchemy import String
 
 from src.utils.auth import hash_password
-<<<<<<< HEAD
 from src.config import APP_ADMIN_EMAIL, APP_ADMIN_PASS
-=======
->>>>>>> master
 
 # revision identifiers, used by Alembic.
 revision = 'abc123'

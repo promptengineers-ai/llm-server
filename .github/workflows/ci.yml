@@ -31,6 +31,15 @@ jobs:
       with:
         python-version: '3.10'
 
+    - name: Cache Python dependencies
+      id: cache-python
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/backend/requirements.txt', '**/backend/requirements-dev.txt', '**/backend/constraints.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
     - name: Install dependencies
       working-directory: ./backend
       run: |
@@ -120,7 +129,7 @@ jobs:
       id: 'auth'
       uses: google-github-actions/auth@v2
       with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        credentials_json: ${{ env.GCP_SA_KEY }}
 
     - name: Setup Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
