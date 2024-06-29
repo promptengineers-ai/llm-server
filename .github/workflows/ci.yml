@@ -57,6 +57,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     if: ${{ github.event.ref }} == 'development'
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
