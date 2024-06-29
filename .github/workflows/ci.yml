@@ -67,7 +67,7 @@ jobs:
         # Create the database directory
         mkdir -p data
         # Run your tests
-        pytest
+        pytest -rs
 
   ###############################################################
   ## Build Docker Image
