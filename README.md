@@ -22,7 +22,7 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
 
 ## 🚀 Roadmap
 
-Here are the upcoming features we're excited to bring to Prompt Engineers AI - LLM Server (More to come):
+Here are the upcoming features I'm (ryaneggleston@promptengineers.ai) is excited to bring to Prompt Engineers AI - LLM Server (More to come):
 
 - 🛠 **UI-Based Tool Configuration**
 - 🖥 **Code Interpreter**
