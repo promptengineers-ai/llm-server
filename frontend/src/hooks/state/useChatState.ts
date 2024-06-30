@@ -7,6 +7,7 @@ import { EmbeddingModel, ModelType, SearchProvider, SearchType, acceptRagSystemM
 import { ChatClient } from "@/utils/api";
 import { combinePrompts, parseCSV, shallowUrl } from "@/utils/chat";
 import { log } from "@/utils/log";
+import { generateRandomNumber } from "@/utils/random";
 import { useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
 import { SSE } from "sse.js";
@@ -58,6 +59,15 @@ export const defaultState = {
             },
         },
     },
+    status: {
+        task_id: "",
+        step: "",
+        progress: 0,
+        message: "",
+        page_number: 1,
+        page_count: 1,
+        chunk_count: 0,
+    },
 };
 
 export const useChatState = () => {
@@ -85,6 +95,7 @@ export const useChatState = () => {
     const [response, setResponse] = useState(defaultState.response);
     const [models, setModels] = useState<LLM[]>(defaultState.models);
     const [chatPayload, setChatPayload] = useState(defaultState.chatPayload);
+    const [status, setStatus] = useState(defaultState.status);
     const [initChatPayload, setInitChatPayload] = useState({
         system: chatPayload.system,
         retrieval: chatPayload.retrieval,
@@ -306,6 +317,42 @@ export const useChatState = () => {
         }
     };
 
+    const createIndex = (e: any) => {
+        return new Promise<void>(async (resolve, reject) => {
+            e.preventDefault();
+
+            // If index exists, use it, otherwise generate a random number
+            const index_name =
+                chatPayload.retrieval.index_name ||
+                generateRandomNumber().toString();
+
+            setStatus((prev: any) => ({ ...prev, task_id: index_name }));
+            try {
+                const chatClient = new ChatClient();
+                const docs = await chatClient.createDocuments({ data: files, task_id: index_name });
+                await chatClient.upsert({
+                    documents: docs.documents,
+                    index_name: index_name,
+                    provider: chatPayload.retrieval.provider,
+                    embedding: chatPayload.retrieval.embedding,
+                });
+                setChatPayload((prev: any) => ({
+                    ...prev,
+                    retrieval: {
+                        ...prev.retrieval,
+                        index_name: index_name,
+                    },
+                }));
+                setFiles([]);
+                resolve();
+            } catch (error) {
+                console.error(error);
+                alert("Error uploading the file");
+                reject(error);
+            }
+        });
+    };
+
     const submitQuestionStream = async () => {
 
         try {
@@ -496,6 +543,8 @@ export const useChatState = () => {
         setChatPayload,
         initChatPayload,
         setInitChatPayload,
+        status,
+        setStatus,
         // Mutations
         fetchModels,
         fetchChats,
@@ -511,5 +560,6 @@ export const useChatState = () => {
         adjustHeight,
         submitQuestionStream,
         abortSseRequest,
+        createIndex,
     };
 };

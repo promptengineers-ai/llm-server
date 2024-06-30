@@ -5,6 +5,8 @@ import { ChatPayload, LLM, Message } from "@/types/chat";
 import { logFilter } from "@/utils/log";
 import { HookedConsole } from "console-feed/lib/definitions/Console";
 import { API_URL } from "@/config/app";
+import { defaultState } from "../state/useChatState";
+import { stat } from "fs";
 
 export const useFetchModelsEffect = (models: LLM[], fetchModels: any) => {
     useEffect(() => {

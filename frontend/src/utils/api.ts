@@ -21,7 +21,7 @@ export class ChatClient extends Client {
         super(_apiUrl);
     }
 
-    public async createDocs(payload: { loaders: any[] }) {
+    public async createDocs(payload: { loaders: any[], task_id: string }) {
         try {
             const response = await fetch(`${this.apiUrl}/api/v1/documents`, {
                 method: "POST",
@@ -31,7 +31,7 @@ export class ChatClient extends Client {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
                 body: JSON.stringify({
-                    task_id: generateRandomNumber().toString(),
+                    task_id: payload.task_id,
                     loaders: payload.loaders,
                     splitter: {
                         type: "recursive",
@@ -49,7 +49,7 @@ export class ChatClient extends Client {
         }
     }
 
-    public async createDocuments(payload: { data: any[] }) {
+    public async createDocuments(payload: { task_id: string, data: any[] }) {
         try {
             const response = await fetch(`${this.apiUrl}/api/v1/documents`, {
                 method: "POST",
@@ -59,7 +59,7 @@ export class ChatClient extends Client {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
                 body: JSON.stringify({
-                    task_id: generateRandomNumber().toString(),
+                    task_id: payload.task_id,
                     loaders: [
                         {
                             type: "base64",
