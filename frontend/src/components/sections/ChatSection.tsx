@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import SubmitIcon from "../icons/SubmitIcon";
 import { useChatContext } from "../../contexts/ChatContext";
 import { FcCancel } from "react-icons/fc";
+import { FaStop } from "react-icons/fa";
 import SuggestionButton from "../buttons/SuggestionButton";
 import ChatInputSelect from "../selects/ChatInputSelect";
 import { multiModalModels } from "@/types/llm";
@@ -359,15 +360,25 @@ export default function ChatSection() {
                                     </span>
                                 </button>
                             ) : ( */}
-                            <button
-                                onClick={handleSubmitChat}
-                                disabled={!done}
-                                className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-0.5 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"
-                            >
-                                <span className="">
-                                    <SubmitIcon />
-                                </span>
-                            </button>
+                            {done ? (
+                                <button
+                                    onClick={handleSubmitChat}
+                                    className="absolute bottom-1.5 right-2 rounded-lg border border-black bg-black p-0.5 text-white transition-colors enabled:bg-black disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"
+                                >
+                                    <span className="">
+                                        <SubmitIcon />
+                                    </span>
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={() => alert("Abort Request")}
+                                    className="absolute bottom-1.5 right-2 rounded-lg border border-red-700 bg-black p-2 text-white transition-colors enabled:bg-red-700 disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"
+                                >
+                                    <span className="">
+                                        <FaStop size={12} />
+                                    </span>
+                                </button>
+                            )}
                             {/* )}   */}
                         </div>
                     </div>
