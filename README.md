@@ -17,9 +17,16 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
 
 ## 📖 Table of Contents
 
+- [Deploy](https://github.com/promptengineers-ai/llm-server/blob/master/docs/deploy)
 - [Tools](https://github.com/promptengineers-ai/llm-server/blob/master/docs/tools)
 
-## 🛠️ Setup API Server
+## 🛠️ Setup Services
+```bash
+### Setup Docker Services
+docker-compose up --build
+```
+
+## 🛠️ Setup Server
 ```bash
 ### Change into Backend directory
 cd backend
@@ -31,10 +38,10 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 ### Install Runtime & Dev Dependencies
-pip install -r requirements.txt -r requirements-dev.txt
+pip install -r requirements.txt -r requirements-dev.txt -c constaints.txt
 
 ### Install Runtime Dependencies
-pip install -r requirements.txt
+pip install -r requirements.txt -c constaints.txt
 
 ### Migrate Database Schema
 alembic upgrade head
@@ -67,8 +74,43 @@ npm run dev
   </tr>
   <tr>
     <td>APP_ENV</td>
-    <td>'local'</td>
+    <td>'development'</td>
     <td>Environment where the application is running</td>
+  </tr>
+  <tr>
+    <td>APP_VERSION</td>
+    <td>0.0.1</td>
+    <td>Version of the application</td>
+  </tr>
+  <tr>
+    <td>APP_SECRET</td>
+    <td>this-is-top-secret</td>
+    <td>Secret key for the application</td>
+  </tr>
+  <tr>
+    <td>APP_WORKERS</td>
+    <td>1</td>
+    <td>Number of application workers</td>
+  </tr>
+  <tr>
+    <td>APP_ADMIN_EMAIL</td>
+    <td>admin@example.com</td>
+    <td>Admin email for the application</td>
+  </tr>
+  <tr>
+    <td>APP_ADMIN_PASS</td>
+    <td>test1234</td>
+    <td>Admin password for the application</td>
+  </tr>
+  <tr>
+    <td>TEST_USER_ID</td>
+    <td>0000000000000000000000000</td>
+    <td>Test user ID</td>
+  </tr>
+  <tr>
+    <td>DATABASE_URL</td>
+    <td>mysql+aiomysql://admin:password@localhost:3306/llm_server</td>
+    <td>URL for the database</td>
   </tr>
   <tr>
     <td>PINECONE_API_KEY</td>
@@ -86,6 +128,11 @@ npm run dev
     <td>Default Pinecone index used</td>
   </tr>
   <tr>
+    <td>REDIS_URL</td>
+    <td>redis://localhost:6379</td>
+    <td>URL for the Redis service</td>
+  </tr>
+  <tr>
     <td>OPENAI_API_KEY</td>
     <td>sk-abc123...</td>
     <td>Default LLM OpenAI key</td>
@@ -101,6 +148,16 @@ npm run dev
     <td>API key for accessing Anthropic services</td>
   </tr>
   <tr>
+    <td>OLLAMA_BASE_URL</td>
+    <td>http://localhost:11434</td>
+    <td>Base URL for the Ollama service</td>
+  </tr>
+  <tr>
+    <td>SEARX_SEARCH_HOST_URL</td>
+    <td>http://localhost:8080</td>
+    <td>URL for the Searx search service</td>
+  </tr>
+  <tr>
     <td>MINIO_HOST</td>
     <td>localhost:9000</td>
     <td>URL to the Object storage</td>
@@ -109,6 +166,11 @@ npm run dev
     <td>BUCKET</td>
     <td>my-documents</td>
     <td>Name of Minio or S3 bucket</td>
+  </tr>
+  <tr>
+    <td>S3_REGION</td>
+    <td>us-east-1</td>
+    <td>Region where the S3 bucket exists</td>
   </tr>
   <tr>
     <td>ACCESS_KEY_ID</td>
@@ -120,33 +182,7 @@ npm run dev
     <td>wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY</td>
     <td>Secret IAM Key &#40;Optional&#41;</td>
   </tr>
-  <tr>
-    <td>S3_REGION</td>
-    <td>us-east-1</td>
-    <td>Region where the S3 bucket exists &#40;Optional&#41;</td>
-  </tr>
 </table>
-
-## Deploy
-1. Log in to vercel
-```bash
-vercel login
-```
-
-2. Deploy to vercel
-```bash
-vercel .
-```
-
-3. Deploy to Cloud Run
-```bash
-gcloud run deploy llm-server \
-    --image docker.io/promptengineers/llm-server:cb064a4 \
-    --platform managed \
-    --region us-central1 \
-    --allow-unauthenticated \
-    --set-env-vars REDIS_URL=value,DATABASE_URL=another_value,OPENAI_API_KEY=open_api_key,GROQ_API_KEY=groq_api_key,ANTHROPIC_API_KEY=anthropic_api_key
-```
 
 ## 🚀 Roadmap
 
@@ -186,7 +222,7 @@ Feel free to submit issues and enhancement requests. We're always looking for fe
 
 ## 🤓 Maintainers
 
-- `Ryan Eggleston` - `ryan.adaptivebiz@gmail.com`
+- `Ryan Eggleston` - `ryaneggleston@promptengineers.ai`
 
 ## 📜 License
 
