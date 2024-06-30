@@ -1,12 +1,13 @@
 "use client";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext"; // Make sure to import the theme context
+import { useAppState } from "@/hooks/state/useAppState";
 import { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 
 const LoginForm = () => {
     const { theme } = useTheme();
-    const [loading, setLoading] = useState(false);
+    const {loading, setLoading} = useAppState();
     const { login } = useAuthContext();
     const [payload, setPayload] = useState({
         email: "admin@example.com",
@@ -157,18 +158,6 @@ const LoginForm = () => {
                             </button>
                         </div>
                     </form>
-
-                    {/* <p
-                        className={`mt-10 text-center text-sm ${themeClasses.text}`}
-                    >
-                        Not a member?{" "}
-                        <a
-                            href="#"
-                            className={`font-semibold leading-6 ${themeClasses.link}`}
-                        >
-                            Start a 14 day free trial
-                        </a>
-                    </p> */}
                 </div>
             </div>
         </>
