@@ -144,6 +144,10 @@ gcloud run deploy llm-server \
     --set-env-vars REDIS_URL=value,DATABASE_URL=another_value,OPENAI_API_KEY=open_api_key,GROQ_API_KEY=groq_api_key,ANTHROPIC_API_KEY=anthropic_api_key
 ```
 
+## 📖 Table of Contents
+
+- [Tools](https://github.com/promptengineers-ai/llm-server/blob/master/docs/tools)
+
 ## 🚀 Roadmap
 
 Here are the upcoming features we're excited to bring to Prompt Engineers AI - LLM Server (More to come):
