@@ -191,9 +191,9 @@ npm run dev
 
 Here are the upcoming features I'm (ryaneggleston@promptengineers.ai) is excited to bring to Prompt Engineers AI - LLM Server (More to come):
 
-- 🛠 **UI-Based Tool Configuration**
-- 🖥 **Code Interpreter**
-- 🤖 **Assistant Creation Capability**
+- [ ] 🛠 **UI-Based Tool Configuration**
+- [ ] 🖥 **Code Interpreter**
+- [ ] 🤖 **Assistant Creation Capability**
 
 Create an issue and lets start a discussion if you'd like to see a feature added to the roadmap.
 
