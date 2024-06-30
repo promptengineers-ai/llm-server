@@ -1,81 +1,48 @@
 "use client";
-import { useContext, createContext, useState, useEffect, useMemo } from "react";
+import { useContext, createContext } from "react";
 import { IContextProvider } from "../interfaces/provider";
+import { useAppState } from "@/hooks/state/useAppState";
+import { useHandleOutsideClickEffect } from "@/hooks/effect/useAppEffects";
+
 
 export const AppContext = createContext({});
 
 export default function AppProvider({ children }: IContextProvider) {
-    // Suppose you have some state or derived data here
-    const [loading, setLoading] = useState(false); // App state
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-    const [isWebLoaderOpen, setIsWebLoaderOpen] = useState(false);
-    const [isOpen, setIsOpen] = useState(false);
+    const {
+        loading,
+        setLoading,
+        isOpen,
+        setIsOpen,
+        isDrawerOpen,
+        setIsDrawerOpen,
+        isPopoverOpen,
+        setIsPopoverOpen,
+        isWebLoaderOpen,
+        setIsWebLoaderOpen,
+        isMobile,
+        toggleDrawer,
+        closeDrawer,
+    } = useAppState();
 
-    const isMobile = () => {
-        const isClient = typeof window === "object";
-
-        // Function to check window size and return isOpen state
-        const getSize = () => {
-            return window.innerWidth < 768;
-        };
-
-        return isClient ? getSize() : false;
-    };
-
-    const toggleDrawer = () => {
-        setIsDrawerOpen(!isDrawerOpen);
-    };
-
-    const closeDrawer = () => {
-        setIsDrawerOpen(false);
-    };
-
-    useEffect(() => {
-        const handleOutsideClick = (event: any) => {
-            const drawer = document.getElementById("drawer");
-            if (drawer && !drawer.contains(event.target)) {
-                closeDrawer();
-            }
-        };
-
-        if (isDrawerOpen) {
-            document.addEventListener("mousedown", handleOutsideClick);
-        }
-
-        return () => {
-            document.removeEventListener("mousedown", handleOutsideClick);
-        };
-    }, [isDrawerOpen]);
+    useHandleOutsideClickEffect(isDrawerOpen, closeDrawer);
 
     return (
         <AppContext.Provider
-            value={useMemo(() => {
-                // Your context value that depends on state, props, etc.
-                return {
-                    // Include state or methods that consumers of this context would need
-                    loading,
-                    isDrawerOpen,
-                    isOpen,
-                    isPopoverOpen,
-                    isWebLoaderOpen,
-                    // App method that alters the state
-                    setLoading,
-                    isMobile,
-                    setIsDrawerOpen,
-                    toggleDrawer,
-                    closeDrawer,
-                    setIsOpen,
-                    setIsPopoverOpen,
-                    setIsWebLoaderOpen,
-                };
-            }, [
+            value={{
                 loading,
-                isDrawerOpen,
+                setLoading,
                 isOpen,
+                setIsOpen,
+                isDrawerOpen,
+                setIsDrawerOpen,
                 isPopoverOpen,
+                setIsPopoverOpen,
                 isWebLoaderOpen,
-            ])}
+                setIsWebLoaderOpen,
+                isMobile,
+                toggleDrawer,
+                closeDrawer,
+            }}
         >
             {children}
         </AppContext.Provider>
