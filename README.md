@@ -15,6 +15,10 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
   <img src="https://github.com/promptengineers-ai/llm-server/blob/master/docs/assets/llm-server.gif?raw=true" width="600px" />
 </p>
 
+## 📖 Table of Contents
+
+- [Tools](https://github.com/promptengineers-ai/llm-server/blob/master/docs/tools)
+
 ## 🛠️ Setup API Server
 ```bash
 ### Change into Backend directory
@@ -143,10 +147,6 @@ gcloud run deploy llm-server \
     --allow-unauthenticated \
     --set-env-vars REDIS_URL=value,DATABASE_URL=another_value,OPENAI_API_KEY=open_api_key,GROQ_API_KEY=groq_api_key,ANTHROPIC_API_KEY=anthropic_api_key
 ```
-
-## 📖 Table of Contents
-
-- [Tools](https://github.com/promptengineers-ai/llm-server/blob/master/docs/tools)
 
 ## 🚀 Roadmap
 
