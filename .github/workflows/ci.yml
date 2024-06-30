@@ -4,8 +4,14 @@ on:
   push:
     branches:
       - "*"
+    paths-ignore:
+      - 'frontend/**'
+      - '.github/workflows/ci.yml'
   pull_request:
     types: [opened, synchronize, reopened]
+    paths-ignore:
+      - 'frontend/**'
+      - '.github/workflows/ci.yml'
 
 jobs:
 
