@@ -54,6 +54,7 @@ export default function ChatSection() {
         setSelectedImage,
         handleImageClick,
         adjustHeight,
+        abortSseRequest,
     } = useChatContext();
 
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
@@ -371,7 +372,7 @@ export default function ChatSection() {
                                 </button>
                             ) : (
                                 <button
-                                    onClick={() => alert("Abort Request")}
+                                    onClick={abortSseRequest}
                                     className="absolute bottom-1.5 right-2 rounded-lg border border-red-700 bg-black p-2 text-white transition-colors enabled:bg-red-700 disabled:text-gray-400 disabled:opacity-10 md:bottom-3 md:right-3"
                                 >
                                     <span className="">
