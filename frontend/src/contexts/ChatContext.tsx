@@ -78,6 +78,7 @@ export default function ChatProvider({ children }: IContextProvider) {
         submitQuestionStream,
         adjustHeight,
         resetOnCancel,
+        abortSseRequest,
         defaultState,
     } = useChatState();
     const searchParams = useSearchParams();
@@ -314,6 +315,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                 renderConversation,
                 setUserInput,
                 setSelectedImage,
+                abortSseRequest,
                 handleImageClick,
                 fetchChats,
                 adjustHeight,
