@@ -1,6 +1,9 @@
 """Application entry point."""
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
 from src.middleware.auth import current_user
 from src.models import Harvest
@@ -31,6 +34,19 @@ app.include_router(prefix='/api/v1', dependencies=[Depends(current_user)], route
 app.include_router(prefix='/api/v1', dependencies=[Depends(current_user)], router=retrieval_router)
 app.include_router(prefix='/api/v1', dependencies=[Depends(current_user)], router=index_router)
 app.include_router(prefix='/api/v1', dependencies=[Depends(current_user)], router=storage_router)
+
+# Define the path to the directory containing the HTML files
+static_dir = Path(__file__).parent / "static"
+
+# Mount the static directory
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+# API Landing Page
+@app.get("/", response_class=HTMLResponse)
+async def read_root():
+    with open(static_dir / "pages/index.html") as f:
+        html_content = f.read()
+    return HTMLResponse(content=html_content, status_code=200)
 
 ############################################################################
 ## Define the endpoints for chat with csv

@@ -90,6 +90,18 @@ export const useChatState = () => {
         retrieval: chatPayload.retrieval,
         tools: chatPayload.tools,
     });
+    const [sseSource, setSseSource] = useState<SSE | null>(null);
+
+    const abortSseRequest = (e: any) => {
+        e.preventDefault();
+        if (sseSource) {
+            sseSource.close();
+            setDone(true);
+            setLoading(false);
+            setSseSource(null);
+            console.log("SSE request aborted");
+        }
+    };
 
     function resetOnCancel(clear: boolean = false) {
         sessionStorage.removeItem("system");
@@ -324,6 +336,8 @@ export const useChatState = () => {
                 payload: JSON.stringify(config),
             });
 
+            setSseSource(source);
+
             let streamTimeout: ReturnType<typeof setTimeout>;
 
             const resetStreamTimeout = () => {
@@ -496,5 +510,6 @@ export const useChatState = () => {
         updateMessages,
         adjustHeight,
         submitQuestionStream,
+        abortSseRequest,
     };
 };
