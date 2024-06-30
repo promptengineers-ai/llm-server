@@ -17,8 +17,8 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
 
 ## 📖 Table of Contents
 
-- [Deploy](https://github.com/promptengineers-ai/llm-server/blob/master/docs/deploy)
-- [Tools](https://github.com/promptengineers-ai/llm-server/blob/master/docs/tools)
+- [Deploy](https://github.com/promptengineers-ai/llm-server/blob/development/docs/deploy)
+- [Tools](https://github.com/promptengineers-ai/llm-server/blob/development/docs/tools)
 
 ## 🛠️ Setup Services
 ```bash
