@@ -27,6 +27,9 @@ docker-compose up --build
 ```
 
 ## 🛠️ Setup Server
+
+Before running the server make sure to take a look at `cp .example.env .env` see [Environment Variables](https://github.com/promptengineers-ai/llm-server?tab=readme-ov-file#environment-variables).
+
 ```bash
 ### Change into Backend directory
 cd backend
