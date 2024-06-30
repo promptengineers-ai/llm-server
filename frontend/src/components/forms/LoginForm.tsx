@@ -1,10 +1,13 @@
 "use client";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext"; // Make sure to import the theme context
+import { useAppState } from "@/hooks/state/useAppState";
 import { useState } from "react";
+import { FaSpinner } from "react-icons/fa";
 
 const LoginForm = () => {
-    const { theme } = useTheme(); // This will give us the current theme
+    const { theme } = useTheme();
+    const {loading, setLoading} = useAppState();
     const { login } = useAuthContext();
     const [payload, setPayload] = useState({
         email: "admin@example.com",
@@ -44,11 +47,15 @@ const LoginForm = () => {
                 alert("Email and password are required");
                 return;
             }
+
+            setLoading(true);
             await login(payload.email, payload.password);
             console.log("Login Successful");
             // Navigate to dashboard or home page here
         } catch (error) {
             console.error("Login Failed:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -135,23 +142,22 @@ const LoginForm = () => {
                             <button
                                 type="submit"
                                 className={`flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white ${themeClasses.button} ${themeClasses.shadow} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500`}
+                                disabled={loading} // Disable button when loading
                             >
-                                Sign in
+                                {loading ? (
+                                    <>
+                                        <FaSpinner
+                                            className="animate-spin"
+                                            fontSize={18}
+                                        />
+                                        <span className="ml-2">Processing...</span>
+                                    </>
+                                ) : (
+                                    "Sign in"
+                                )}
                             </button>
                         </div>
                     </form>
-
-                    {/* <p
-                        className={`mt-10 text-center text-sm ${themeClasses.text}`}
-                    >
-                        Not a member?{" "}
-                        <a
-                            href="#"
-                            className={`font-semibold leading-6 ${themeClasses.link}`}
-                        >
-                            Start a 14 day free trial
-                        </a>
-                    </p> */}
                 </div>
             </div>
         </>
