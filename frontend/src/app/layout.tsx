@@ -27,10 +27,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <head>
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1, maximum-scale=1"
-                />
+                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
                 <link
                     href="splashscreens/iphone5_splash.png"
                     media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"
