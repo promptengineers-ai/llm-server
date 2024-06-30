@@ -12,7 +12,7 @@ Full LLM REST API with prompts, LLMs, Vector Databases, and Agents
 </p>
 
 <p align="center">
-  <img src="https://github.com/promptengineers-ai/llm-server/blob/master/backend/static/llm-server.gif?raw=true" width="600px" />
+  <img src="https://github.com/promptengineers-ai/llm-server/blob/master/docs/assets/llm-server.gif?raw=true" width="600px" />
 </p>
 
 ## 🛠️ Setup API Server
