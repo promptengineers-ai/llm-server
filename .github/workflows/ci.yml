@@ -7,12 +7,23 @@ on:
     paths-ignore:
       - 'frontend/**'
       - '.github/workflows/ci.yml'
+      - 'Changelog.md'
+      - 'docker/**'
+      - 'docker-compose.yml'
+      - docs/**
+      - '.dockerignore'
+      - 'README.md'
   pull_request:
     types: [opened, synchronize, reopened]
     paths-ignore:
       - 'frontend/**'
       - '.github/workflows/ci.yml'
-
+      - 'Changelog.md'
+      - 'docker/**'
+      - 'docker-compose.yml'
+      - docs/**
+      - '.dockerignore'
+      - 'README.md'
 jobs:
 
   ###############################################################
