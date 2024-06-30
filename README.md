@@ -191,8 +191,11 @@ npm run dev
 
 Here are the upcoming features I'm (ryaneggleston@promptengineers.ai) is excited to bring to Prompt Engineers AI - LLM Server (More to come):
 
-- [ ] 🛠 **UI-Based Tool Configuration**
-- [ ] 🖥 **Code Interpreter**
+- [x] 🤖 **Foundation Model Providers Supported (OpenAI, Anthropic, Ollama, Groq, Google... coming soon.)**
+- [x] 📸 **Multi-Modal Models Generation**
+- [x] 📑 **Retrieval Augmented Generation (RAG)**
+- [x] 🛠 **UI-Based Tool Configuration**
+- [x] 🖥 [**Code Interpreter**](https://github.com/promptengineers-ai/llm-server/blob/52b82eee1744d2b9543f788b835082c72fb8869c/backend/src/tools/__init__.py#L89) ⚠️ Use with Caution. Recommend [E2B Data Analysis](https://python.langchain.com/v0.2/docs/integrations/tools/e2b_data_analysis/)
 - [ ] 🤖 **Assistant Creation Capability**
 
 Create an issue and lets start a discussion if you'd like to see a feature added to the roadmap.
