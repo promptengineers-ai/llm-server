@@ -1,5 +1,5 @@
 "use client";
-import { useContext, createContext, useMemo } from "react";
+import { useContext, createContext, useMemo, useState } from "react";
 import { ChatClient } from "../utils/api";
 import { Message } from "../types/chat";
 import { IContextProvider } from "../interfaces/provider";
@@ -23,10 +23,11 @@ import {
 } from "@/hooks/effect/useChatEffects";
 import ActionDisclosure from "@/components/disclosures/ActionDisclosure";
 import { generateRandomNumber } from "@/utils/random";
+import { API_URL } from "@/config/app";
 
 const ChatContext = createContext({});
 export default function ChatProvider({ children }: IContextProvider) {
-    const { loading, setIsPopoverOpen } = useAppContext();
+    const { loading, setIsPopoverOpen, setIsWebLoaderOpen } = useAppContext();
     const {
         chatboxRef,
         chatInputRef,
@@ -61,6 +62,8 @@ export default function ChatProvider({ children }: IContextProvider) {
         setLogs,
         tools,
         setTools,
+        status,
+        setStatus,
         selectedImage,
         setSelectedImage,
         selectedDocument,
@@ -80,9 +83,34 @@ export default function ChatProvider({ children }: IContextProvider) {
         resetOnCancel,
         abortSseRequest,
         defaultState,
+        createIndex,
     } = useChatState();
     const searchParams = useSearchParams();
     const chatClient = new ChatClient();
+
+    const updateStatus = (task_id: string) => {
+        const eventSource = new EventSource(`${API_URL}/status/${task_id}`);
+
+        eventSource.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log("EventSource message:", data); // Log every message
+            if (data.progress) {
+                setStatus(data);
+                if (data.step === 'upsert' && data.progress === 100) {
+                    eventSource.close();
+                    console.log("EventSource connection closed");
+                    alert(`Index ${task_id} created successfully!`);
+                    setStatus(defaultState.status);
+                    setIsWebLoaderOpen(false);
+                }
+            }
+        };
+
+        eventSource.onerror = (error) => {
+            console.error("EventSource failed:", error);
+            eventSource.close();
+        };
+    };
 
     const createIndexFromLoaders = (e: any) => {
         return new Promise<void>(async (resolve, reject) => {
@@ -92,15 +120,20 @@ export default function ChatProvider({ children }: IContextProvider) {
             const index_name =
                 chatPayload.retrieval.index_name ||
                 generateRandomNumber().toString();
-
+            setStatus((prev: any) => ({ ...prev, step: "scrape" }));
+            updateStatus(index_name);
             try {
                 const chatClient = new ChatClient();
-                const docs = await chatClient.createDocs({ loaders });
+                const docs = await chatClient.createDocs({ loaders, task_id: index_name });
                 await chatClient.upsert({
+                    task_id: index_name,
                     documents: docs.documents,
                     index_name: index_name,
                     provider: chatPayload.retrieval.provider,
                     embedding: chatPayload.retrieval.embedding,
+                    batch_size: chatPayload.retrieval.batch_size,
+                    parallel: chatPayload.retrieval.parallel,
+                    workers: chatPayload.retrieval.workers,
                 });
                 setChatPayload((prev: any) => ({
                     ...prev,
@@ -296,6 +329,8 @@ export default function ChatProvider({ children }: IContextProvider) {
                 initChatPayload,
                 isSaveEnabled,
                 models,
+                status,
+                setStatus,
                 fetchModels,
                 setCsvContent,
                 setFiles,
@@ -327,6 +362,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                 handleRegenerateClick,
                 handleDocumentClick,
                 resetOnCancel,
+                createIndex,
                 createIndexFromLoaders,
             }}
         >

@@ -14,6 +14,7 @@ import { ChatPayload } from "@/types/chat";
 import RetrievalForm from "../forms/RetrievalForm";
 import { useFetchToolsEffect, useUpdateInitChatPayloadEffect } from "@/hooks/effect/useChatEffects";
 import ToolList from "../lists/ToolList";
+import { FaSpinner } from "react-icons/fa";
 
 const CustomizeModal = () => {
     const { isOpen, setIsOpen, setIsPopoverOpen, setIsDrawerOpen } =
@@ -66,9 +67,7 @@ const CustomizeModal = () => {
                                     <Tab className="rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
                                         Retrieval
                                     </Tab>
-                                    <Tab
-                                        className="disabled:opacity-50 rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white"
-                                    >
+                                    <Tab className="disabled:opacity-50 rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
                                         Tools
                                     </Tab>
                                 </TabList>
@@ -94,7 +93,10 @@ const CustomizeModal = () => {
                                                                 .value,
                                                         })
                                                     );
-                                                    sessionStorage.setItem('system', e.target.value)
+                                                    sessionStorage.setItem(
+                                                        "system",
+                                                        e.target.value
+                                                    );
                                                 }}
                                             />
                                         </TabPanel>
