@@ -129,6 +129,9 @@ export default function ChatProvider({ children }: IContextProvider) {
                     index_name: index_name,
                     provider: chatPayload.retrieval.provider,
                     embedding: chatPayload.retrieval.embedding,
+                    batch_size: chatPayload.retrieval.batch_size,
+                    parallel: chatPayload.retrieval.parallel,
+                    workers: chatPayload.retrieval.workers,
                 });
                 setChatPayload((prev: any) => ({
                     ...prev,

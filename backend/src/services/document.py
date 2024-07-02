@@ -197,11 +197,11 @@ class DocumentService:
 				task_id, 
 				ujson.dumps({
 					'step': 'upsert',
-					'message': f'Created {total_batches} batches of {self.batch_size} documents',
+					'message': f'Creating {total_batches} batches of {self.batch_size} documents',
 					'progress': 0, 
-					'page_number': 0,
-					'page_count': 0,
-					'chunk_count': 0
+					'batch_number': 0,
+					'batch_count': 0,
+					'batch_size': 0
 				})
 			)
 
@@ -217,11 +217,11 @@ class DocumentService:
 					task_id, 
 					ujson.dumps({
 						'step': 'upsert',
-						'message': f'Processed batch {i+1}/{total_batches}',
+						'message': f'Processed batch {i+1} of {total_batches}',
 						'progress': round(((i+1) / total_batches) * 100, 2),
-						'page_number': i + 1,
-						'page_count': total_batches,
-						'chunk_count': len(batch)
+						'batch_number': i + 1,
+						'batch_count': total_batches,
+						'batch_size': len(batch)
 					})
 				)
 		
