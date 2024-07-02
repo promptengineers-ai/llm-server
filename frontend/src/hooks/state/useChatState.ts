@@ -57,7 +57,7 @@ export const defaultState = {
                 fetch_k: null,
                 score_threshold: null,
             },
-            batch_size: 32,
+            batch_size: 100,
             parallel: false,
             workers: 4,
         },
