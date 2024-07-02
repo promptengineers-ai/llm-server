@@ -95,7 +95,7 @@ async def split_docs(
 			await cache.publish(
 				task_id, 
 				json.dumps({
-					'step': 'end' if i+1 == len(pages) else 'split',
+					'step': 'split',
 					'message': f'Created {len(chunks)} chunks from {len(pages)} pages.' if i+1 == len(pages) else f'Spliting page {i+1} into chunks',
 					'progress': round(progress_percentage, 2), 
 					'page_number': i + 1,

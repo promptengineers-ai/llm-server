@@ -71,3 +71,8 @@ export const parseCSV = (text: string) => {
 export const messagesContainsSources = (messages: Message[]) => {
     return messages.some((message) => message.sources);
 };
+
+export function capitalizeFirstLetter(string: string) {
+    if (!string) return "";
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

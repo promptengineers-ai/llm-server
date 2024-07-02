@@ -40,7 +40,7 @@ export default function ChatSection() {
         done,
         chatInputRef,
         chatPayload,
-        setChatPayload,
+        // setChatPayload,
         sendChatPayload,
         resetChat,
         images,
@@ -55,6 +55,7 @@ export default function ChatSection() {
         handleImageClick,
         adjustHeight,
         abortSseRequest,
+        createIndex,
     } = useChatContext();
 
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
@@ -109,41 +110,6 @@ export default function ChatSection() {
     const removeImage = (id: number) => {
         setImages((prev: any) => prev.filter((image: any) => image.id !== id));
         setFiles((prev: any) => prev.filter((image: any) => image.id !== id));
-    };
-
-    const createIndex = (e: any) => {
-        return new Promise<void>(async (resolve, reject) => {
-            e.preventDefault();
-
-            // If index exists, use it, otherwise generate a random number
-            const index_name =
-                chatPayload.retrieval.index_name ||
-                generateRandomNumber().toString();
-
-            try {
-                const chatClient = new ChatClient();
-                const docs = await chatClient.createDocuments({ data: files });
-                await chatClient.upsert({
-                    documents: docs.documents,
-                    index_name: index_name,
-                    provider: chatPayload.retrieval.provider,
-                    embedding: chatPayload.retrieval.embedding,
-                });
-                setChatPayload((prev: any) => ({
-                    ...prev,
-                    retrieval: {
-                        ...prev.retrieval,
-                        index_name: index_name,
-                    },
-                }));
-                setFiles([]);
-                resolve();
-            } catch (error) {
-                console.error(error);
-                alert("Error uploading the file");
-                reject(error);
-            }
-        });
     };
 
     const handleSubmitChat = async (e: any) => {
@@ -331,7 +297,7 @@ export default function ChatSection() {
                                         ? "List 5 key takeaways..."
                                         : "Acting as a expert at..."
                                 }
-                                className="m-0 w-full resize-none border-0 bg-white py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] max-h-52 placeholder-black/50 pl-10 md:pl-[55px] focus:outline-none"
+                                className="m-0 w-full resize-none border-0 bg-white py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] placeholder-black/50 pl-10 md:pl-[55px] focus:outline-none"
                                 style={{
                                     overflowY: "auto",
                                     borderRadius: "10px",

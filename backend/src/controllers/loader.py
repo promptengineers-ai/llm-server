@@ -19,7 +19,7 @@ from src.utils.retrieval import fetch_links
 def loader_file_config(file, tmpdirname):
 	_, file_extension = os.path.splitext(file.filename)
 	file_extension_cleaned = file_extension.replace('.', '')
-    
+	
 	# Check if the file extension is a valid type
 	if file_extension_cleaned not in [e.value for e in FileLoaderType]:
 		raise HTTPException(status_code=400, detail=f"Invalid file type: {file_extension_cleaned}")
@@ -35,6 +35,8 @@ def loader_file_config(file, tmpdirname):
 cache = CacheService(REDIS_URL)
 
 class LoaderController:
+	def __init__(self):
+		self.document_service = DocumentService()
 
 	##############################################################
 	### Fetch Documents
@@ -45,7 +47,7 @@ class LoaderController:
 	):
 		"""Creates settings"""
 		try:
-			documents = await DocumentService.from_loaders(
+			documents = await self.document_service.from_loaders(
 				loaders=body.loaders, 
 				splitter=body.splitter,
 				task_id=body.task_id
@@ -116,7 +118,7 @@ class LoaderController:
 				loaders.append(loader)		
 				
 			try:
-				documents = await DocumentService.from_loaders(
+				documents = await self.document_service.from_loaders(
 					loaders=loaders, 
 					splitter=Splitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap, type=splitter),
 					task_id=task_id
@@ -166,13 +168,17 @@ class LoaderController:
 				)
 
 			tokens = retrieve_defaults(keys)
-
-			result = await DocumentService.upsert(
+			document_service = DocumentService(
+       			batch_size=body.batch_size, 
+				parallel=body.parallel, 
+				workers=body.workers
+    		)
+			await document_service.upsert(
 				body, 
 				tokens, 
 				keys,
 				request.state.user_id
-    		)
+			)
 			return UJSONResponse(
 				content={'message': f'Documents upserted to [{body.index_name}] successfully.'},
 				media_type='application/json',

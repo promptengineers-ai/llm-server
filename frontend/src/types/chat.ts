@@ -26,6 +26,9 @@ export type ChatPayload = {
             fetch_k: number | null;
             score_threshold: number | null;
         };
+        batch_size: number;
+        parallel: boolean;
+        workers: number;
     };
 };
 

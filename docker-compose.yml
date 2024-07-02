@@ -8,6 +8,8 @@ services:
     image: redis/redis-stack-server:latest
     ports:
       - 6379:6379
+    volumes:
+      - ./docker/redis/data:/data
 
   # Database (MySQL)
   mysql:
@@ -21,11 +23,13 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: password
       MYSQL_DATABASE: llm_server
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
       
   # phpMyAdmin
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmymadmin
+    container_name: phpmyadmin
     restart: unless-stopped
     depends_on:
       - mysql
@@ -45,7 +49,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - "./docker/searxng:/etc/searxng"
+      - ./docker/searxng:/etc/searxng
     environment:
       BASE_URL: "http://localhost:8080/"
       INSTANCE_NAME: "my-instance"

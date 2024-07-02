@@ -120,6 +120,9 @@ class VectorstoreContext:
 
     async def add(self, documents):
         return self.strategy.add(documents)
+    
+    def add_sync(self, documents):
+        return self.strategy.add(documents)
 
     def load(self):
         return self.strategy.load()
