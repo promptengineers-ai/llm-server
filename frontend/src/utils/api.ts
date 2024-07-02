@@ -83,6 +83,7 @@ export class ChatClient extends Client {
     }
 
     public async upsert(payload: {
+        task_id: string;
         documents: any[];
         index_name: string;
         provider: SearchProvider;
@@ -101,6 +102,7 @@ export class ChatClient extends Client {
                         )}`,
                     },
                     body: JSON.stringify({
+                        task_id: payload.task_id,
                         provider: payload.provider,
                         index_name: payload.index_name,
                         embedding: payload.embedding,

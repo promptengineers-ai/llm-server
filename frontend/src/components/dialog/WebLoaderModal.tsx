@@ -5,6 +5,9 @@ import GitbookLoaderForm from "../forms/loaders/GitbookLoaderForm";
 import TextLoaderForm from "../forms/loaders/TextLoaderForm";
 import { Loader } from "@/types/chat";
 import { useChatContext } from "@/contexts/ChatContext";
+import { FaSpinner } from "react-icons/fa";
+import { capitalizeFirstLetter } from "@/utils/chat";
+import { stat } from "fs";
 
 export function FormSelector({ loader }: { loader: Loader }) {
     if (loader === "text") return <TextLoaderForm />;
@@ -16,7 +19,7 @@ const WebLoaderModal = () => {
         isWebLoaderOpen,
         setIsWebLoaderOpen,
     } = useAppContext();
-    const { loaders, setLoaders, createIndexFromLoaders } = useChatContext();
+    const { loaders, setLoaders, createIndexFromLoaders, status } = useChatContext();
     // const [disabled, setDisabled] = useState<boolean>(false);
     const [loader, setLoader] = useState<Loader>("text");
 
@@ -28,6 +31,15 @@ const WebLoaderModal = () => {
 
     if (!isWebLoaderOpen) {
         return null;
+    }
+
+    const handleSuffix = (step: string) => {
+        if (step === "scrape") {
+            return "Scraping...";
+        } else if (step === "split") {
+            return "Splitting...";
+        }
+        return "Uploading...";
     }
 
     return (
@@ -91,9 +103,23 @@ const WebLoaderModal = () => {
                                             ? "bg-gray-500 text-white"
                                             : "bg-gray-300 text-gray-500 cursor-not-allowed"
                                     }`}
-                                    disabled={false}
+                                    disabled={status.step}
                                 >
-                                    Save
+                                    {status.step ? (
+                                        <div className="flex items-center">
+                                            <FaSpinner
+                                                className="animate-spin"
+                                                fontSize={18}
+                                            />
+                                            <span className="ml-2">
+                                                {capitalizeFirstLetter(handleSuffix(status.step))}{" "}
+                                                {status.progress !== 0 &&
+                                                    status.progress + "%"}
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        "Load"
+                                    )}
                                 </button>
                             </div>
                         </div>

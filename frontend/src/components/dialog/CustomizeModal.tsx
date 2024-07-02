@@ -27,9 +27,7 @@ const CustomizeModal = () => {
         isSaveEnabled,
         resetOnCancel,
         setTools,
-        status,
     } = useChatContext();
-    const [progress, setProgress] = useState(0);
 
     useUpdateInitChatPayloadEffect(setInitChatPayload);
     useFetchToolsEffect(setTools);
@@ -37,10 +35,6 @@ const CustomizeModal = () => {
     if (!isOpen) {
         return null;
     }
-
-    useEffect(() => {
-        setProgress(status.progress);
-    }, [status.progress])
 
     return (
         <div
@@ -159,19 +153,7 @@ const CustomizeModal = () => {
                                     }`}
                                     disabled={!isSaveEnabled}
                                 >
-                                    {progress !== 0 ? (
-                                        <div className="flex items-center">
-                                            <FaSpinner
-                                                className="animate-spin"
-                                                fontSize={18}
-                                            />
-                                            <span className="ml-2">
-                                                {progress}% Complete
-                                            </span>
-                                        </div>
-                                    ) : (
-                                        "Save"
-                                    )}
+                                    Save
                                 </button>
                             </div>
                         </div>

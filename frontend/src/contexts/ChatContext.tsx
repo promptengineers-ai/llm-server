@@ -96,7 +96,7 @@ export default function ChatProvider({ children }: IContextProvider) {
             console.log("EventSource message:", data); // Log every message
             if (data.progress) {
                 setStatus(data);
-                if (data.progress === 100) {
+                if (data.step === 'upsert' && data.progress === 100) {
                     eventSource.close();
                     console.log("EventSource connection closed");
                     setStatus(defaultState.status)
@@ -118,11 +118,13 @@ export default function ChatProvider({ children }: IContextProvider) {
             const index_name =
                 chatPayload.retrieval.index_name ||
                 generateRandomNumber().toString();
+            setStatus((prev: any) => ({ ...prev, step: "scrape" }));
             updateStatus(index_name);
             try {
                 const chatClient = new ChatClient();
                 const docs = await chatClient.createDocs({ loaders, task_id: index_name });
                 await chatClient.upsert({
+                    task_id: index_name,
                     documents: docs.documents,
                     index_name: index_name,
                     provider: chatPayload.retrieval.provider,

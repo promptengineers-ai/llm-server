@@ -60,7 +60,7 @@ export const defaultState = {
         },
     },
     status: {
-        task_id: "",
+        task_id: null,
         step: "",
         progress: 0,
         message: "",
@@ -331,6 +331,7 @@ export const useChatState = () => {
                 const chatClient = new ChatClient();
                 const docs = await chatClient.createDocuments({ data: files, task_id: index_name });
                 await chatClient.upsert({
+                    task_id: index_name,
                     documents: docs.documents,
                     index_name: index_name,
                     provider: chatPayload.retrieval.provider,

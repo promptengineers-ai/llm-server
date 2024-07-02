@@ -5,6 +5,7 @@ import asyncio
 from typing import List, Any
 
 from langchain.docstore.document import Document
+from concurrent.futures import ThreadPoolExecutor
 
 from src.config import REDIS_URL
 from src.db.strategies import VectorstoreContext
@@ -16,50 +17,40 @@ from src.utils.retrieval import split_docs
 
 cache = CacheService(REDIS_URL)
 validtor = Validator()
-
-def to_serializable(obj):
-    """
-    Recursively convert an object and its nested properties into dictionaries.
-    """
-    if isinstance(obj, dict):
-        return {key: to_serializable(val) for key, val in obj.items()}
-    elif hasattr(obj, "__dict__"):  # Check if it is a custom class
-        return {key: to_serializable(val) for key, val in obj.__dict__.items() if not key.startswith("_")}
-    elif isinstance(obj, list):
-        return [to_serializable(item) for item in obj]
-    elif isinstance(obj, (str, int, float, bool, type(None))):  # Add any other types you consider "primitive"
-        return obj
-    else:
-        # For other types, you might want to convert them to string, or handle them specifically.
-        # You might also raise an error or warning here, depending on your needs.
-        return str(obj)
-    
-    
-async def upsert_documents_batch(vectorstore_service, batch: List[Document]):
-    # Assuming vectorstore_service.add() is an asynchronous function or
-    # you have an async wrapper around it.
-    result = await vectorstore_service.add(batch)
-    return result
-
-async def upsert_all_in_parallel(vectorstore_service, documents, batch_size=100):
-    # Split documents into batches
-    batches = [documents[i:i+batch_size] for i in range(0, len(documents), batch_size)]
-    
-    # Create a list of future tasks for each batch
-    tasks = [upsert_documents_batch(vectorstore_service, batch) for batch in batches]
-    
-    # Run tasks concurrently and wait for all of them to complete
-    results = await asyncio.gather(*tasks)
-    
-    # Process results if needed
-    return results
+	
 
 class DocumentService:
+	def __init__(self, batch_size=100):
+		self.batch_size = batch_size
+		self.vectorstore_service = None
+		self.parallel: bool = True
+		self.executor = ThreadPoolExecutor(max_workers=10) 
+		
+	##############################################################
+	### Convert to Serializable
+	##############################################################
+	def to_serializable(self, obj):
+		"""
+		Recursively convert an object and its nested properties into dictionaries.
+		"""
+		if isinstance(obj, dict):
+			return {key: self.to_serializable(val) for key, val in obj.items()}
+		elif hasattr(obj, "__dict__"):  # Check if it is a custom class
+			return {key: self.to_serializable(val) for key, val in obj.__dict__.items() if not key.startswith("_")}
+		elif isinstance(obj, list):
+			return [self.to_serializable(item) for item in obj]
+		elif isinstance(obj, (str, int, float, bool, type(None))):  # Add any other types you consider "primitive"
+			return obj
+		else:
+			# For other types, you might want to convert them to string, or handle them specifically.
+			# You might also raise an error or warning here, depending on your needs.
+			return str(obj)
 
 	##############################################################
 	### Get Documents
 	##############################################################
 	async def from_loaders(
+		self,
 		loaders: List[Any],
 		splitter = Splitter,
 		task_id: str = None
@@ -99,7 +90,7 @@ class DocumentService:
 				for i, doc in enumerate(loader):
 					doc.metadata['page'] = i + 1
 					docs.append(doc)
-     
+	 
 				logging.debug(f"Loaded {len(docs)} documents from {loader_config['type']}")
 			except ValueError as e:
 				raise ValueError(f"Invalid loader type: {e}")
@@ -120,6 +111,7 @@ class DocumentService:
 	### Upsert Documents
 	##############################################################
 	async def upsert(
+	 	self,
 		body: UpsertDocuments,
 		tokens: dict,
 		keys: set,
@@ -154,11 +146,102 @@ class DocumentService:
 			provider_keys=provider_keys
 		)
 		# Create a vector store service context
-		vectostore_service = VectorstoreContext(retrieval_provider.create_strategy())
+		self.vectorstore_service = VectorstoreContext(retrieval_provider.create_strategy())
+		
+		# Add logging to verify the initialization
+		logging.debug(f"Vectorstore service initialized: {self.vectorstore_service}")
+  
+		# Format Documents
 		documents = list(map(lambda x: Document(page_content=str(x.page_content), 
-                            metadata=to_serializable(x.metadata)), body.documents))
-		# result = vectostore_service.add(documents)
-		result = await upsert_all_in_parallel(vectostore_service, documents) # TODO: Try again
+							metadata=self.to_serializable(x.metadata)), body.documents))
+
+		# Upsert Documents
+		try:
+			if self.parallel:
+				result = await self.upsert_in_parallel_batches(documents)
+			else:
+				result = await self.upsert_in_batches(documents, task_id=body.task_id)
+		except Exception as e:
+			logging.exception(e)
 		if result:
 			return result
 		return False
+
+	##############################################################
+	### Upsert Documents
+	##############################################################
+	async def upsert_documents(self, documents: List[Document]):		
+		try:
+			if self.parallel:
+				loop = asyncio.get_event_loop()
+				result = await loop.run_in_executor(self.executor, self.vectorstore_service.add, documents)
+			else:
+				result = await self.vectorstore_service.add(documents)
+			logging.debug(f"Upserted {len(documents)} documents to vectorstore_service")
+			return result
+		except Exception as e:
+			logging.error(f"Failed to upsert documents: {e}")
+			return None
+
+	##############################################################
+	### Upsert Documents In Batches
+	##############################################################
+	async def upsert_in_batches(self, documents: List[Document], task_id: str = None):
+		# Split documents into batches
+		batches = [documents[i:i+self.batch_size] for i in range(0, len(documents), self.batch_size)]
+		total_batches = len(batches)
+		
+		if cache:
+			await cache.publish(
+				task_id, 
+				ujson.dumps({
+					'step': 'upsert',
+					'message': f'Created {total_batches} batches of {self.batch_size} documents',
+					'progress': 0, 
+					'page_number': 0,
+					'page_count': 0,
+					'chunk_count': 0
+				})
+			)
+
+		results = []
+		
+		# Process each batch
+		for i, batch in enumerate(batches):
+			result = await self.upsert_documents(batch)
+			results.append(result)
+			
+			if cache:
+				await cache.publish(
+					task_id, 
+					ujson.dumps({
+						'step': 'upsert',
+						'message': f'Processed batch {i+1}/{total_batches}',
+						'progress': round(((i+1) / total_batches) * 100, 2),
+						'page_number': i + 1,
+						'page_count': total_batches,
+						'chunk_count': len(batch)
+					})
+				)
+		
+		return results
+
+	##############################################################
+	### Upsert Documents In Parallel
+	##############################################################
+	async def upsert_in_parallel_batches(self, documents: List[Document]):
+		# Split documents into batches
+		batches = [documents[i:i+self.batch_size] for i in range(0, len(documents), self.batch_size)]
+		
+		# Create a list of future tasks for each batch
+		tasks = [self.upsert_documents(batch) for batch in batches]
+		
+		logging.debug(f"Created {len(tasks)} tasks for upserting documents")
+
+		# Run tasks concurrently and wait for all of them to complete
+		results = await asyncio.gather(*tasks)
+		
+		logging.debug(f"Completed upserting all document batches")
+		
+		# Process results if needed
+		return results
