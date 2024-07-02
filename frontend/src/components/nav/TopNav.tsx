@@ -13,7 +13,7 @@ import { useChatContext } from "@/contexts/ChatContext";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "@/contexts/AppContext";
 import SettingsPopover from "../dialog/SettingsPopover";
-import { FaTools } from "react-icons/fa";
+import { FaSpinner, FaTools } from "react-icons/fa";
 
 const TopNav: React.FC = () => {
     const router = useRouter();
@@ -57,7 +57,9 @@ const TopNav: React.FC = () => {
                         {chatPayload.tools.length > 0 ? (
                             <div>
                                 <div className="text-center flex">
-                                    <div className="text-xl">{chatPayload.tools.length}</div>
+                                    <div className="text-xl">
+                                        {chatPayload.tools.length}
+                                    </div>
                                     <FaTools className="mt-[6.5px] ml-1" />
                                 </div>
                                 <div>
@@ -134,19 +136,35 @@ const TopNav: React.FC = () => {
                                             </h3>
                                         </div>
                                         <ol className="bg-primary-800">
-                                            {chats?.map((chat: any) => (
-                                                <li
-                                                    key={chat.id}
-                                                    className="relative z-[15] h-auto bg-primary-800"
-                                                    style={{
-                                                        opacity: 1,
-                                                    }}
-                                                >
-                                                    <ChatHistoryButton
-                                                        chat={chat}
-                                                    />
-                                                </li>
-                                            ))}
+                                            {chats.length > 0 ? (
+                                                <>
+                                                    {chats?.map((chat: any) => (
+                                                        <li
+                                                            key={chat.id}
+                                                            className="relative z-[15] h-auto bg-primary-800"
+                                                            style={{
+                                                                opacity: 1,
+                                                            }}
+                                                        >
+                                                            <ChatHistoryButton
+                                                                chat={chat}
+                                                            />
+                                                        </li>
+                                                    ))}
+                                                </>
+                                            ) : (
+                                                <div className="flex items-center justify-center h-[80dvh] w-full">
+                                                    <div>
+                                                        <FaSpinner
+                                                            className="animate-spin"
+                                                            fontSize={22}
+                                                        />
+                                                    </div>
+                                                    <div className="ml-2">
+                                                        Loading...
+                                                    </div>
+                                                </div>
+                                            )}
                                         </ol>
                                     </div>
                                 </span>

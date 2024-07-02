@@ -8,6 +8,7 @@ import SettingsPopover from "../dialog/SettingsPopover";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useAppContext } from "@/contexts/AppContext";
+import { FaSpinner } from "react-icons/fa";
 
 interface DrawerProps {
     isOpen: boolean;
@@ -102,19 +103,43 @@ const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
                                                     </h3>
                                                 </div>
                                                 <ol className="bg-primary-800">
-                                                    {chats?.map((chat: any) => (
-                                                        <li
-                                                            key={chat.id}
-                                                            className="relative z-[15] h-auto bg-primary-800"
-                                                            style={{
-                                                                opacity: 1,
-                                                            }}
-                                                        >
-                                                            <ChatHistoryButton
-                                                                chat={chat}
-                                                            />
-                                                        </li>
-                                                    ))}
+                                                    {chats.length > 0 ? (
+                                                        <>
+                                                            {chats?.map(
+                                                                (chat: any) => (
+                                                                    <li
+                                                                        key={
+                                                                            chat.id
+                                                                        }
+                                                                        className="relative z-[15] h-auto bg-primary-800"
+                                                                        style={{
+                                                                            opacity: 1,
+                                                                        }}
+                                                                    >
+                                                                        <ChatHistoryButton
+                                                                            chat={
+                                                                                chat
+                                                                            }
+                                                                        />
+                                                                    </li>
+                                                                )
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        <div className="flex items-center justify-center h-[80dvh] w-full">
+                                                            <div>
+                                                                <FaSpinner
+                                                                    className="animate-spin"
+                                                                    fontSize={
+                                                                        22
+                                                                    }
+                                                                />
+                                                            </div>
+                                                            <div className="ml-2">
+                                                                Loading...
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </ol>
                                             </div>
                                         </span>
@@ -134,7 +159,9 @@ const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
                                         aria-haspopup="true"
                                         aria-expanded="false"
                                         data-headlessui-state=""
-                                        onMouseDown={() => setIsPopoverOpen(!isPopoverOpen)}
+                                        onMouseDown={() =>
+                                            setIsPopoverOpen(!isPopoverOpen)
+                                        }
                                     >
                                         <div className="flex-shrink-0">
                                             <div className="flex items-center justify-center rounded">
