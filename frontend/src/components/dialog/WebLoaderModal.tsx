@@ -50,7 +50,7 @@ const WebLoaderModal = () => {
             <Dialog open={true} onClose={() => {}} className="relative z-50">
                 <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
                     <DialogPanel className="max-w-lg border bg-white rounded-2xl w-full">
-                        <div className="px-4 pb-4 pt-5 sm:p-6 flex items-center justify-between border-b border-black/10 dark:border-white/10">
+                        <div className="px-4 pb-4 pt-5 sm:p-6 sm:py-3 flex items-center justify-between border-b border-black/10 dark:border-white/10">
                             <div className="flex">
                                 <div className="flex items-center">
                                     <div className="flex grow flex-col gap-1">
@@ -60,6 +60,7 @@ const WebLoaderModal = () => {
                                         >
                                             Web Documents
                                         </h2>
+                                        {status.message && <small>{status.message}</small>}
                                     </div>
                                 </div>
                             </div>
@@ -99,11 +100,11 @@ const WebLoaderModal = () => {
                                 <button
                                     onClick={createIndex}
                                     className={`px-4 py-2 rounded-3xl ${
-                                        loaders.length > 0
+                                        loaders.length > 0 && !status.step
                                             ? "bg-gray-500 text-white"
                                             : "bg-gray-300 text-gray-500 cursor-not-allowed"
                                     }`}
-                                    disabled={status.step}
+                                    disabled={status.step ? true : false}
                                 >
                                     {status.step ? (
                                         <div className="flex items-center">

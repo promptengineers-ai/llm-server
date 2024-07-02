@@ -27,7 +27,7 @@ import { API_URL } from "@/config/app";
 
 const ChatContext = createContext({});
 export default function ChatProvider({ children }: IContextProvider) {
-    const { loading, setIsPopoverOpen } = useAppContext();
+    const { loading, setIsPopoverOpen, setIsWebLoaderOpen } = useAppContext();
     const {
         chatboxRef,
         chatInputRef,
@@ -99,7 +99,9 @@ export default function ChatProvider({ children }: IContextProvider) {
                 if (data.step === 'upsert' && data.progress === 100) {
                     eventSource.close();
                     console.log("EventSource connection closed");
-                    setStatus(defaultState.status)
+                    alert(`Index ${task_id} created successfully!`);
+                    setStatus(defaultState.status);
+                    setIsWebLoaderOpen(false);
                 }
             }
         };
