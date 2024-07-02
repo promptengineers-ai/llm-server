@@ -20,11 +20,12 @@ validtor = Validator()
 	
 
 class DocumentService:
-	def __init__(self, batch_size=100):
-		self.batch_size = batch_size
-		self.vectorstore_service = None
-		self.parallel: bool = True
-		self.executor = ThreadPoolExecutor(max_workers=10) 
+	def __init__(self, batch_size=32, parallel: bool = True, workers: int = 4):
+		self.batch_size: int = batch_size
+		self.vectorstore_service: VectorstoreContext = None
+		self.parallel: bool = parallel
+		self.workers: int = workers
+		self.executor = ThreadPoolExecutor(max_workers=self.workers) 
 		
 	##############################################################
 	### Convert to Serializable

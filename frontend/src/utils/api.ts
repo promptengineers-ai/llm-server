@@ -88,6 +88,9 @@ export class ChatClient extends Client {
         index_name: string;
         provider: SearchProvider;
         embedding: EmbeddingModel;
+        batch_size?: number;
+        parallel?: boolean;
+        workers?: number;
     }) {
         try {
             const response = await fetch(
@@ -107,6 +110,9 @@ export class ChatClient extends Client {
                         index_name: payload.index_name,
                         embedding: payload.embedding,
                         documents: payload.documents,
+                        batch_size: payload.batch_size || 50,
+                        parallel: payload.parallel || false,
+                        workers: payload.workers || 1,
                     }),
                 }
             );

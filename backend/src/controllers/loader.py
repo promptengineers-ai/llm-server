@@ -168,8 +168,12 @@ class LoaderController:
 				)
 
 			tokens = retrieve_defaults(keys)
-
-			result = await self.document_service.upsert(
+			document_service = DocumentService(
+       			batch_size=body.batch_size, 
+				parallel=body.parallel, 
+				workers=body.workers
+    		)
+			await document_service.upsert(
 				body, 
 				tokens, 
 				keys,
