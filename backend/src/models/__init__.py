@@ -76,7 +76,7 @@ class UpsertDocuments(BaseModel):
 	documents: List[Document] = Field(...)
 	batch_size: int = 32
 	parallel: bool = False
-	workers: int = 5
+	workers: int = 4
  
 	@field_validator('embedding')
 	def check_embedding_model(cls, v):

@@ -20,7 +20,7 @@ validtor = Validator()
 	
 
 class DocumentService:
-	def __init__(self, batch_size=32, parallel: bool = True, workers: int = 4):
+	def __init__(self, batch_size=32, parallel: bool = False, workers: int = 4):
 		self.batch_size: int = batch_size
 		self.vectorstore_service: VectorstoreContext = None
 		self.parallel: bool = parallel
