@@ -104,6 +104,15 @@ class TestChatRepository(unittest.IsolatedAsyncioTestCase):
         found_chat = await self.chat_repo.find(chat_id)
         self.assertIsNotNone(found_chat)
         self.assertEqual(found_chat['id'], chat_id)
+        
+        # Verify that the messages are in the correct order by content
+        expected_messages = self.chat_data["messages"]
+        found_messages = found_chat['messages']
+        self.assertEqual(len(expected_messages), len(found_messages), "Number of messages does not match")
+        
+        for expected_msg, found_msg in zip(expected_messages, found_messages):
+            self.assertEqual(expected_msg['role'], found_msg['role'])
+            self.assertEqual(expected_msg['content'], found_msg['content'])
             
     async def test_update(self):
         chat_id = self.chat.get("id")

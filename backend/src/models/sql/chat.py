@@ -32,6 +32,7 @@ class Message(Base):
     role = Column(String(20), nullable=False)
     content = Column(Text, nullable=False)
     model = Column(String(50), nullable=True)
+    order = Column(Integer, nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.now)
 
     chat = relationship("Chat", back_populates="messages")

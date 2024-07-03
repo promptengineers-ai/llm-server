@@ -58,12 +58,12 @@ class ChatRepository:
                 self.db.add(new_chat)
                 await self.db.flush()
 
-                for message in chat.messages:
-                    
+                for index, message in enumerate(chat.messages):
                     new_message = Message(chat_id=new_chat.id, 
                                           role=message["role"], 
                                           content=message["content"],
                                           model=message.get("model"), 
+                                          order=index+1, 
                                           created_at=datetime.utcnow())
                     self.db.add(new_message)
                     await self.db.flush()
@@ -110,6 +110,7 @@ class ChatRepository:
                 "system": chat.system or None,
                 "messages": [
                     {
+                        "id": message.order,
                         "role": message.role, 
                         "content": message.content,
                         "model": message.model or None,
@@ -124,9 +125,9 @@ class ChatRepository:
                             }
                             for source in message.sources
                         ],
-                        "created_at": message.created_at.isoformat()
+                        # "created_at": message.created_at.isoformat() # TODO: Currently doesn't matter
                     }
-                    for message in chat.messages
+                    for message in sorted(chat.messages, key=lambda m: m.order)
                 ],
                 "retrieval": ujson.loads(chat.retrieval) if chat.retrieval else None,
                 "tools": ujson.loads(chat.tools) if chat.tools else None,
@@ -176,16 +177,17 @@ class ChatRepository:
                     # Add new messages
                     messages = updates.messages
                     if messages:
-                        for message_data in messages:
+                        for index, message in enumerate(messages):
                             new_message = Message(chat_id=chat_id, 
-                                                  role=message_data["role"], 
-                                                  content=message_data["content"], 
-                                                  model=message_data.get("model"), 
+                                                  role=message["role"], 
+                                                  content=message["content"], 
+                                                  model=message.get("model"), 
+                                                  order=index+1,
                                                   created_at=datetime.utcnow())
                             self.db.add(new_message)
                             await self.db.flush()
 
-                            images = message_data.get("images", [])
+                            images = message.get("images", [])
                             for image in images:
                                 new_image = Image(
                                     message_id=new_message.id, 
@@ -193,7 +195,7 @@ class ChatRepository:
                                 )
                                 self.db.add(new_image)
 
-                            sources = message_data.get("sources", [])
+                            sources = message.get("sources", [])
                             for source in sources:
                                 new_source = Source(
                                     message_id=new_message.id,
