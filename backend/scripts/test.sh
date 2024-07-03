@@ -8,6 +8,7 @@ source $ENV_FILE
 set +a
 
 APP_VERSION=$(git rev-parse --short HEAD)
+unset DATABASE_URL # Clear so will use sqlite
 
 if [ -z "$1" ]
 then
