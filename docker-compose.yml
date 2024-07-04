@@ -54,6 +54,22 @@ services:
       BASE_URL: "http://localhost:8080/"
       INSTANCE_NAME: "my-instance"
 
+  # Code Interpreter (Jupyter Notebook / FastAPI)
+  interpreter:
+    container_name: interpreter
+    image: promptengineers/interpreter:latest
+    build: .
+    restart: always
+    ports:
+      - "8888:8888"
+      - "8000:8000"
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - PYTHONPATH=/home/jovyan
+    entrypoint: ["sh", "-c", "start-notebook.sh --NotebookApp.token='' & uvicorn api:app --host 0.0.0.0 --port 8000"]
+    volumes:
+      - ./docker/interpreter/data:/tmp
+
   # Minio (File Storage) -- CURRENTLY ALL FILES AND IMAGES ARE BASE64 ENCODED
   # minio:
   #   image: minio/minio
