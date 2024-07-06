@@ -13,18 +13,15 @@ services:
 
   # Database (MySQL)
   mysql:
-    image: mysql:8.2.0
+    image: mysql:8.2
     container_name: mysql
     restart: unless-stopped
     ports:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: password
-      MYSQL_DATABASE: llm_server
     volumes:
-      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/:/docker-entrypoint-initdb.d
       
   # phpMyAdmin
   phpmyadmin:
@@ -53,6 +50,43 @@ services:
     environment:
       BASE_URL: "http://localhost:8080/"
       INSTANCE_NAME: "my-instance"
+
+  # Code Interpreter (Jupyter Notebook / FastAPI)
+  interpreter:
+    container_name: interpreter
+    image: promptengineers/interpreter:latest
+    build: .
+    restart: always
+    ports:
+      - "8888:8888"
+      - "8000:8000"
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - PYTHONPATH=/home/jovyan
+    entrypoint: ["sh", "-c", "start-notebook.sh --NotebookApp.token='' & uvicorn api:app --host 0.0.0.0 --port 8000"]
+    volumes:
+      - ./docker/interpreter/data:/tmp
+
+  # n8n (Workflow Automation)
+  # n8n:
+  #   image: n8nio/n8n
+  #   container_name: n8n
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - mysql
+  #   ports:
+  #     - "5678:5678"
+  #   environment:
+  #     DB_TYPE: mysqldb
+  #     DB_MYSQLDB_DATABASE: n8n
+  #     DB_MYSQLDB_HOST: mysql
+  #     DB_MYSQLDB_PORT: 3306
+  #     DB_MYSQLDB_USER: admin
+  #     DB_MYSQLDB_PASSWORD: password
+  #     N8N_BASIC_AUTH_USER: admin_user
+  #     N8N_BASIC_AUTH_PASSWORD: password
+  #   volumes:
+  #     - ./docker/n8n:/home/node/.n8n
 
   # Minio (File Storage) -- CURRENTLY ALL FILES AND IMAGES ARE BASE64 ENCODED
   # minio:

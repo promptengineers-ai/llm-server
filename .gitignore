@@ -1,2 +1,4 @@
 docker/mysql/data
 docker/redis/data
+docker/intepreter/data
+docker/n8n/

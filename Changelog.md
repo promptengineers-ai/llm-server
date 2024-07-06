@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - bugfix/42-redis-is-default-vector-db (2024-05-26)
   - bugfix/33-groq-rag-not-working (2024-05-19)
 ### Changed 
+  - feature/127-interpreter-as-tool (2024-07-04)
   - feature/124-message-out-of-order (2024-07-02)
   - feature/120-status-of-split-and-upsert-to-client (2024-06-30)
   - feature/87-ability-to-abort-query (2024-06-30)
