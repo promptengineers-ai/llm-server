@@ -6,13 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import text
 
-from src.config import DATABASE_URL
+from src.config import DATABASE_URL, database_engine
 
 # Initialize Faker
 fake = Faker()
 
 # Create an async engine and session
-engine = create_async_engine(DATABASE_URL, echo=True)
+engine = create_async_engine(DATABASE_URL, echo=True, connect_args={"statement_cache_size": 0} if database_engine() == 'postgresql' else {})
 async_session = sessionmaker(
     autocommit=False, autoflush=False, bind=engine, class_=AsyncSession
 )

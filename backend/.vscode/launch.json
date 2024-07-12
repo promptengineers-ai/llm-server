@@ -21,7 +21,7 @@
 			"type": "debugpy",
 			"request": "launch",
 			"module": "pytest",
-			"args": ["-s", "-v", "test/unit/repositories/test_chat.py"],
+			"args": ["-s", "-v", "test/unit/services/test_storage.py"],
 			"envFile": "${workspaceFolder}/.env.test",
 			"justMyCode": false
 		},

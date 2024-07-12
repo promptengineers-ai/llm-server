@@ -9,6 +9,7 @@ set +a
 
 APP_VERSION=$(git rev-parse --short HEAD)
 unset DATABASE_URL # Clear so will use sqlite
+unset MINIO_HOST
 
 if [ -z "$1" ]
 then

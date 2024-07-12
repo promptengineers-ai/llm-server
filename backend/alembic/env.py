@@ -6,7 +6,7 @@ from alembic import context
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from src.models.sql import Base
-from src.config import DATABASE_URL
+from src.config import DATABASE_URL, database_engine
 
 config = context.config
 
@@ -33,7 +33,7 @@ async def run_async_migrations() -> None:
     connectable = create_async_engine(
         DATABASE_URL,
         poolclass=pool.NullPool,
-        connect_args={"statement_cache_size": 0}
+        connect_args={"statement_cache_size": 0} if database_engine() == 'postgresql' else {}
     )
 
     async with connectable.connect() as connection:

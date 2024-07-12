@@ -5,7 +5,7 @@ from alembic import command
 from alembic.config import Config
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from src.config import DATABASE_URL
+from src.config import DATABASE_URL, database_engine
 from src.models.sql import Base
 from src.models import Agent as ChatBody
 from src.services.db import create_default_user, get_db
@@ -34,7 +34,7 @@ class TestChatRepository(unittest.IsolatedAsyncioTestCase):
         
     @classmethod
     async def drop_all_tables(cls):
-        engine = create_async_engine(DATABASE_URL)
+        engine = create_async_engine(DATABASE_URL, connect_args={"statement_cache_size": 0} if database_engine() == 'postgresql' else {} if database_engine() == 'postgresql' else {})
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
 
@@ -57,9 +57,9 @@ class TestChatRepository(unittest.IsolatedAsyncioTestCase):
         self.chat_data = {
             "system": "You are a helpful assistant.",
             "messages": [
-                {"role": "user", "content": "Who won the 2001 world series?"},
-                {"role": "assistant", "content": "The Arizona Diamondbacks won the 2001 World Series against the New Your Yankees."},
-                {"role": "user", "content": "Who were the pitchers?"}
+                {"index": 1, "role": "user", "content": "Who won the 2001 world series?"},
+                {"index": 2, "role": "assistant", "content": "The Arizona Diamondbacks won the 2001 World Series against the New Your Yankees."},
+                {"index": 3, "role": "user", "content": "Who were the pitchers?"}
             ],
             "tools": [],
             "retrieval": {
@@ -119,7 +119,7 @@ class TestChatRepository(unittest.IsolatedAsyncioTestCase):
         new_message = {
             "messages": [
                 *self.chat_data["messages"],
-                {"role": "assistant", "content": "Randy Johnson and Curt Schilling were the pitchers."}
+                {"index": 4, "role": "assistant", "content": "Randy Johnson and Curt Schilling were the pitchers."}
             ]
         }
         
