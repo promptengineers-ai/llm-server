@@ -11,7 +11,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects.mysql import LONGTEXT
 
-from src.config import DATABASE_URL
+from src.config import DATABASE_URL, database_type
 
 
 # revision identifiers, used by Alembic.
@@ -29,8 +29,8 @@ def upgrade() -> None:
         sa.Column('retrieval', sa.JSON(), nullable=True),
         sa.Column('tools', sa.JSON(), nullable=True),
         sa.Column('system', sa.TEXT(), nullable=True),
-        sa.Column('created_at', sa.DATETIME(), nullable=False),
-        sa.Column('updated_at', sa.DATETIME(), nullable=False),
+        sa.Column('created_at', database_type('DATE'), nullable=False),
+        sa.Column('updated_at', database_type('DATE'), nullable=False),
     )
     op.create_index('ix_chats_user_id', 'chats', ['user_id'])
     
@@ -38,8 +38,8 @@ def upgrade() -> None:
         sa.Column('id', sa.String(36), primary_key=True),
         sa.Column('chat_id', sa.String(36), nullable=False, unique=True),
         sa.Column('index_name', sa.INTEGER(), nullable=False),
-        sa.Column('created_at', sa.DATETIME(), nullable=False),
-        sa.Column('updated_at', sa.DATETIME(), nullable=False),
+        sa.Column('created_at', database_type('DATE'), nullable=False),
+        sa.Column('updated_at', database_type('DATE'), nullable=False),
         sa.ForeignKeyConstraint(['chat_id'], ['chats.id'], ondelete='CASCADE'),
     )
     op.create_index('ix_indexes_chat_id', 'indexes', ['chat_id'])
@@ -51,7 +51,7 @@ def upgrade() -> None:
         sa.Column('content', sa.TEXT(), nullable=False),
         sa.Column('model', sa.String(50), nullable=True),
         sa.Column('order', sa.INTEGER(), nullable=False),
-        sa.Column('created_at', sa.DATETIME(), nullable=False),
+        sa.Column('created_at', database_type('DATE'), nullable=False),
         sa.ForeignKeyConstraint(['chat_id'], ['chats.id'], ondelete='CASCADE'),
     )
     op.create_index('ix_messages_chat_id', 'messages', ['chat_id'])
@@ -60,7 +60,7 @@ def upgrade() -> None:
     op.create_table('images',
         sa.Column('id', sa.String(36), primary_key=True),
         sa.Column('message_id', sa.String(36), nullable=False),
-        sa.Column('content', LONGTEXT if 'mysql' in DATABASE_URL else sa.TEXT(), nullable=False),
+        sa.Column('content', database_type('TEXT'), nullable=False),
         sa.ForeignKeyConstraint(['message_id'], ['messages.id'], ondelete='CASCADE'),
     )
     op.create_index('ix_images_message_id', 'images', ['message_id'])
@@ -71,7 +71,7 @@ def upgrade() -> None:
         sa.Column('index_id', sa.String(36), nullable=True),
         sa.Column('name', sa.String(100), nullable=False),
         sa.Column('type', sa.String(50), nullable=False),
-        sa.Column('src', LONGTEXT if 'mysql' in DATABASE_URL else sa.TEXT(), nullable=False),
+        sa.Column('src', database_type('TEXT'), nullable=False),
         sa.ForeignKeyConstraint(['message_id'], ['messages.id'], ondelete='CASCADE'),
     )
     op.create_index('ix_sources_message_id', 'sources', ['message_id'])

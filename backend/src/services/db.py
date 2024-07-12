@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from src.config import APP_ADMIN_EMAIL, APP_ADMIN_PASS, APP_SECRET, DATABASE_URL
 from src.models.sql.user import User 
 
-engine = create_async_engine(DATABASE_URL, echo=True)
+engine = create_async_engine(DATABASE_URL, echo=True, connect_args={"statement_cache_size": 0})
 AsyncSessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,

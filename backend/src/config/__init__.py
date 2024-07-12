@@ -1,4 +1,6 @@
 import os
+import sqlalchemy as sa
+from sqlalchemy.dialects.mysql import LONGTEXT
 
 ## APP
 APP_ENV = os.environ.get("APP_ENV", "local")
@@ -56,3 +58,24 @@ def retrieve_defaults(keys):
     :return: A new dictionary containing only the keys present in the keys argument.
     """
     return {k: default_app_tokens[k] for k in keys if k in default_app_tokens}
+
+def database_engine():
+    if 'mysql' in DATABASE_URL:
+        return 'mysql'
+    elif 'postgresql' in DATABASE_URL:
+        return 'postgresql'
+    else:
+        return 'sqlite'
+    
+def database_type(field_type: str):
+    if field_type == 'TEXT':
+        if database_engine() == 'mysql':
+            return LONGTEXT
+        else:
+            return sa.TEXT()
+        
+    if field_type == 'DATE':
+        if database_engine() == 'postgresql':
+            return sa.TIMESTAMP()
+        else:
+            return sa.DATETIME()
