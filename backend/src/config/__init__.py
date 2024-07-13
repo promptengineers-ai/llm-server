@@ -79,3 +79,9 @@ def database_type(field_type: str):
             return sa.TIMESTAMP()
         else:
             return sa.DATETIME()
+        
+    if field_type == 'connect_args':
+        connect_args = {}
+        if database_engine() == 'postgresql':
+            connect_args['statement_cache_size'] = 0
+        return connect_args

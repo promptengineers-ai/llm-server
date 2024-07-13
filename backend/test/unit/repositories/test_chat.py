@@ -1,49 +1,21 @@
 import unittest
 import asyncio
-import os
-from alembic import command
-from alembic.config import Config
-from sqlalchemy.ext.asyncio import create_async_engine
 
-from src.config import DATABASE_URL, database_engine
-from src.models.sql import Base
 from src.models import Agent as ChatBody
 from src.services.db import create_default_user, get_db
 from src.repositories.chat import ChatRepository
+from test import apply_migrations, cleanup_database
 
 class TestChatRepository(unittest.IsolatedAsyncioTestCase):
     
     @classmethod
     def setUpClass(cls):
         # Run migrations before any tests
-        asyncio.run(cls.apply_migrations())
-
-    @classmethod
-    async def apply_migrations(cls):
-        alembic_cfg = Config("alembic.ini")
-        command.upgrade(alembic_cfg, "head")
+        asyncio.run(apply_migrations())
 
     @classmethod
     def tearDownClass(cls):
-        asyncio.run(cls.cleanup_database())
-
-    @classmethod
-    async def cleanup_database(cls):
-        await cls.drop_all_tables()
-        cls.remove_database_file()
-        
-    @classmethod
-    async def drop_all_tables(cls):
-        engine = create_async_engine(DATABASE_URL, connect_args={"statement_cache_size": 0} if database_engine() == 'postgresql' else {} if database_engine() == 'postgresql' else {})
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
-
-    @classmethod
-    def remove_database_file(cls):
-        """Remove the SQLite database file."""
-        db_path = DATABASE_URL.split("///")[-1]  # Assumes format 'sqlite+aiosqlite:///path_to_db'
-        if os.path.exists(db_path):
-            os.remove(db_path)
+        asyncio.run(cleanup_database())
     
     async def asyncSetUp(self):
         await super().asyncSetUp()

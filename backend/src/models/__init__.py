@@ -41,7 +41,7 @@ class Metadata(BaseModel):
 
 class Document(BaseModel):
 	page_content: str
-	metadata: Metadata
+	metadata: Any
 	type: str = Field(default="Document", alias="type")
 	
 class UrlLoaderType(str, Enum):
