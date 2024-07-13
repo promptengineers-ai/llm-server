@@ -39,12 +39,14 @@ class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
             ],
         }
     
+    @unittest.skip("skip test_upsert_documents. Will not run in GH Action without Redis container")
     async def test_upsert_documents(self):
         tokens = retrieve_defaults(self.keys)
         document_service = DocumentService()
-        await document_service.upsert(
+        result = await document_service.upsert(
             UpsertDocuments(**self.body), 
             tokens, 
             self.keys,
             self.user_id
         )
+        assert len(result) > 0
