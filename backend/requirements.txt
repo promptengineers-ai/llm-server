@@ -2,6 +2,7 @@ langchain
 langchain_openai 
 langchain-anthropic
 langchain-pinecone
+langchain-postgres
 langchain-groq
 langchain_experimental 
 pandas
@@ -33,3 +34,4 @@ setuptools
 loguru
 asyncpg
 psycopg2-binary
+psycopg

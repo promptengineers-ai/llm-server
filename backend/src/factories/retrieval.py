@@ -1,6 +1,6 @@
 from typing import Dict
 
-from src.db.strategies import PineconeStrategy, RedisStrategy, VectorStoreStrategy
+from src.db.strategies import PineconeStrategy, PostgresStrategy, RedisStrategy, VectorStoreStrategy
 
 class RetrievalFactory:
     def __init__(
@@ -32,6 +32,8 @@ class RetrievalFactory:
             return self._create_pinecone_strategy()
         elif self.provider == 'redis':
             return self._create_redis_strategy()
+        elif self.provider == 'postgres':
+            return self._create_postgres_strategy()
         else:
             raise ValueError(f"Invalid index provider: {self.provider}")
 
@@ -52,6 +54,14 @@ class RetrievalFactory:
             index_name=self.provider_keys['index_name'],
             embeddings=self.embeddings,
         )
+        
+    def _create_postgres_strategy(self) -> RedisStrategy:
+        """ Creates a PostgresStrategy with the appropriate configuration. """
+        return PostgresStrategy(
+            connection=self.provider_keys.get('connection'),
+            collection_name=self.provider_keys.get('collection_name'),
+            embeddings=self.embeddings,
+        )
 
     def _validate_provider_keys(self):
         """
@@ -60,7 +70,8 @@ class RetrievalFactory:
         """
         required_keys = {
             'pinecone': ['api_key', 'env', 'index_name', 'namespace'],
-            'redis': ['redis_url', 'index_name']
+            'redis': ['redis_url', 'index_name'],
+            'postgres': ['connection', 'collection_name'],
         }
 
         if self.provider not in required_keys:

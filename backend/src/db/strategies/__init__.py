@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 # from io import BytesIO
 
-from src.db import PineconeDB, RedisDB
+from src.db import PineconeDB, RedisDB, PGVectorDB
 
 
 # Define the strategy interface
@@ -75,9 +75,34 @@ class PineconeStrategy(VectorStoreStrategy):
             embeddings=self.embeddings,
             namespace=self.namespace
         )
+        
+#########################################################################
+## Postgres Strategy
+#########################################################################
+class PostgresStrategy(VectorStoreStrategy):
+    def __init__(
+        self,
+        connection: str,
+        collection_name: str,
+        embeddings = None,
+    ):
+        self.connection = connection
+        self.collection_name = collection_name
+        self.embeddings = embeddings,
+        self.service = PGVectorDB(
+			connection=self.connection,
+			collection_name=self.collection_name,
+            embeddings=self.embeddings
+		)
+
+    def add(self, documents):
+        return self.service.add_docs(documents)
+
+    def load(self):
+       pass
 
 #########################################################################
-## Pinecone Strategy
+## Redis Strategy
 #########################################################################
 class RedisStrategy(VectorStoreStrategy):
     def __init__(

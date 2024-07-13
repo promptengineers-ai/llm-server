@@ -70,7 +70,7 @@ class FetchDocuments(BaseModel):
  
 class UpsertDocuments(BaseModel):
 	task_id: str
-	provider: Union[Literal['pinecone', 'redis']] = Field(...)
+	provider: Union[Literal['pinecone', 'redis', 'postgres']] = Field(...)
 	index_name: str = Field(...)
 	embedding: Annotated[str, Field(...)]
 	documents: List[Document] = Field(...)

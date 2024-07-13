@@ -138,6 +138,13 @@ class DocumentService:
 				'index_name': tokens.get('PINECONE_INDEX'),
 				'namespace': f"{user_id}::{body.index_name}",
 			}
+		elif body.provider == 'postgres':
+			# Validate API keys
+			validtor.validate_api_keys(tokens, keys)
+			provider_keys={
+				'connection': tokens.get('POSTGRES_URL'),
+				'collection_name': f"{user_id}::{body.index_name}",
+			}
 		else:
 			raise ValueError(f"Invalid retrieval provider: {body.provider}")
   
