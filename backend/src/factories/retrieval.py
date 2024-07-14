@@ -60,6 +60,7 @@ class RetrievalFactory:
         return PostgresStrategy(
             connection=self.provider_keys.get('connection'),
             collection_name=self.provider_keys.get('collection_name'),
+            async_mode=self.provider_keys.get('async_mode', False),
             embeddings=self.embeddings,
         )
 

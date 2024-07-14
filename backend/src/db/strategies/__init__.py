@@ -16,6 +16,10 @@ class VectorStoreStrategy(ABC):
         pass
     
     @abstractmethod
+    def aload(self):
+        pass
+    
+    @abstractmethod
     def delete(self):
         pass
 
@@ -80,6 +84,9 @@ class PineconeStrategy(VectorStoreStrategy):
             namespace=self.namespace
         )
         
+    async def aload(self):
+        pass
+        
     def delete(self):
         return self.service.delete()
         
@@ -92,6 +99,7 @@ class PostgresStrategy(VectorStoreStrategy):
         connection: str,
         collection_name: str,
         embeddings = None,
+        async_mode = False,
     ):
         self.connection = connection
         self.collection_name = collection_name
@@ -99,7 +107,8 @@ class PostgresStrategy(VectorStoreStrategy):
         self.service = PGVectorDB(
 			connection=self.connection,
 			collection_name=self.collection_name,
-            embeddings=self.embeddings
+            embeddings=self.embeddings,
+            async_mode=async_mode
 		)
 
     def add(self, documents):
@@ -107,6 +116,9 @@ class PostgresStrategy(VectorStoreStrategy):
 
     def load(self):
         return self.service.from_existing()
+    
+    def aload(self):
+        return self.service.afrom_existing()
     
     def delete(self):
         return self.service.delete()
@@ -143,6 +155,9 @@ class RedisStrategy(VectorStoreStrategy):
             schema=self.index_schema
         )
         
+    async def aload(self):
+        pass
+        
     def delete(self):
         return self.service.delete(self.index_name)
 
@@ -164,6 +179,9 @@ class VectorstoreContext:
 
     def load(self):
         return self.strategy.load()
+    
+    def aload(self):
+        return self.strategy.aload()
 
     def delete(self):
         return self.strategy.delete()

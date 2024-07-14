@@ -65,6 +65,7 @@ def retrieval_chain(body: Retrieval or Agent, user_id = None): # type: ignore
 			provider_keys = {
 				'connection': POSTGRES_URL,
 				'collection_name': index_name_or_namespace,
+				'async_mode': True,
 			}
 		else:
 			raise ValueError(f"Invalid retrieval provider {body.retrieval.provider}")

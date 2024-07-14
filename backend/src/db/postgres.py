@@ -8,16 +8,18 @@ class PGVectorDB:
 			connection: str, 
 			collection_name: str = None, 
 			embeddings = None,
+			async_mode = False,
 	):
 		self.connection = connection
 		self.collection_name = collection_name
 		self.embeddings = embeddings or None
+		self.async_mode = async_mode
 		self.client = PGVector(
 			connection=self.connection,
 			collection_name=self.collection_name,
 			embeddings=self.embeddings[0] if self.embeddings else None,
 			use_jsonb=True,
-			async_mode=False
+			async_mode=self.async_mode
 		)
 
 	def add_docs(self, documents: list):
@@ -26,6 +28,14 @@ class PGVectorDB:
 
 	def from_existing(self):
 		return self.client.from_existing_index(
+			collection_name=self.collection_name,
+			embedding=self.embeddings[0],
+			connection=self.connection,
+			async_mode = self.async_mode
+		)
+  
+	def afrom_existing(self):
+		return self.client.afrom_existing_index(
 			collection_name=self.collection_name,
 			embedding=self.embeddings[0],
 			connection=self.connection,

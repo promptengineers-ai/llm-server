@@ -100,8 +100,7 @@ async def chat(request: Request, body: Agent):
 			status_code=status.HTTP_400_BAD_REQUEST
 		)
 	except Exception as err:
-		tb = traceback.format_exc()
-		logging.error("Exception: %s\n%s", err, tb)
+		logging.exception(err)
 		raise HTTPException(status_code=500, 
 					  		detail="Internal Server Error") from err
   

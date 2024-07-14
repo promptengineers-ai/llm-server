@@ -187,8 +187,7 @@ class LoaderController:
 			logging.error(err.detail)
 			raise
 		except BaseException as err:
-			tb = traceback.format_exc()
-			logging.error(f"[routes.{PathLib(__file__).resolve().stem}.upsert_documents]: %s\n%s", err, tb)
+			logging.exception(err)
 			raise HTTPException(
 				status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
 				detail=f"An unexpected error occurred. {str(err)}"
