@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from src.db import PineconeDB, RedisDB, PGVectorDB
 
 
-# Define the strategy interface
+## Define the strategy interface
 class VectorStoreStrategy(ABC):
     @abstractmethod
     def add(self, loaders, chunk_size: int = 1000, chunk_overlap: int = 100):
