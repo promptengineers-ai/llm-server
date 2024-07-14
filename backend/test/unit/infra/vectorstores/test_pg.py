@@ -54,7 +54,7 @@ class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
         )
         assert len(result) > 0
         
-    # @unittest.skip("skip test_retrieve_documents. Will not run in GH Action without Postgres container")
+    @unittest.skip("skip test_retrieve_documents. Will not run in GH Action without Postgres container")
     async def test_retrieve_documents(self):
         tokens = retrieve_defaults(self.keys)
         index_name_or_namespace = f"{self.user_id}::{self.body.get('index_name')}"
