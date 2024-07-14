@@ -7,11 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v0.0.1
 ### Fixed
+  - bugfix/111-agent-duplicating-chat-history-messages (2024-07-02)
   - bugfix/88-submit-button-not-enabled-on-stream-done (2024-06-23)
   - bugfix/54-back-to-login-on-jwt-expire (2024-06-06)
   - bugfix/42-redis-is-default-vector-db (2024-05-26)
   - bugfix/33-groq-rag-not-working (2024-05-19)
 ### Changed 
+  - feature/131-pgvector-support (2024-07-13)
+  - feature/124-message-out-of-order (2024-07-02)
   - feature/120-status-of-split-and-upsert-to-client (2024-06-30)
   - feature/87-ability-to-abort-query (2024-06-30)
   - feature/113-add-spinner-to-login-button (2024-06-29)

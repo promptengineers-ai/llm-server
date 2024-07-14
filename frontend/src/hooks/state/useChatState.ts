@@ -46,7 +46,7 @@ export const defaultState = {
         temperature: 0.5,
         tools: [],
         retrieval: {
-            provider: SearchProvider.REDIS,
+            provider: SearchProvider.POSTGRES,
             embedding: ON_PREM
                 ? EmbeddingModel.OLLAMA_NOMIC_EMBED_TEXT
                 : EmbeddingModel.OPENAI_TEXT_EMBED_3_LARGE,

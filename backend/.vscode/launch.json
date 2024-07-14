@@ -17,14 +17,15 @@
 			"envFile": "${workspaceFolder}/.env"
 		},
 		{
-			"name": "Debug Single Test",
-			"type": "debugpy",
-			"request": "launch",
-			"module": "pytest",
-			"args": ["-s", "-v", "test/unit/tools/test_search.py"],
-			"envFile": "${workspaceFolder}/.test.env",
-			"justMyCode": false
-		},
+            "name": "Debug Single Test",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": ["-s", "-v", "test/unit/infra/vectorstores/test_pg.py"],
+            "envFile": "${workspaceFolder}/.env.test",
+            "justMyCode": false,
+            "preLaunchTask": "Unset DATABASE_URL"
+        },
 		{
             "name": "Python: Run Script",
             "type": "debugpy",

@@ -1,49 +1,21 @@
 import unittest
 import asyncio
-import os
-from alembic import command
-from alembic.config import Config
-from sqlalchemy.ext.asyncio import create_async_engine
 
-from src.config import DATABASE_URL
-from src.models.sql import Base
 from src.models import Agent as ChatBody
 from src.services.db import create_default_user, get_db
 from src.repositories.chat import ChatRepository
+from test import apply_migrations, cleanup_database
 
 class TestChatRepository(unittest.IsolatedAsyncioTestCase):
     
     @classmethod
     def setUpClass(cls):
         # Run migrations before any tests
-        asyncio.run(cls.apply_migrations())
-
-    @classmethod
-    async def apply_migrations(cls):
-        alembic_cfg = Config("alembic.ini")
-        command.upgrade(alembic_cfg, "head")
+        asyncio.run(apply_migrations())
 
     @classmethod
     def tearDownClass(cls):
-        asyncio.run(cls.cleanup_database())
-
-    @classmethod
-    async def cleanup_database(cls):
-        await cls.drop_all_tables()
-        cls.remove_database_file()
-        
-    @classmethod
-    async def drop_all_tables(cls):
-        engine = create_async_engine(DATABASE_URL)
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
-
-    @classmethod
-    def remove_database_file(cls):
-        """Remove the SQLite database file."""
-        db_path = DATABASE_URL.split("///")[-1]  # Assumes format 'sqlite+aiosqlite:///path_to_db'
-        if os.path.exists(db_path):
-            os.remove(db_path)
+        asyncio.run(cleanup_database())
     
     async def asyncSetUp(self):
         await super().asyncSetUp()
@@ -57,9 +29,9 @@ class TestChatRepository(unittest.IsolatedAsyncioTestCase):
         self.chat_data = {
             "system": "You are a helpful assistant.",
             "messages": [
-                {"role": "user", "content": "Who won the 2001 world series?"},
-                {"role": "assistant", "content": "The Arizona Diamondbacks won the 2001 World Series against the New Your Yankees."},
-                {"role": "user", "content": "Who were the pitchers?"}
+                {"index": 1, "role": "user", "content": "Who won the 2001 world series?"},
+                {"index": 2, "role": "assistant", "content": "The Arizona Diamondbacks won the 2001 World Series against the New Your Yankees."},
+                {"index": 3, "role": "user", "content": "Who were the pitchers?"}
             ],
             "tools": [],
             "retrieval": {
@@ -104,13 +76,22 @@ class TestChatRepository(unittest.IsolatedAsyncioTestCase):
         found_chat = await self.chat_repo.find(chat_id)
         self.assertIsNotNone(found_chat)
         self.assertEqual(found_chat['id'], chat_id)
+        
+        # Verify that the messages are in the correct order by content
+        expected_messages = self.chat_data["messages"]
+        found_messages = found_chat['messages']
+        self.assertEqual(len(expected_messages), len(found_messages), "Number of messages does not match")
+        
+        for expected_msg, found_msg in zip(expected_messages, found_messages):
+            self.assertEqual(expected_msg['role'], found_msg['role'])
+            self.assertEqual(expected_msg['content'], found_msg['content'])
             
     async def test_update(self):
         chat_id = self.chat.get("id")
         new_message = {
             "messages": [
                 *self.chat_data["messages"],
-                {"role": "assistant", "content": "Randy Johnson and Curt Schilling were the pitchers."}
+                {"index": 4, "role": "assistant", "content": "Randy Johnson and Curt Schilling were the pitchers."}
             ]
         }
         

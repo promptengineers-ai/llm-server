@@ -41,7 +41,7 @@ class Metadata(BaseModel):
 
 class Document(BaseModel):
 	page_content: str
-	metadata: Metadata
+	metadata: Any
 	type: str = Field(default="Document", alias="type")
 	
 class UrlLoaderType(str, Enum):
@@ -70,7 +70,7 @@ class FetchDocuments(BaseModel):
  
 class UpsertDocuments(BaseModel):
 	task_id: str
-	provider: Union[Literal['pinecone', 'redis']] = Field(...)
+	provider: Union[Literal['pinecone', 'redis', 'postgres']] = Field(...)
 	index_name: str = Field(...)
 	embedding: Annotated[str, Field(...)]
 	documents: List[Document] = Field(...)

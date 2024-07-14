@@ -1,11 +1,11 @@
 langchain 
 langchain_openai 
 langchain-anthropic
-langchain-pinecone
+# langchain-pinecone
+langchain-postgres
 langchain-groq
 langchain_experimental 
 pandas
-pinecone-client
 uvicorn
 fastapi
 transformers
@@ -16,18 +16,20 @@ nest-asyncio
 fillpdf
 pypdf
 # faiss-gpu
-faiss-cpu
+# faiss-cpu
 networkx
 ujson
+setuptools
+loguru
 minio
 python-multipart
-sqlalchemy 
-asyncpg 
-aiosqlite
 python-jose[cryptography]
 aioredis
 redis
+# pinecone-client
 alembic
-aiomysql
-setuptools
-loguru
+# aiomysql
+# aiosqlite
+psycopg[binary]
+sqlalchemy 
+asyncpg 

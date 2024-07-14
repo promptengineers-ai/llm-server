@@ -40,25 +40,30 @@ retrieval_service = RetrievalService()
 	}
 )
 async def chat(request: Request, body: Agent):
+	chain_type = 'chat'
 	try:     
 		if not body.tools and body.retrieval.provider and body.retrieval.index_name:
+			chain_type = 'retrieval'
 			chain = retrieval_chain(body, request.state.user_id)
 			query = {'input': body.messages[-1]['content']}
 		else:
+			if body.tools:
+				chain_type = 'agent'
 			chain, filtered_messages = agent_chain(body)
 			query = filtered_messages
    
 		if body.streaming:
 			return StreamingResponse(
 				chain_stream(
-        			chain, 
-           			query, 
-              		config={
-                    	'configurable': {
+					chain, 
+		   			query, 
+			  		config={
+						'configurable': {
 							'chat_history': retrieve_chat_messages(body, True)[:-1]
 						}
-                    }
-                ),
+					},
+					chain_type=chain_type
+				),
 				headers={
 					"Cache-Control": "no-cache",
 					"Connection": "keep-alive",

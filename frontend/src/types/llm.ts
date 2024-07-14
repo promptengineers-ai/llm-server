@@ -119,5 +119,6 @@ export enum SearchProvider {
     PINECONE = "pinecone",
     REDIS = "redis",
     MONGO = "mongo",
+    POSTGRES = "postgres",
     FAISS = "faiss",
 }

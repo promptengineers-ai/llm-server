@@ -1,9 +1,6 @@
 """Pinecone Service"""
 from typing import List
 
-from pinecone import Pinecone, PodSpec
-from langchain_pinecone import PineconeVectorStore
-
 from threading import Lock
 
 class PineconeDB:
@@ -19,6 +16,8 @@ class PineconeDB:
             return cls._instance
 
     def initialize(self, api_key: str, env: str, index_name: str):
+        from pinecone import Pinecone, PodSpec
+        from langchain_pinecone import PineconeVectorStore
         if all([api_key, env, index_name]):
             self.api_key = api_key
             self.env = env

@@ -5,7 +5,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from src.db.strategies import VectorstoreContext
 from src.factories.retrieval import RetrievalFactory
-from src.config import OPENAI_API_KEY, PINECONE_API_KEY, PINECONE_ENV, PINECONE_INDEX, REDIS_URL
+from src.config import OPENAI_API_KEY, PINECONE_API_KEY, PINECONE_ENV, PINECONE_INDEX, POSTGRES_URL, REDIS_URL
 from src.factories.embedding import EmbeddingFactory
 from src.models import Agent, Retrieval
 from src.utils.llm import filter_models
@@ -60,6 +60,11 @@ def retrieval_chain(body: Retrieval or Agent, user_id = None): # type: ignore
 				'env': PINECONE_ENV,
 				'index_name': PINECONE_INDEX,
 				'namespace': index_name_or_namespace,
+			}
+		elif body.retrieval.provider == 'postgres':
+			provider_keys = {
+				'connection': POSTGRES_URL,
+				'collection_name': index_name_or_namespace,
 			}
 		else:
 			raise ValueError(f"Invalid retrieval provider {body.retrieval.provider}")

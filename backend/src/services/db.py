@@ -3,10 +3,10 @@ import sqlalchemy
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from src.config import APP_ADMIN_EMAIL, APP_ADMIN_PASS, APP_SECRET, DATABASE_URL
+from src.config import APP_ADMIN_EMAIL, APP_ADMIN_PASS, APP_SECRET, DATABASE_URL, database_engine
 from src.models.sql.user import User 
 
-engine = create_async_engine(DATABASE_URL, echo=True)
+engine = create_async_engine(DATABASE_URL, echo=True, connect_args={"statement_cache_size": 0} if database_engine() == 'postgresql' else {})
 AsyncSessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
@@ -24,8 +24,8 @@ async def create_default_user(session):
         raise ValueError("env variable APP_SECRET is not set")
     
     if not default_user:
-        user = User(full_name="Super Admin", 
-                    username="super_admin", 
+        user = User(full_name="Admin User", 
+                    username="admin", 
                     email=APP_ADMIN_EMAIL, 
                     password=APP_ADMIN_PASS, 
                     salt=APP_SECRET)

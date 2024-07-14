@@ -7,13 +7,13 @@ from sqlalchemy.future import select
 
 from src.models.sql.user import User
 from src.models.sql.chat import Chat, Message
-from src.config import DATABASE_URL
+from src.config import DATABASE_URL, database_engine
 
 # Initialize Faker
 fake = Faker()
 
 # Create an async engine and session
-engine = create_async_engine(DATABASE_URL, echo=True)
+engine = create_async_engine(DATABASE_URL, echo=True, connect_args={"statement_cache_size": 0} if database_engine() == 'postgresql' else {})
 async_session = sessionmaker(
     autocommit=False, autoflush=False, bind=engine, class_=AsyncSession
 )

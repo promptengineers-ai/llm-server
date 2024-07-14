@@ -1,0 +1,11 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Unset DATABASE_URL",
+            "type": "shell",
+            "command": "unset DATABASE_URL",
+            "problemMatcher": []
+        }
+    ]
+}

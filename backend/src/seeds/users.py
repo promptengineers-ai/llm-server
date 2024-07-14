@@ -6,13 +6,13 @@ from sqlalchemy.orm import sessionmaker
 
 from src.models.sql.user import User  # Ensure this path is correct
 from src.utils.auth import hash_password  # Ensure this function exists and is correct
-from src.config import DATABASE_URL
+from src.config import DATABASE_URL, database_engine
 
 # Initialize Faker
 fake = Faker()
 
 # Create an async engine and session
-engine = create_async_engine(DATABASE_URL, echo=True)
+engine = create_async_engine(DATABASE_URL, echo=True, connect_args={"statement_cache_size": 0} if database_engine() == 'postgresql' else {})
 async_session = sessionmaker(
     autocommit=False, autoflush=False, bind=engine, class_=AsyncSession
 )

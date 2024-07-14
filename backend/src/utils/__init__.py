@@ -3,7 +3,7 @@ from .message import retrieve_system_message, retrieve_chat_messages
 from .format import format_agent_actions
 from langchain_core.runnables import Runnable
 
-async def chain_stream(chain: Runnable, query, config: dict = {}):
+async def chain_stream(chain: Runnable, query, config: dict = {}, chain_type: str = 'chat'):
     if isinstance(query, dict):
         runnable = chain.astream(query, config=config)
         async for event in runnable:
@@ -20,6 +20,9 @@ async def chain_stream(chain: Runnable, query, config: dict = {}):
         async for event in runnable:
             kind = event["event"]
             # print(kind)
+            # f = open("./data/events.txt", "a")
+            # f.write(kind + "\n")
+            # f.close()
             if kind == "on_chat_model_start":
                 print(event)
             elif kind == "on_chat_model_stream":
@@ -69,7 +72,8 @@ async def chain_stream(chain: Runnable, query, config: dict = {}):
                                     action_type=key,
                                     tool=event['name'])
             else:
-                yield token_stream()
+                if not chain_type == 'agent':
+                    yield token_stream()
 
     
 __all__ = [
