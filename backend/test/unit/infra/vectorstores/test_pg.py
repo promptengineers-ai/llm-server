@@ -2,7 +2,7 @@
 import asyncio
 import unittest
 
-from src.config import POSTGRES_URL, retrieve_defaults
+from src.config import retrieve_defaults
 from src.config.llm import ModelType
 from src.db.strategies import VectorstoreContext
 from src.factories.embedding import EmbeddingFactory
@@ -19,6 +19,12 @@ class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
         # Run migrations before any tests
         asyncio.run(apply_migrations())
 
+        # Initialize database and create default user
+        cls.db_gen = get_db()
+        cls.db = asyncio.run(cls.db_gen.__anext__())
+        default_user = asyncio.run(create_default_user(cls.db))
+        cls.user_id = default_user.id
+
     @classmethod
     def tearDownClass(cls):
         asyncio.run(cleanup_database())
@@ -27,9 +33,8 @@ class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
         await super().asyncSetUp()
         self.db_gen = get_db()  # Get the generator
         self.db = await self.db_gen.__anext__()  # Manually advance to the next item
-        default_user = await create_default_user(self.db)
-        self.user_id = default_user.id
         self.keys = {'POSTGRES_URL'}
+        self.tokens = retrieve_defaults(self.keys)
         self.body = {
             'task_id': 'test',
             'provider': 'postgres',
@@ -41,33 +46,49 @@ class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
                 {'page_content': 'fresh apples are available at the market', 'metadata': {"id": 3, "location": "market", "topic": "food"}},
             ],
         }
-    
-    @unittest.skip("skip test_upsert_documents. Will not run in GH Action without Postgres container")
-    async def test_upsert_documents(self):
-        tokens = retrieve_defaults(self.keys)
+        self.index_name_or_namespace = f"{self.user_id}::{self.body.get('index_name')}"
+
+    async def upsert_documents(self):
         document_service = DocumentService()
         result = await document_service.upsert(
             UpsertDocuments(**self.body), 
-            tokens, 
+            self.tokens, 
             self.keys,
-            self.user_id
+            self.user_id  # Access class attribute
         )
         assert len(result) > 0
         
-    @unittest.skip("skip test_retrieve_documents. Will not run in GH Action without Postgres container")
-    async def test_retrieve_documents(self):
-        tokens = retrieve_defaults(self.keys)
-        index_name_or_namespace = f"{self.user_id}::{self.body.get('index_name')}"
+    async def retrieve_documents(self):
         embedding = EmbeddingFactory(llm=self.body.get('embedding'))
         retrieval_provider = RetrievalFactory(
-			provider=self.body.get('provider'),
-			embeddings=embedding.create_embedding(),
-			provider_keys={
-				'connection': tokens[next(iter(self.keys))],
-				'collection_name': index_name_or_namespace,
-			}
-		)
+            provider=self.body.get('provider'),
+            embeddings=embedding.create_embedding(),
+            provider_keys={
+                'connection': self.tokens[next(iter(self.keys))],
+                'collection_name': self.index_name_or_namespace,
+            }
+        )
         vectostore_service = VectorstoreContext(retrieval_provider.create_strategy())
         vectorstore = vectostore_service.load()
         results = vectorstore.similarity_search('ducks', k=10)
         assert len(results) > 0
+        
+    async def delete_collection(self):
+        embedding = EmbeddingFactory(llm=self.body.get('embedding'))
+        retrieval_provider = RetrievalFactory(
+            provider=self.body.get('provider'),
+            embeddings=embedding.create_embedding(),
+            provider_keys={
+                'connection': self.tokens[next(iter(self.keys))],
+                'collection_name': self.index_name_or_namespace,
+            }
+        )
+        vectostore_service = VectorstoreContext(retrieval_provider.create_strategy())
+        dropped = vectostore_service.delete()
+        assert dropped == True
+
+    # @unittest.skip("skip test_upsert_and_retrieve_documents. Will not run in GH Action without Postgres container")
+    async def test_upsert_and_retrieve_documents(self):
+        await self.upsert_documents()
+        await self.retrieve_documents()
+        await self.delete_collection()

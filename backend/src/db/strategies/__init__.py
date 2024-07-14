@@ -14,6 +14,10 @@ class VectorStoreStrategy(ABC):
     @abstractmethod
     def load(self):
         pass
+    
+    @abstractmethod
+    def delete(self):
+        pass
 
 #########################################################################
 ## FAISS Strategy
@@ -76,6 +80,9 @@ class PineconeStrategy(VectorStoreStrategy):
             namespace=self.namespace
         )
         
+    def delete(self):
+        pass
+        
 #########################################################################
 ## Postgres Strategy
 #########################################################################
@@ -100,6 +107,9 @@ class PostgresStrategy(VectorStoreStrategy):
 
     def load(self):
         return self.service.from_existing()
+    
+    def delete(self):
+        return self.service.delete()
 
 #########################################################################
 ## Redis Strategy
@@ -132,6 +142,9 @@ class RedisStrategy(VectorStoreStrategy):
         return self.service.from_existing(
             schema=self.index_schema
         )
+        
+    def delete(self):
+        return self.service.delete(self.index_name)
 
 #########################################################################
 ## Strategy Context
@@ -151,3 +164,6 @@ class VectorstoreContext:
 
     def load(self):
         return self.strategy.load()
+
+    def delete(self):
+        return self.strategy.delete()

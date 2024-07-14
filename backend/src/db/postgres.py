@@ -30,3 +30,9 @@ class PGVectorDB:
 			embedding=self.embeddings[0],
 			connection=self.connection,
 		)
+  
+	def delete(self):
+		result = self.client.delete_collection()
+		if not result:
+			return True
+		return False
