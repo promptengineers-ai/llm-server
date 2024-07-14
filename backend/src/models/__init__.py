@@ -103,7 +103,7 @@ class RetrievalTool(BaseModel):
 	search_kwargs: SearchKwargs
 	
 class RetrievalParams(BaseModel):
-	provider: SearchProvider = SearchProvider.PINECONE
+	provider: SearchProvider = SearchProvider.POSTGRES
 	embedding: Embedding = Embedding.TEXT_EMBED_3_SMALL
 	index_name: str
 	search_type: SearchType
