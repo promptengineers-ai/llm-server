@@ -18,6 +18,7 @@ PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
 PINECONE_ENV = os.environ.get('PINECONE_ENV', 'us-east1-gcp')
 PINECONE_INDEX = os.environ.get('PINECONE_INDEX', 'default')
 REDIS_URL = os.environ.get("REDIS_URL", 'redis://localhost:6379/0')
+POSTGRES_URL = os.environ.get("POSTGRES_URL", 'postgresql+psycopg://langchain:langchain@localhost:6024/langchain')
 
 ## LLM
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
@@ -39,6 +40,7 @@ default_app_tokens = {
     # 'MONGO_CONNECTION': MONGO_CONNECTION,
     # 'MONGO_DB_NAME': MONGO_DB_NAME,
     'REDIS_URL': REDIS_URL,
+    'POSTGRES_URL': POSTGRES_URL,
     'BUCKET': BUCKET,
     'S3_REGION': S3_REGION,
     'ACCESS_KEY_ID': ACCESS_KEY_ID,
@@ -79,3 +81,9 @@ def database_type(field_type: str):
             return sa.TIMESTAMP()
         else:
             return sa.DATETIME()
+        
+    if field_type == 'connect_args':
+        connect_args = {}
+        if database_engine() == 'postgresql':
+            connect_args['statement_cache_size'] = 0
+        return connect_args
