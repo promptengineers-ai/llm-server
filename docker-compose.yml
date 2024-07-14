@@ -2,57 +2,57 @@ version: '3'
 
 services:
   # Redis (Cache / Broker / Vector Index / Stream)
-  redis:
-    container_name: redis
-    restart: unless-stopped
-    image: redis/redis-stack-server:latest
-    ports:
-      - 6379:6379
-    volumes:
-      - ./docker/redis/data:/data
+  # redis:
+  #   container_name: redis
+  #   restart: unless-stopped
+  #   image: redis/redis-stack-server:latest
+  #   ports:
+  #     - 6379:6379
+  #   volumes:
+  #     - ./docker/redis/data:/data
 
   # Database (MySQL)
-  mysql:
-    image: mysql:8.2.0
-    container_name: mysql
-    restart: unless-stopped
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: password
-      MYSQL_DATABASE: llm_server
-    volumes:
-      - ./docker/mysql/data:/var/lib/mysql
+  # mysql:
+  #   image: mysql:8.2.0
+  #   container_name: mysql
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3306:3306"
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: password
+  #     MYSQL_USER: admin
+  #     MYSQL_PASSWORD: password
+  #     MYSQL_DATABASE: llm_server
+  #   volumes:
+  #     - ./docker/mysql/data:/var/lib/mysql
       
-  # phpMyAdmin
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
-    restart: unless-stopped
-    depends_on:
-      - mysql
-    ports:
-      - "8081:80"
-    environment:
-      PMA_HOST: mysql
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_PASSWORD: password
-      MYSQL_USER: admin
+  # # phpMyAdmin
+  # phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin
+  #   container_name: phpmyadmin
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - mysql
+  #   ports:
+  #     - "8081:80"
+  #   environment:
+  #     PMA_HOST: mysql
+  #     MYSQL_ROOT_PASSWORD: password
+  #     MYSQL_PASSWORD: password
+  #     MYSQL_USER: admin
 
-  # SearXNG
-  searxng:
-    image: searxng/searxng
-    container_name: searxng
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./docker/searxng:/etc/searxng
-    environment:
-      BASE_URL: "http://localhost:8080/"
-      INSTANCE_NAME: "my-instance"
+  # # SearXNG
+  # searxng:
+  #   image: searxng/searxng
+  #   container_name: searxng
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ./docker/searxng:/etc/searxng
+  #   environment:
+  #     BASE_URL: "http://localhost:8080/"
+  #     INSTANCE_NAME: "my-instance"
 
   # Minio (File Storage) -- CURRENTLY ALL FILES AND IMAGES ARE BASE64 ENCODED
   # minio:
@@ -70,17 +70,17 @@ services:
   #   command: server /data --console-address ":9001"
 
   # # API
-  # api:
-  #   container_name: api
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #   # volumes:
-  #   #   - ./backend/data:/app/data  # Mount for SQLite database to host directory
-  #   ports:
-  #     - 8000:8000
-  #   env_file:
-  #     - ./backend/.env
+  api:
+    container_name: api
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # volumes:
+    #   - ./backend/data:/app/data  # Mount for SQLite database to host directory
+    ports:
+      - 8000:8000
+    env_file:
+      - ./backend/.env
 
   # # Proxy (Nginx)
   # nginx:
