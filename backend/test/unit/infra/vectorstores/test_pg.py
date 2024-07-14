@@ -2,8 +2,11 @@
 import asyncio
 import unittest
 
-from src.config import retrieve_defaults
+from src.config import POSTGRES_URL, retrieve_defaults
 from src.config.llm import ModelType
+from src.db.strategies import VectorstoreContext
+from src.factories.embedding import EmbeddingFactory
+from src.factories.retrieval import RetrievalFactory
 from src.models import UpsertDocuments
 from src.services.document import DocumentService
 from src.services.db import create_default_user, get_db
@@ -50,3 +53,21 @@ class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
             self.user_id
         )
         assert len(result) > 0
+        
+    # @unittest.skip("skip test_retrieve_documents. Will not run in GH Action without Postgres container")
+    async def test_retrieve_documents(self):
+        tokens = retrieve_defaults(self.keys)
+        index_name_or_namespace = f"{self.user_id}::{self.body.get('index_name')}"
+        embedding = EmbeddingFactory(llm=self.body.get('embedding'))
+        retrieval_provider = RetrievalFactory(
+			provider=self.body.get('provider'),
+			embeddings=embedding.create_embedding(),
+			provider_keys={
+				'connection': tokens[next(iter(self.keys))],
+				'collection_name': index_name_or_namespace,
+			}
+		)
+        vectostore_service = VectorstoreContext(retrieval_provider.create_strategy())
+        vectorstore = vectostore_service.load()
+        results = vectorstore.similarity_search('ducks', k=10)
+        assert len(results) > 0

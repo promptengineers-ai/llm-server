@@ -99,7 +99,7 @@ class PostgresStrategy(VectorStoreStrategy):
         return self.service.add_docs(documents)
 
     def load(self):
-       pass
+        return self.service.from_existing()
 
 #########################################################################
 ## Redis Strategy
