@@ -81,7 +81,7 @@ class PineconeStrategy(VectorStoreStrategy):
         )
         
     def delete(self):
-        pass
+        return self.service.delete()
         
 #########################################################################
 ## Postgres Strategy

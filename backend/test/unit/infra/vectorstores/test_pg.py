@@ -87,7 +87,7 @@ class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
         dropped = vectostore_service.delete()
         assert dropped == True
 
-    # @unittest.skip("skip test_upsert_and_retrieve_documents. Will not run in GH Action without Postgres container")
+    @unittest.skip("skip test_upsert_and_retrieve_documents. Will not run in GH Action without Postgres container")
     async def test_upsert_and_retrieve_documents(self):
         await self.upsert_documents()
         await self.retrieve_documents()
