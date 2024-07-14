@@ -138,6 +138,7 @@ jobs:
       PINECONE_ENV: ${{ secrets.PINECONE_ENV }}
       PINECONE_INDEX: ${{ secrets.PINECONE_INDEX }}
       REDIS_URL: ${{ secrets.REDIS_URL }}
+      POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
       DOCKER_USERNAME: promptengineers
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
@@ -188,6 +189,7 @@ jobs:
           "PINECONE_ENV=$PINECONE_ENV"
           "PINECONE_INDEX=$PINECONE_INDEX"
           "REDIS_URL=$REDIS_URL"
+          "POSTGRES_URL=$POSTGRES_URL"
 
           ## LLM
           "OPENAI_API_KEY=$OPENAI_API_KEY"
