@@ -25,6 +25,7 @@ class SearchProvider(str, Enum):
 	PINECONE = 'pinecone'
 	REDIS = 'redis'
 	MONGO = 'mongo'
+	POSTGRES = 'postgres'
 	FAISS = 'faiss'
 	
 class Splitter(BaseModel):

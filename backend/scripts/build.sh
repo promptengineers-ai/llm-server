@@ -2,7 +2,7 @@
 
 SHORT_SHA=$(git rev-parse --short HEAD)
 
-docker build -t promptengineers/llm-server:$SHORT_SHA .
+docker build --squash -t promptengineers/llm-server:$SHORT_SHA .
 
 echo ""
 ## Prompt to push the image to Docker Hub
