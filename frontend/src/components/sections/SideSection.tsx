@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useAppContext } from "@/contexts/AppContext";
 import { FaSpinner } from "react-icons/fa";
+import { PiBatteryEmptyBold } from "react-icons/pi";
 
 interface DrawerProps {
     isOpen: boolean;
@@ -16,7 +17,7 @@ interface DrawerProps {
 
 const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
     const router = useRouter();
-    const {isPopoverOpen, setIsPopoverOpen} = useAppContext();
+    const {isPopoverOpen, setIsPopoverOpen, loading} = useAppContext();
     const { retrieveUser } = useAuthContext();
     const { resetChat, chats, shallowUrl } = useChatContext();
     
@@ -127,17 +128,34 @@ const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
                                                         </>
                                                     ) : (
                                                         <div className="flex items-center justify-center h-[80dvh] w-full">
-                                                            <div>
-                                                                <FaSpinner
-                                                                    className="animate-spin"
-                                                                    fontSize={
-                                                                        22
-                                                                    }
-                                                                />
-                                                            </div>
-                                                            <div className="ml-2">
-                                                                Loading...
-                                                            </div>
+                                                            {loading ? (
+                                                                <>
+                                                                    <div>
+                                                                        <FaSpinner
+                                                                            className="animate-spin"
+                                                                            fontSize={
+                                                                                22
+                                                                            }
+                                                                        />
+                                                                    </div>
+                                                                    <div className="ml-2">
+                                                                        Loading...
+                                                                    </div>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <div>
+                                                                        <PiBatteryEmptyBold
+                                                                            fontSize={
+                                                                                22
+                                                                            }
+                                                                        />
+                                                                    </div>
+                                                                    <div className="ml-2">
+                                                                        No History
+                                                                    </div>
+                                                                </>
+                                                            )}
                                                         </div>
                                                     )}
                                                 </ol>

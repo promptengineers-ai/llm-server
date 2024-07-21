@@ -9,6 +9,7 @@ import { multiModalModels } from "@/types/llm";
 import DocumentIcon from "../icons/DocumentIcon";
 import { generateRandomNumber } from "@/utils/random";
 import { ChatClient } from "@/utils/api";
+import { useAppContext } from "@/contexts/AppContext";
 
 const SUGGESTIONS = [
     {
@@ -36,6 +37,7 @@ const SUGGESTIONS = [
 
 
 export default function ChatSection() {
+    const { loading } = useAppContext();
     const {
         done,
         chatInputRef,
@@ -141,6 +143,15 @@ export default function ChatSection() {
     }, [userInput]);
 
     const selectedFiles = [...images, ...files]
+    const loadingPlaceholder = () => {
+        if (!loading) {
+            return files.length > 0
+                ? "List 5 key takeaways..."
+                : "Acting as a expert at...";
+        } else {
+            return 'Please wait...'
+        }
+    }
 
     return (
         <div className="w-full pt-2 md:pt-0 border-t md:border-t-0 bg-white md:!bg-transparent">
@@ -291,13 +302,10 @@ export default function ChatSection() {
                                 tabIndex={0}
                                 data-id="root"
                                 rows={1}
+                                disabled={loading}
                                 // disabled={files.length > 0}
-                                placeholder={
-                                    files.length > 0
-                                        ? "List 5 key takeaways..."
-                                        : "Acting as a expert at..."
-                                }
-                                className="m-0 w-full resize-none border-0 bg-white py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] placeholder-black/50 pl-10 md:pl-[55px] focus:outline-none"
+                                placeholder={loadingPlaceholder()}
+                                className="m-0 w-full resize-none border-0 bg-white disabled:bg-gray-100 py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] placeholder-black/50 pl-10 md:pl-[55px] focus:outline-none"
                                 style={{
                                     overflowY: "auto",
                                     borderRadius: "10px",
