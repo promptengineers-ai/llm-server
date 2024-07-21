@@ -302,7 +302,7 @@ export default function ChatSection() {
                                 tabIndex={0}
                                 data-id="root"
                                 rows={1}
-                                disabled={loading}
+                                // disabled={loading}
                                 // disabled={files.length > 0}
                                 placeholder={loadingPlaceholder()}
                                 className="m-0 w-full resize-none border-0 bg-white disabled:bg-gray-100 py-[10px] pr-10 md:py-3.5 md:pr-12 max-h-[25dvh] placeholder-black/50 pl-10 md:pl-[55px] focus:outline-none"
