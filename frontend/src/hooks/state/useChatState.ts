@@ -141,12 +141,15 @@ export const useChatState = () => {
     };
 
     const fetchChats = async () => {
+        setLoading(true);
         try {
             const data = await chatClient.list();
             setChats(data.chats);
         } catch (err) {
             alert(err);
             console.error(err);
+        } finally {
+            setLoading(false);
         }
     };
 
