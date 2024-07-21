@@ -66,7 +66,7 @@ const LoginForm = () => {
         if (loading) {
             timer = setTimeout(() => {
                 setTimeoutExceeded(true);
-            }, 500); // 5 seconds timeout
+            }, 5000); // 5 seconds timeout
         }
         return () => {
             clearTimeout(timer);
