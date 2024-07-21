@@ -2,35 +2,36 @@
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext"; // Make sure to import the theme context
 import { useAppState } from "@/hooks/state/useAppState";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaSpinner } from "react-icons/fa";
 
 const LoginForm = () => {
     const { theme } = useTheme();
-    const {loading, setLoading} = useAppState();
+    const { loading, setLoading } = useAppState();
     const { login } = useAuthContext();
     const [payload, setPayload] = useState({
         email: "admin@example.com",
         password: "test1234",
     });
+    const [timeoutExceeded, setTimeoutExceeded] = useState(false);
 
     // Determine the class names based on the theme
     const themeClasses =
         theme === "dark"
             ? {
-                text: "text-white",
-                input: "bg-gray-800 border-gray-700 placeholder-gray-500",
-                button: "bg-indigo-700 hover:bg-indigo-600",
-                link: "text-indigo-400 hover:text-indigo-300",
-                shadow: "shadow-none",
+                  text: "text-white",
+                  input: "bg-gray-800 border-gray-700 placeholder-gray-500",
+                  button: "bg-indigo-700 hover:bg-indigo-600",
+                  link: "text-indigo-400 hover:text-indigo-300",
+                  shadow: "shadow-none",
               }
             : {
-                text: "text-gray-900",
-                input: "border-gray-300 placeholder-gray-400",
-                button: "bg-indigo-600 hover:bg-indigo-500",
-                link: "text-indigo-600 hover:text-indigo-500",
-                shadow: "shadow-sm",
-            };
+                  text: "text-gray-900",
+                  input: "border-gray-300 placeholder-gray-400",
+                  button: "bg-indigo-600 hover:bg-indigo-500",
+                  link: "text-indigo-600 hover:text-indigo-500",
+                  shadow: "shadow-sm",
+              };
 
     const handleInputChange = (e: any) => {
         const { name, value } = e.target;
@@ -56,8 +57,21 @@ const LoginForm = () => {
             console.error("Login Failed:", error);
         } finally {
             setLoading(false);
+            setTimeoutExceeded(false);
         }
     };
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (loading) {
+            timer = setTimeout(() => {
+                setTimeoutExceeded(true);
+            }, 500); // 5 seconds timeout
+        }
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [loading]);
 
     return (
         <>
@@ -145,19 +159,27 @@ const LoginForm = () => {
                                 disabled={loading} // Disable button when loading
                             >
                                 {loading ? (
-                                    <>
+                                    <div className="flex items-center">
                                         <FaSpinner
                                             className="animate-spin"
                                             fontSize={18}
                                         />
-                                        <span className="ml-2">Processing...</span>
-                                    </>
+                                        <span className="ml-2">
+                                            Processing...
+                                        </span>
+                                    </div>
                                 ) : (
                                     "Sign in"
                                 )}
                             </button>
                         </div>
                     </form>
+                    {loading && timeoutExceeded && (
+                        <div className="mt-4 text-center text-sm text-red-600 font-semibold">
+                            Serverless Enabled: please wait for cold boot to
+                            finish
+                        </div>
+                    )}
                 </div>
             </div>
         </>
