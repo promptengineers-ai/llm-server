@@ -4,10 +4,12 @@ import unittest
 
 from src.config import retrieve_defaults
 from src.config.llm import ModelType
+from src.db.postgres import PGVectorDB
 from src.db.strategies import VectorstoreContext
 from src.factories.embedding import EmbeddingFactory
 from src.factories.retrieval import RetrievalFactory
 from src.models import UpsertDocuments
+from src.repositories.index import IndexRepository
 from src.services.document import DocumentService
 from src.services.db import create_default_user, get_db
 from test import apply_migrations, cleanup_database
@@ -97,6 +99,15 @@ class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
         )
         assert len(result) > 0
         
+        
+    async def list_indexes(self):
+        db = get_db(self.tokens.get('POSTGRES_URL'))
+        async_db = await db.__anext__()
+        repo = IndexRepository(db=async_db, user_id=self.user_id)
+        indexes = await repo.list()
+        return indexes
+        
+        
     async def retrieve_documents(self):
         retrieval_provider = RetrievalFactory(
             provider=self.body.get('provider'),
@@ -139,13 +150,17 @@ class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
         dropped = vectostore_service.delete()
         assert dropped == True
 
+    # @unittest.skip("skip test_upsert_and_retrieve_documents. Will not run in GH Action without Postgres container")
+    async def test_list_indexes(self):
+        await self.list_indexes()
+
     @unittest.skip("skip test_upsert_and_retrieve_documents. Will not run in GH Action without Postgres container")
     async def test_upsert_and_retrieve_documents(self):
         await self.upsert_documents()
         await self.retrieve_documents()
         await self.delete_collection()
         
-    # @unittest.skip("skip test_upsert_and_retrieve_documents. Will not run in GH Action without Postgres container")
+    @unittest.skip("skip test_upsert_and_retrieve_documents. Will not run in GH Action without Postgres container")
     async def test_upsert_and_multi_retriever_(self):
         indexes = [['big-bad-wolf',DOCS_1], ['boy-who-cried-wolf', DOCS_2]]
         for index in indexes:

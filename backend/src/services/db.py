@@ -6,13 +6,9 @@ from sqlalchemy.orm import sessionmaker
 from src.config import APP_ADMIN_EMAIL, APP_ADMIN_PASS, APP_SECRET, DATABASE_URL, database_engine
 from src.models.sql.user import User 
 
-engine = create_async_engine(DATABASE_URL, echo=True, connect_args={"statement_cache_size": 0} if database_engine() == 'postgresql' else {})
-AsyncSessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine,
-    class_=AsyncSession
-)
+
+def configure_engine(db_url: str = DATABASE_URL):
+    return create_async_engine(db_url, echo=True, connect_args={"statement_cache_size": 0} if database_engine() == 'postgresql' else {})
 
 async def create_default_user(session):
     default_user = await session.execute(
@@ -42,7 +38,13 @@ async def create_default_user(session):
     await session.close()
     return default_user
 
-async def get_db():
+async def get_db(db_url: str = DATABASE_URL):
+    AsyncSessionLocal = sessionmaker(
+        autocommit=False,
+        autoflush=False,
+        bind=configure_engine(db_url),
+        class_=AsyncSession
+    )
     db = AsyncSessionLocal()
     try:
         yield db
