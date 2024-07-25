@@ -327,7 +327,8 @@ export const useChatState = () => {
             // If index exists, use it, otherwise generate a random number
             const index_name =
                 chatPayload.retrieval.index_name ||
-                generateRandomNumber().toString();
+                chatPayload.history_id ||
+                generateRandomNumber().toString(); // This won't solve my chicken an egg problem, as conversation has not be created yet.
 
             setStatus((prev: any) => ({ ...prev, task_id: index_name }));
             try {
