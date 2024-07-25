@@ -216,3 +216,17 @@ class Agent(Chat):
 			}
 		}
 	}
+ 
+ 
+class PostgresPut(BaseModel):
+	index_name: str
+	new_index_name: str
+ 
+	__config__ = {
+		"json_schema_extra": {
+			"example": {
+				"index_name": "6901622865",
+				"new_index_name": "my-new-index-name"
+			}
+   		}
+  	}
