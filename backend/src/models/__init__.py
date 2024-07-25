@@ -230,3 +230,14 @@ class PostgresPut(BaseModel):
 			}
    		}
   	}
+ 
+class PostgresDelete(BaseModel):
+	index_name: str
+ 
+	__config__ = {
+		"json_schema_extra": {
+			"example": {
+				"index_name": "my-new-index-name"
+			}
+   		}
+  	}

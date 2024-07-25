@@ -4,6 +4,8 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import (APIRouter, Body, Depends, HTTPException, Request,
 					Response, status)
 
+from src.db.strategies import VectorstoreContext
+from src.factories.retrieval import RetrievalFactory
 from src.infrastructure.logger import logger as logging
 from src.controllers.index import (retrieve_pinecone_vectorstores, 
 								   delete_pinecone_index, 
@@ -11,7 +13,7 @@ from src.controllers.index import (retrieve_pinecone_vectorstores,
 								   delete_redis_vectorstore)
 from src.config import PINECONE_API_KEY, PINECONE_ENV, PINECONE_INDEX, REDIS_URL, retrieve_defaults
 from src.middleware.auth import current_user
-from src.models import PostgresPut
+from src.models import PostgresDelete, PostgresPut
 from src.repositories import get_repo
 from src.repositories.index import IndexRepository
 from src.services.cache import CacheService
@@ -245,19 +247,19 @@ async def list_postgres_indexes(request: Request):
   
 
 @router.put(
-    "/indexes/postgres",
-    dependencies=[Depends(current_user)],
-    tags=[TAG],
-    responses={
+	"/indexes/postgres",
+	dependencies=[Depends(current_user)],
+	tags=[TAG],
+	responses={
 		200: {
 			"description": "Index name updated",
 			"content": {
-       			"application/json": {
-              		"example": {
+	   			"application/json": {
+			  		"example": {
 						"message": "Index 6901622865 updated to my-new-index-name"
 					}
-                }
-          	},
+				}
+		  	},
 		},
 		409: {
 			"description": "Index name already exists",
@@ -282,73 +284,84 @@ async def list_postgres_indexes(request: Request):
 	}
 )
 async def update_postgres_index_name(
-    request: Request,
-    body: PostgresPut = Body(...),
+	request: Request,
+	body: PostgresPut = Body(...),
 ):
-    try:
-        token_name = "POSTGRES_URL"
-        tokens = retrieve_defaults({token_name})
-        url = tokens.get(token_name).replace('psycopg', 'asyncpg')
-        async for db in get_vector_db(url):
-            repo = get_repo(
-                request=request,
-                db=db,
-                cls=IndexRepository
-            )
-            await repo.update_name(body.index_name, body.new_index_name)
-            # Format Response
-            data = ujson.dumps({
-                'message': f'Index {body.index_name} updated to {body.new_index_name}'
-            })
-            return Response(
-                content=data,
-                media_type='application/json',
-                status_code=200
-            )
-    except ValidationException as err:
-        logging.warning("ValidationException: %s", err)
-        raise HTTPException(
-            status_code=400,
-            detail=str(err)
-        ) from err
-    except NotFoundException as err:
-        logging.warning("NotFoundException: %s", err)
-        raise HTTPException(status_code=404, detail=str(err)) from err
-    except IntegrityError as err:
-        if 'duplicate key value violates unique constraint' in str(err.orig):
-            logging.warning("IntegrityError: Duplicate key value error: %s", err)
-            raise HTTPException(status_code=409, detail=f"Duplicate: Index [{body.new_index_name}] name already exists.")
-        else:
-            logging.error("IntegrityError: %s", err)
-            raise HTTPException(status_code=500, detail="Internal server error") from err
-    except HTTPException as err:
-        logging.error("HTTPException: %s", err.detail)
-        raise
-    except Exception as err:
-        tb = traceback.format_exc()
-        logging.exception(err)
-        raise HTTPException(
-            status_code=500,
-            detail=f"An unexpected error occurred. {str(err)}"
-        ) from err
+	try:
+		token_name = "POSTGRES_URL"
+		tokens = retrieve_defaults({token_name})
+		url = tokens.get(token_name).replace('psycopg', 'asyncpg')
+		async for db in get_vector_db(url):
+			repo = get_repo(
+				request=request,
+				db=db,
+				cls=IndexRepository
+			)
+			await repo.update_name(body.index_name, body.new_index_name)
+			# Format Response
+			data = ujson.dumps({
+				'message': f'Index {body.index_name} updated to {body.new_index_name}'
+			})
+			return Response(
+				content=data,
+				media_type='application/json',
+				status_code=200
+			)
+	except ValidationException as err:
+		logging.warning("ValidationException: %s", err)
+		raise HTTPException(
+			status_code=400,
+			detail=str(err)
+		) from err
+	except NotFoundException as err:
+		logging.warning("NotFoundException: %s", err)
+		raise HTTPException(status_code=404, detail=str(err)) from err
+	except IntegrityError as err:
+		if 'duplicate key value violates unique constraint' in str(err.orig):
+			logging.warning("IntegrityError: Duplicate key value error: %s", err)
+			raise HTTPException(status_code=409, detail=f"Duplicate: Index [{body.new_index_name}] name already exists.")
+		else:
+			logging.error("IntegrityError: %s", err)
+			raise HTTPException(status_code=500, detail="Internal server error") from err
+	except HTTPException as err:
+		logging.error("HTTPException: %s", err.detail)
+		raise
+	except Exception as err:
+		tb = traceback.format_exc()
+		logging.exception(err)
+		raise HTTPException(
+			status_code=500,
+			detail=f"An unexpected error occurred. {str(err)}"
+		) from err
   
 ######################################
 # Delete Postgres Index
 ######################################
 @router.delete(
-	"/indexes/postgres/{id}",
+	"/indexes/postgres",
 	status_code=status.HTTP_204_NO_CONTENT,
 	dependencies=[Depends(current_user)],
 	tags=[TAG]
 )
 async def delete_postgres_index(
 	request: Request,
-	prefix: str or None = None, # type: ignore
+	body: PostgresDelete = Body(...),
 ):
 	try:
-		keys = {"REDIS_URL"}
-		tokens = retrieve_defaults(keys)
-		delete_redis_vectorstore(request.state.user_id, prefix, tokens)
+		token_name = "POSTGRES_URL"
+		tokens = retrieve_defaults({token_name})
+		retrieval_provider = RetrievalFactory(
+			provider='postgres',
+			embeddings=None,
+			provider_keys={
+				'connection': tokens.get(token_name),
+				'collection_name': f"{request.state.user_id}::{body.index_name}",
+			}
+		)
+		vectostore_service = VectorstoreContext(retrieval_provider.create_strategy())
+		dropped = vectostore_service.delete()
+		if not dropped:
+			raise HTTPException(status_code=404, detail="Index not found")
 		return Response(status_code=204)
 	except ValidationException as err:
 		logging.warning("ValidationException: %s", err)
