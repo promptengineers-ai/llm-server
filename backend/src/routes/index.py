@@ -348,20 +348,12 @@ async def delete_postgres_index(
 	body: PostgresDelete = Body(...),
 ):
 	try:
-		token_name = "POSTGRES_URL"
-		tokens = retrieve_defaults({token_name})
-		retrieval_provider = RetrievalFactory(
-			provider='postgres',
-			embeddings=None,
-			provider_keys={
-				'connection': tokens.get(token_name),
-				'collection_name': f"{request.state.user_id}::{body.index_name}",
-			}
+		repo = get_repo(
+			request=request,
+			db=None,
+			cls=IndexRepository
 		)
-		vectostore_service = VectorstoreContext(retrieval_provider.create_strategy())
-		dropped = vectostore_service.delete()
-		if not dropped:
-			raise HTTPException(status_code=404, detail="Index not found")
+		repo.delete(body.index_name)
 		return Response(status_code=204)
 	except ValidationException as err:
 		logging.warning("ValidationException: %s", err)
@@ -369,6 +361,9 @@ async def delete_postgres_index(
 			status_code=400,
 			detail=str(err)
 		) from err
+	except NotFoundException as err:
+		logging.warning("NotFoundException: %s", err)
+		raise HTTPException(status_code=404, detail=str(err)) from err
 	except Exception as err:
 		raise HTTPException(status_code=404, 
 					  		detail=str(err)) from err

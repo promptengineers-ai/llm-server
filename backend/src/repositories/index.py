@@ -2,6 +2,9 @@ import uuid
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.config import retrieve_defaults
+from src.db.strategies import VectorstoreContext
+from src.factories.retrieval import RetrievalFactory
 from src.utils.exception import NotFoundException
 
 class IndexRepository:
@@ -51,3 +54,19 @@ class IndexRepository:
 			await self.db.commit()
 		finally:
 			await conn.close()
+   
+	def delete(self, index_name: str) -> bool:
+		token_name = "POSTGRES_URL"
+		tokens = retrieve_defaults({token_name})
+		retrieval_provider = RetrievalFactory(
+			provider='postgres',
+			embeddings=None,
+			provider_keys={
+				'connection': tokens.get(token_name),
+				'collection_name': f"{self.user_id}::{index_name}",
+			}
+		)
+		vectostore_service = VectorstoreContext(retrieval_provider.create_strategy())
+		dropped = vectostore_service.delete()
+		if not dropped:
+			raise NotFoundException(f"Index with name {index_name} not found")
