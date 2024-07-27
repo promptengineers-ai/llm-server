@@ -35,7 +35,7 @@ class AzureModels(Enum):
 	GPT_4_OMNI = 'gpt-4o'
 	
 class ModelType(str, Enum):
-	AZURE_GPT_4_OMNI = 'openai-gpt-4o'
+	AZURE_GPT_4_OMNI = 'azure-gpt-4o'
 	OPENAI_EMBED_ADA = 'openai-text-embedding-ada'
 	OPENAI_TEXT_EMBED_3_SMALL = 'openai-text-embedding-3-small'
 	OPENAI_TEXT_EMBED_3_LARGE = 'openai-text-embedding-3-large'
