@@ -1,5 +1,8 @@
 from enum import Enum
-from src.config import ANTHROPIC_API_KEY, GROQ_API_KEY, OLLAMA_BASE_URL, OPENAI_API_KEY
+from src.config import (ANTHROPIC_API_KEY, GROQ_API_KEY, 
+                        OLLAMA_BASE_URL, OPENAI_API_KEY, 
+                        AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT,
+                        AZURE_OPENAI_DEPLOYMENT, AZURE_OPENAI_API_VERSION)
 from src.utils.llm import model_sets
 
 class OpenAIModels(Enum):
@@ -28,8 +31,11 @@ class OllamaModels(Enum):
 	PHI3 = 'phi3'
 	PHI3_14B = 'phi3:14b'
 	
+class AzureModels(Enum):
+	GPT_4_OMNI = 'gpt-4o'
 	
 class ModelType(str, Enum):
+	AZURE_GPT_4_OMNI = 'openai-gpt-4o'
 	OPENAI_EMBED_ADA = 'openai-text-embedding-ada'
 	OPENAI_TEXT_EMBED_3_SMALL = 'openai-text-embedding-3-small'
 	OPENAI_TEXT_EMBED_3_LARGE = 'openai-text-embedding-3-large'
@@ -79,6 +85,21 @@ class Embedding(str, Enum):
 	MXBAI_EMBED_LARGE = ModelType.OLLAMA_MXBAI_EMBED_LARGE.value
 
 MODEL_LIST = [
+    ## Azure
+    {
+		"model_name": ModelType.AZURE_GPT_4_OMNI,
+		"embedding": False,
+		"multimodal": True,
+		"open_source": False,
+		"litellm_params": {
+			"model": f"azure/{AzureModels.GPT_4_OMNI.value}",
+			"api_key": AZURE_OPENAI_API_KEY,
+			"azure_deployment": AZURE_OPENAI_DEPLOYMENT,
+			"azure_endpoint": AZURE_OPENAI_ENDPOINT,
+			"api_version": AZURE_OPENAI_API_VERSION
+		},
+	},
+    ## OpenAI
 	{
 		"model_name": ModelType.OPENAI_EMBED_ADA,
 		"embedding": True,
@@ -147,6 +168,7 @@ MODEL_LIST = [
 			"api_key": OPENAI_API_KEY
 		},
 	},
+	## Ollama
 	{
 		"model_name": ModelType.OLLAMA_NOMIC_EMBED_TEXT,
 		"embedding": True,
@@ -255,6 +277,7 @@ MODEL_LIST = [
 			"api_base": OLLAMA_BASE_URL
 		},
 	},
+	## Groq
 	{
 		"model_name": ModelType.GROQ_MIXTRAL,
 		"multimodal": False,
@@ -285,6 +308,7 @@ MODEL_LIST = [
 			"api_key": GROQ_API_KEY
 		},
 	},
+	## Anthropic
 	{
 		"model_name": ModelType.ANTHROPIC_HAIKU,
 		"multimodal": False,
