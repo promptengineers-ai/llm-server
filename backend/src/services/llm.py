@@ -101,6 +101,7 @@ class LLMService:
 				cache=cache,
 			)
 		if model_provider.startswith('azure'):
+			## https://api.python.langchain.com/en/latest/chat_models/langchain_openai.chat_models.azure.AzureChatOpenAI.html
 			return AzureChatOpenAI(
 				api_version=params.get('api_version', ''),
 				azure_deployment=params.get('azure_deployment', ''),
