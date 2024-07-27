@@ -99,7 +99,6 @@ export default function ChatProvider({ children }: IContextProvider) {
                 if (data.step === 'upsert' && data.progress === 100) {
                     eventSource.close();
                     console.log("EventSource connection closed");
-                    alert(`Index ${task_id} created successfully!`);
                     setStatus(defaultState.status);
                     setIsWebLoaderOpen(false);
                 }
@@ -119,14 +118,21 @@ export default function ChatProvider({ children }: IContextProvider) {
             // If index exists, use it, otherwise generate a random number
             const index_name =
                 chatPayload.retrieval.index_name ||
-                generateRandomNumber().toString();
-            setStatus((prev: any) => ({ ...prev, step: "scrape" }));
-            updateStatus(index_name);
+                prompt('Enter an index name:');
+            
+            const task_id = generateRandomNumber().toString();
+            
             try {
+                if (!index_name) {
+                    // alert("Index name is required");
+                    return;
+                }
+                updateStatus(task_id);
+                setStatus((prev: any) => ({ ...prev, step: "scrape" }));
                 const chatClient = new ChatClient();
-                const docs = await chatClient.createDocs({ loaders, task_id: index_name });
+                const docs = await chatClient.createDocs({ loaders, task_id });
                 await chatClient.upsert({
-                    task_id: index_name,
+                    task_id,
                     documents: docs.documents,
                     index_name: index_name,
                     provider: chatPayload.retrieval.provider,
@@ -135,6 +141,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                     parallel: chatPayload.retrieval.parallel,
                     workers: chatPayload.retrieval.workers,
                 });
+                alert(`Index [${index_name}] created successfully!`);
                 setChatPayload((prev: any) => ({
                     ...prev,
                     retrieval: {
@@ -146,7 +153,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                 resolve();
             } catch (error) {
                 console.error(error);
-                alert("Error uploading the file");
+                alert(error);
                 reject(error);
             }
         });

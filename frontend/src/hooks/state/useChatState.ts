@@ -323,19 +323,27 @@ export const useChatState = () => {
     const createIndex = (e: any) => {
         return new Promise<void>(async (resolve, reject) => {
             e.preventDefault();
-
+            
             // If index exists, use it, otherwise generate a random number
             const index_name =
                 chatPayload.retrieval.index_name ||
-                chatPayload.history_id ||
-                generateRandomNumber().toString(); // This won't solve my chicken an egg problem, as conversation has not be created yet.
+                prompt('Enter an index name:');
 
-            setStatus((prev: any) => ({ ...prev, task_id: index_name }));
+            const task_id = generateRandomNumber().toString();
+            
             try {
+                if (!index_name) {
+                    // alert("Index name is required");
+                    return;
+                }
+                setStatus((prev: any) => ({ ...prev, task_id: index_name }));
                 const chatClient = new ChatClient();
-                const docs = await chatClient.createDocuments({ data: files, task_id: index_name });
+                const docs = await chatClient.createDocuments({
+                    data: files,
+                    task_id,
+                });
                 await chatClient.upsert({
-                    task_id: index_name,
+                    task_id,
                     documents: docs.documents,
                     index_name: index_name,
                     provider: chatPayload.retrieval.provider,
@@ -352,7 +360,7 @@ export const useChatState = () => {
                 resolve();
             } catch (error) {
                 console.error(error);
-                alert("Error uploading the file");
+                alert(error);
                 reject(error);
             }
         });
