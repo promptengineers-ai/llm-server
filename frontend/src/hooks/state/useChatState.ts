@@ -51,6 +51,7 @@ export const defaultState = {
                 ? EmbeddingModel.OLLAMA_NOMIC_EMBED_TEXT
                 : EmbeddingModel.OPENAI_TEXT_EMBED_3_LARGE,
             index_name: "",
+            indexes: [],
             search_type: SearchType.MMR,
             search_kwargs: {
                 k: 20,
@@ -353,7 +354,7 @@ export const useChatState = () => {
                     ...prev,
                     retrieval: {
                         ...prev.retrieval,
-                        index_name: index_name,
+                        indexes: [index_name],
                     },
                 }));
                 setFiles([]);

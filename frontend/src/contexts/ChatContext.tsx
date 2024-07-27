@@ -146,7 +146,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                     ...prev,
                     retrieval: {
                         ...prev.retrieval,
-                        index_name: index_name,
+                        indexes: [index_name],
                     },
                 }));
                 setLoaders([]);

@@ -3,11 +3,9 @@ from langchain.chains.history_aware_retriever import create_history_aware_retrie
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
-from src.db.strategies import VectorstoreContext
-from src.factories.retrieval import RetrievalFactory
 from src.config import OPENAI_API_KEY, PINECONE_API_KEY, PINECONE_ENV, PINECONE_INDEX, POSTGRES_URL, REDIS_URL
 from src.factories.embedding import EmbeddingFactory
-from src.models import Agent, Retrieval
+from src.models import Agent, Retrieval, SearchProvider
 from src.utils.llm import filter_models
 from src.services import LLMService, RetrievalService
 
@@ -45,49 +43,49 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory, ConfigurableFieldSpec
 
 def retrieval_chain(body: Retrieval or Agent, user_id = None): # type: ignore
-	vectorstore = None
-	if body.retrieval.provider and body.retrieval.index_name:
-		embedding = EmbeddingFactory(llm=body.retrieval.embedding, token=OPENAI_API_KEY) # TODO: Check the index information in DB to see which was used.
-		index_name_or_namespace = f"{user_id}::{body.retrieval.index_name}" if user_id else body.retrieval.index_name
-		if body.retrieval.provider == 'redis':
-			provider_keys={
-				'redis_url': REDIS_URL,
-				'index_name': index_name_or_namespace,
-			}
-		elif body.retrieval.provider == 'pinecone':
-			provider_keys = {
-				'api_key': PINECONE_API_KEY,
-				'env': PINECONE_ENV,
-				'index_name': PINECONE_INDEX,
-				'namespace': index_name_or_namespace,
-			}
-		elif body.retrieval.provider == 'postgres':
-			provider_keys = {
-				'connection': POSTGRES_URL,
-				'collection_name': index_name_or_namespace,
-				'async_mode': True,
-			}
-		else:
-			raise ValueError(f"Invalid retrieval provider {body.retrieval.provider}")
 
-		retrieval_provider = RetrievalFactory(
-			provider=body.retrieval.provider,
-			embeddings=embedding.create_embedding(),
-			provider_keys=provider_keys
-		)
-		vectostore_service = VectorstoreContext(retrieval_provider.create_strategy())
-		vectorstore = vectostore_service.load()
+	if body.retrieval.provider and body.retrieval.indexes:
+		embedding = EmbeddingFactory(llm=body.retrieval.embedding, token=OPENAI_API_KEY) # TODO: Check the index information in DB to see which was used.
+		if len(body.retrieval.indexes) > 1:
+			retrievers = []
+			for index in body.retrieval.indexes:				
+				config = retrieval_service.config(
+					provider=body.retrieval.provider,
+					index=retrieval_service.format_index_name(
+         				index, 
+             			user_id
+            		),
+				)
+				retriever = retrieval_service.retriever(
+					config=config,
+					embeddings=embedding.create_embedding(),
+					body=body
+				)
+				retrievers.append(retriever)
+			retriever = retrieval_service.merge_retrievers(
+       			retrievers=retrievers, 
+	   			embeddings=embedding.create_embedding()
+          	)
+		else:
+			config = retrieval_service.config(
+				provider=body.retrieval.provider,
+				index=retrieval_service.format_index_name(
+        			body.retrieval.indexes[0], 
+           			user_id
+              	),
+			)
+			retriever = retrieval_service.retriever(
+				config=config,
+				embeddings=embedding.create_embedding(),
+				body=body
+			)
 
 	llm = LLMService(model_list=filter_models(body.model)).chat()
 	question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
-	filter_search_kwargs = body.retrieval.search_kwargs.model_dump()
 	history_aware_retriever = create_history_aware_retriever(
-		llm, 
-		vectorstore.as_retriever(
-			search_type=body.retrieval.search_type, 
-			search_kwargs={k: v for k, v in filter_search_kwargs.items() if v is not None}
-		), 
-		contextualize_q_prompt
+		llm=llm, 
+		retriever=retriever, 
+		prompt=contextualize_q_prompt
 	)
 	rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
 	
