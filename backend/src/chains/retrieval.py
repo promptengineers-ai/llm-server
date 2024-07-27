@@ -43,42 +43,16 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory, ConfigurableFieldSpec
 
 def retrieval_chain(body: Retrieval or Agent, user_id = None): # type: ignore
-
 	if body.retrieval.provider and body.retrieval.indexes:
-		embedding = EmbeddingFactory(llm=body.retrieval.embedding, token=OPENAI_API_KEY) # TODO: Check the index information in DB to see which was used.
-		if len(body.retrieval.indexes) > 1:
-			retrievers = []
-			for index in body.retrieval.indexes:				
-				config = retrieval_service.config(
-					provider=body.retrieval.provider,
-					index=retrieval_service.format_index_name(
-         				index, 
-             			user_id
-            		),
-				)
-				retriever = retrieval_service.retriever(
-					config=config,
-					embeddings=embedding.create_embedding(),
-					body=body
-				)
-				retrievers.append(retriever)
-			retriever = retrieval_service.merge_retrievers(
-       			retrievers=retrievers, 
-	   			embeddings=embedding.create_embedding()
-          	)
-		else:
-			config = retrieval_service.config(
-				provider=body.retrieval.provider,
-				index=retrieval_service.format_index_name(
-        			body.retrieval.indexes[0], 
-           			user_id
-              	),
-			)
-			retriever = retrieval_service.retriever(
-				config=config,
-				embeddings=embedding.create_embedding(),
-				body=body
-			)
+		embedding = EmbeddingFactory(
+      		llm=body.retrieval.embedding, 
+        	token=OPENAI_API_KEY
+        )
+		retriever = retrieval_service.retriever(
+			retrieval=body.retrieval,
+			embedding=embedding,
+			user_id=user_id,
+		)
 
 	llm = LLMService(model_list=filter_models(body.model)).chat()
 	question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)

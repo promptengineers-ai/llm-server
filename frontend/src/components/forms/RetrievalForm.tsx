@@ -87,7 +87,7 @@ const RetrievalForm = () => {
                     ...prev.retrieval,
                     search_kwargs: {
                         ...prev.retrieval.search_kwargs,
-                        score_threshold,
+                        score_threshold: parseFloat(score_threshold),
                     },
                 },
             }));
@@ -283,7 +283,7 @@ const RetrievalForm = () => {
                                             ...prev.retrieval,
                                             search_kwargs: {
                                                 ...prev.retrieval.search_kwargs,
-                                                score_threshold: e.target.value,
+                                                score_threshold: parseFloat(e.target.value),
                                             },
                                         },
                                     }));
