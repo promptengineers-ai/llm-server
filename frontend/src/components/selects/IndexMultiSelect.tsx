@@ -1,6 +1,7 @@
 import Select, { MultiValue, ActionMeta, components } from "react-select";
 import { SearchProvider } from "@/types/llm";
 import { useChatContext } from "@/contexts/ChatContext";
+import { useEffect, useState } from "react";
 
 type OptionType = {
     value: SearchProvider;
@@ -9,11 +10,18 @@ type OptionType = {
 
 const CustomOption = (props: any) => {
     const { data, innerRef, innerProps } = props;
+    const { deleteIndex, initChatPayload } = useChatContext();
 
-    const handleDeleteClick = (event: React.MouseEvent) => {
+    const handleDeleteClick = async (event: React.MouseEvent) => {
         event.stopPropagation();
         // Replace this with your API call for deleting
-        alert(`Delete ${data.value}`);
+        const confirmDelete = confirm(
+            `Are you sure you want to delete [${data.value}] index?`
+        );
+        if (!confirmDelete) {
+            return; // If user clicks 'Cancel', exit the function
+        }
+        await deleteIndex(initChatPayload.retrieval.provider, data.value);
     };
 
     const handleUpdateClick = (event: React.MouseEvent) => {
@@ -35,7 +43,7 @@ const CustomOption = (props: any) => {
                     </button>
                     <button
                         onClick={handleDeleteClick}
-                        // className="text-red-500 hover:text-red-700 ml-2"
+                        className="ml-2"
                     >
                         ✕
                     </button>
@@ -47,12 +55,13 @@ const CustomOption = (props: any) => {
 
 const IndexMultiSelect = () => {
     const { indexes, setInitChatPayload, initChatPayload } = useChatContext();
+    const [options, setOptions] = useState<OptionType[]>([]);
 
     const formattedIndexes = indexes.map((index: any) => ({
         value: index.name,
         label: index.name,
     }));
-    const selectedIndexes = initChatPayload.retrieval.indexes.map(
+    const selectedIndexes = initChatPayload.retrieval.indexes?.map(
         (index: any) => ({
             value: index,
             label: index,
@@ -72,6 +81,10 @@ const IndexMultiSelect = () => {
         }));
     };
 
+    useEffect(() => {
+        setOptions(formattedIndexes);
+    }, [indexes])
+
     return (
         <div className="border px-2 rounded-md p-3">
             <label className="font-semibold">Indexes</label>
@@ -82,12 +95,12 @@ const IndexMultiSelect = () => {
                 isMulti
                 name="indexes"
                 closeMenuOnSelect={false}
-                options={formattedIndexes}
+                options={options}
                 className="basic-multi-select mt-1"
                 classNamePrefix="select"
                 value={selectedIndexes}
                 onChange={handleChange}
-                // components={{ Option: CustomOption }}
+                components={{ Option: CustomOption }}
             />
         </div>
     );

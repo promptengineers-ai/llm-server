@@ -5,8 +5,6 @@ import { ChatPayload, LLM, Message } from "@/types/chat";
 import { logFilter } from "@/utils/log";
 import { HookedConsole } from "console-feed/lib/definitions/Console";
 import { API_URL } from "@/config/app";
-import { defaultState } from "../state/useChatState";
-import { stat } from "fs";
 
 export const useFetchModelsEffect = (models: LLM[], fetchModels: any) => {
     useEffect(() => {
@@ -187,27 +185,9 @@ export const useFetchToolsEffect = (setTools: any) => {
 
 }
 
-export const useFetchIndexesEffect = (provider: 'pinecone'|'redis'|'postgres', setIndexes: any) => {
+export const useFetchIndexesEffect = (provider: 'pinecone'|'redis'|'postgres', fetchIndexes: any) => {
     useEffect(() => {
-        const fetchIndexes = async () => {
-            try {
-                const response = await fetch(
-                    `${API_URL}/api/v1/indexes/${provider}`,
-                    {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("token")}`,
-                        },
-                    }
-                );
-                const data = await response.json();
-                setIndexes(data.indexes);
-            } catch (error) {
-                console.error("Error fetching tools:", error);
-            }
-        };
-
-        fetchIndexes();
+        fetchIndexes(provider);
         return () => {
             // Cleanup logic if needed
         };

@@ -27,12 +27,12 @@ const CustomizeModal = () => {
         isSaveEnabled,
         resetOnCancel,
         setTools,
-        setIndexes,
+        fetchIndexes,
     } = useChatContext();
 
     useUpdateInitChatPayloadEffect(setInitChatPayload);
     useFetchToolsEffect(setTools);
-    useFetchIndexesEffect(initChatPayload.retrieval.provider, setIndexes);
+    useFetchIndexesEffect(initChatPayload.retrieval.provider, fetchIndexes);
 
     if (!isOpen) {
         return null;

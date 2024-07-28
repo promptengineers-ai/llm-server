@@ -5,7 +5,7 @@ import { useAppContext } from "@/contexts/AppContext";
 import { LLM, Message, Tool } from "@/types/chat";
 import { EmbeddingModel, ModelType, SearchProvider, SearchType, acceptRagSystemMessage } from "@/types/llm";
 import { ChatClient } from "@/utils/api";
-import { combinePrompts, parseCSV, shallowUrl } from "@/utils/chat";
+import { combinePrompts, parseCSV, removeByKeyValue, shallowUrl } from "@/utils/chat";
 import { log } from "@/utils/log";
 import { generateRandomNumber } from "@/utils/random";
 import { useSearchParams } from "next/navigation";
@@ -117,6 +117,55 @@ export const useChatState = () => {
             setLoading(false);
             setSseSource(null);
             console.log("SSE request aborted");
+        }
+    };
+
+    const fetchIndexes = async (
+        provider: "pinecone" | "redis" | "postgres"
+    ) => {
+        try {
+            const response = await fetch(
+                `${API_URL}/api/v1/indexes/${provider}`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                }
+            );
+            const data = await response.json();
+            setIndexes(data.indexes);
+        } catch (error) {
+            console.error("Error fetching tools:", error);
+        }
+    };
+
+    const deleteIndex = async (
+        provider: "pinecone" | "redis" | "postgres",
+        index_name: string
+    ) => {
+        try {
+            const response = await fetch(
+                `${API_URL}/api/v1/indexes/${provider}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        accept: "application/json",
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                    body: JSON.stringify({ index_name }),
+                }
+            );
+            const updatedIndexes = removeByKeyValue(indexes, "name", index_name);
+            console.log(updatedIndexes);
+            setIndexes(updatedIndexes);
+        } catch (error) {
+            console.error("Error deleting index:", error);
         }
     };
 
@@ -582,5 +631,7 @@ export const useChatState = () => {
         submitQuestionStream,
         abortSseRequest,
         createIndex,
+        fetchIndexes,
+        deleteIndex,
     };
 };
