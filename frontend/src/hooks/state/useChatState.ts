@@ -142,6 +142,34 @@ export const useChatState = () => {
         }
     };
 
+    const updateIndexName = async (
+        provider: "pinecone" | "redis" | "postgres",
+        index_name: string,
+        new_index_name: string
+    ) => {
+        try {
+            const response = await fetch(
+                `${API_URL}/api/v1/indexes/${provider}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        accept: "application/json",
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                    body: JSON.stringify({ index_name, new_index_name }),
+                }
+            );
+            const data = await response.json();
+            alert(data.message);
+            await fetchIndexes(provider);
+        } catch (error) {
+            console.error("Error deleting index:", error);
+        }
+    };
+
     const deleteIndex = async (
         provider: "pinecone" | "redis" | "postgres",
         index_name: string
@@ -632,6 +660,7 @@ export const useChatState = () => {
         abortSseRequest,
         createIndex,
         fetchIndexes,
+        updateIndexName,
         deleteIndex,
     };
 };

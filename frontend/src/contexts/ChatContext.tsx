@@ -88,6 +88,7 @@ export default function ChatProvider({ children }: IContextProvider) {
         createIndex,
         fetchIndexes,
         deleteIndex,
+        updateIndexName,
     } = useChatState();
     const searchParams = useSearchParams();
     const chatClient = new ChatClient();
@@ -378,6 +379,7 @@ export default function ChatProvider({ children }: IContextProvider) {
                 createIndex,
                 createIndexFromLoaders,
                 fetchIndexes,
+                updateIndexName,
                 deleteIndex,
             }}
         >

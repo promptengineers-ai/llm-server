@@ -10,7 +10,7 @@ type OptionType = {
 
 const CustomOption = (props: any) => {
     const { data, innerRef, innerProps } = props;
-    const { deleteIndex, initChatPayload } = useChatContext();
+    const { deleteIndex, updateIndexName, initChatPayload } = useChatContext();
 
     const handleDeleteClick = async (event: React.MouseEvent) => {
         event.stopPropagation();
@@ -24,10 +24,13 @@ const CustomOption = (props: any) => {
         await deleteIndex(initChatPayload.retrieval.provider, data.value);
     };
 
-    const handleUpdateClick = (event: React.MouseEvent) => {
+    const handleUpdateClick = async (event: React.MouseEvent) => {
         event.stopPropagation();
-        // Replace this with your API call for updating
-        alert(`Update ${data.value}`);
+        const newName = prompt("Enter new index name:");
+        if (!newName) {
+            return;
+        }
+        await updateIndexName(initChatPayload.retrieval.provider, data.value, newName);
     };
 
     return (
