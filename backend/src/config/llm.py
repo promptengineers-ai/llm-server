@@ -1,5 +1,8 @@
 from enum import Enum
-from src.config import ANTHROPIC_API_KEY, GROQ_API_KEY, OLLAMA_BASE_URL, OPENAI_API_KEY
+from src.config import (ANTHROPIC_API_KEY, GROQ_API_KEY, 
+                        OLLAMA_BASE_URL, OPENAI_API_KEY, 
+                        AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT,
+                        AZURE_OPENAI_API_VERSION)
 from src.utils.llm import model_sets
 
 class OpenAIModels(Enum):
@@ -28,8 +31,13 @@ class OllamaModels(Enum):
 	PHI3 = 'phi3'
 	PHI3_14B = 'phi3:14b'
 	
+class AzureModels(Enum):
+	GPT_4_OMNI = 'gpt-4o'
+	TEXT_EMBED_3_LARGE = 'text-embedding-3-large'
 	
 class ModelType(str, Enum):
+	AZURE_GPT_4_OMNI = 'azure-gpt-4o'
+	AZURE_TEXT_EMBED_3_LARGE = 'azure-text-embedding-3-large'
 	OPENAI_EMBED_ADA = 'openai-text-embedding-ada'
 	OPENAI_TEXT_EMBED_3_SMALL = 'openai-text-embedding-3-small'
 	OPENAI_TEXT_EMBED_3_LARGE = 'openai-text-embedding-3-large'
@@ -50,7 +58,8 @@ class ModelType(str, Enum):
 	OLLAMA_PHI3_14B = 'ollama-phi3-14b'
 	GROQ_MIXTRAL = 'groq-mixtral'
 	GROQ_GEMMA_7B_IT = 'groq-gemma-7b-it'
-	GROQ_LLAMA_3_70B = 'groq-llama3-70b'
+	GROQ_LLAMA_3_1_70B = 'groq-llama3.1-70b'
+	GROQ_LLAMA_3_1_405B = 'groq-llama3.1-405b'
 	ANTHROPIC_HAIKU = 'anthropic-claude-3-haiku'
 	ANTHROPIC_OPUS = 'anthropic-claude-3-opus'
 	ANTHROPIC_SONNET = 'anthropic-claude-3.5-sonnet'
@@ -79,6 +88,34 @@ class Embedding(str, Enum):
 	MXBAI_EMBED_LARGE = ModelType.OLLAMA_MXBAI_EMBED_LARGE.value
 
 MODEL_LIST = [
+    ## Azure
+    {
+		"model_name": ModelType.AZURE_GPT_4_OMNI,
+		"embedding": False,
+		"multimodal": True,
+		"open_source": False,
+		"litellm_params": {
+			"model": f"azure/{AzureModels.GPT_4_OMNI.value}",
+			"api_key": AZURE_OPENAI_API_KEY,
+			"azure_deployment": 'pe-gpt-4o',
+			"azure_endpoint": AZURE_OPENAI_ENDPOINT,
+			"api_version": AZURE_OPENAI_API_VERSION
+		},
+	},
+    {
+		"model_name": ModelType.AZURE_TEXT_EMBED_3_LARGE,
+		"embedding": True,
+		"multimodal": False,
+		"open_source": False,
+		"litellm_params": {
+			"model": f"azure/{AzureModels.TEXT_EMBED_3_LARGE.value}",
+			"api_key": AZURE_OPENAI_API_KEY,
+			"azure_deployment": 'pe-text-embedding-3-large',
+			"azure_endpoint": AZURE_OPENAI_ENDPOINT,
+			"api_version": AZURE_OPENAI_API_VERSION
+		},
+	},
+    ## OpenAI
 	{
 		"model_name": ModelType.OPENAI_EMBED_ADA,
 		"embedding": True,
@@ -119,24 +156,6 @@ MODEL_LIST = [
 			"api_key": OPENAI_API_KEY
 		},
 	},
-	# {
-	# 	"model_name": ModelType.OPENAI_GPT_4_VISION_PREVIEW,
-	# 	"multimodal": True,
-	# 	"embedding": False,
-	# 	"litellm_params": {
-	# 		"model": f"openai/gpt-4-vision-preview",
-	# 		"api_key": OPENAI_API_KEY
-	# 	},
-	# },
-	# {
-	# 	"model_name": ModelType.OPENAI_GPT_4_TURBO_PREVIEW,
-	# 	"multimodal": False,
-	# 	"embedding": False,
-	# 	"litellm_params": {
-	# 		"model": f"openai/gpt-4-turbo-preview",
-	# 		"api_key": OPENAI_API_KEY
-	# 	},
-	# },
  	{
 		"model_name": ModelType.OPENAI_GPT_4_OMNI,
 		"multimodal": True,
@@ -147,6 +166,7 @@ MODEL_LIST = [
 			"api_key": OPENAI_API_KEY
 		},
 	},
+	## Ollama
 	{
 		"model_name": ModelType.OLLAMA_NOMIC_EMBED_TEXT,
 		"embedding": True,
@@ -217,24 +237,6 @@ MODEL_LIST = [
 			"api_base": OLLAMA_BASE_URL
 		},
 	},
-	# {
-	# 	"model_name": ModelType.OLLAMA_LLAMA_2,
-	# 	"multimodal": False,
-	# 	"embedding": True,
-	# 	"litellm_params": {
-	# 		"model": f"ollama/llama2",
-	# 		"api_base": OLLAMA_BASE_URL
-	# 	},
-	# },
-	# {
-	# 	"model_name": ModelType.OLLAMA_LLAMA_3,
-	# 	"multimodal": False,
-	# 	"embedding": False,
-	# 	"litellm_params": {
-	# 		"model": f"ollama/llama3",
-	# 		"api_base": OLLAMA_BASE_URL
-	# 	},
-	# },
 	{
 		"model_name": ModelType.OLLAMA_LLAMA_2_CHAT,
 		"multimodal": False,
@@ -255,6 +257,7 @@ MODEL_LIST = [
 			"api_base": OLLAMA_BASE_URL
 		},
 	},
+	## Groq
 	{
 		"model_name": ModelType.GROQ_MIXTRAL,
 		"multimodal": False,
@@ -275,16 +278,37 @@ MODEL_LIST = [
 			"api_key": GROQ_API_KEY
 		},
 	},
+	# {
+	# 	"model_name": ModelType.GROQ_LLAMA_3_70B,
+	# 	"multimodal": False,
+	# 	"embedding": False,
+	# 	"open_source": False,
+	# 	"litellm_params": {
+	# 		"model": f"groq/llama3-70b-8192",
+	# 		"api_key": GROQ_API_KEY
+	# 	},
+	# },
 	{
-		"model_name": ModelType.GROQ_LLAMA_3_70B,
+		"model_name": ModelType.GROQ_LLAMA_3_1_70B,
 		"multimodal": False,
 		"embedding": False,
 		"open_source": False,
 		"litellm_params": {
-			"model": f"groq/llama3-70b-8192",
+			"model": f"groq/llama-3.1-70b-versatile",
 			"api_key": GROQ_API_KEY
 		},
 	},
+	# {
+	# 	"model_name": ModelType.GROQ_LLAMA_3_1_405B,
+	# 	"multimodal": False,
+	# 	"embedding": False,
+	# 	"open_source": False,
+	# 	"litellm_params": {
+	# 		"model": f"groq/llama-3.1-405b-reasoning",
+	# 		"api_key": GROQ_API_KEY
+	# 	},
+	# },
+	## Anthropic
 	{
 		"model_name": ModelType.ANTHROPIC_HAIKU,
 		"multimodal": False,

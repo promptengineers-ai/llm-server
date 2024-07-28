@@ -42,7 +42,7 @@ static_dir = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # API Landing Page
-@app.get("/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def read_root():
     with open(static_dir / "pages/index.html") as f:
         html_content = f.read()

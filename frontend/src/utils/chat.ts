@@ -16,6 +16,10 @@ export const constructBubbleMessage = (
     return `${src ? image(src) : "🤖 "} ${label ? label : "Assistant"}`;
 };
 
+export function removeByKeyValue(arr: any[], key: string, value: any): any[] {
+    return arr.filter((item) => item[key] !== value);
+}
+
 export function filterModels(
     source: { [key: string]: string },
     compare: { [key: string]: string },

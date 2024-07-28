@@ -1,6 +1,7 @@
 import { ON_PREM } from "@/config/app";
 import { useChatContext } from "@/contexts/ChatContext";
 import { ChatPayload, LLM } from "@/types/chat";
+import { SearchProvider } from "@/types/llm";
 import {
     Field,
     Fieldset,
@@ -11,6 +12,7 @@ import {
 } from "@headlessui/react";
 import { useEffect } from "react";
 import { FaChevronDown } from "react-icons/fa";
+import IndexMultiSelect from "../selects/IndexMultiSelect";
 
 const RetrievalForm = () => {
     const {initChatPayload, setInitChatPayload, models} = useChatContext();
@@ -87,7 +89,7 @@ const RetrievalForm = () => {
                     ...prev.retrieval,
                     search_kwargs: {
                         ...prev.retrieval.search_kwargs,
-                        score_threshold,
+                        score_threshold: parseFloat(score_threshold),
                     },
                 },
             }));
@@ -97,7 +99,8 @@ const RetrievalForm = () => {
     return (
         <>
             <Fieldset>
-                <Field className={"border px-2 rounded-md p-3"}>
+                <IndexMultiSelect />
+                <Field className={"border px-2 rounded-md p-3 mt-4"}>
                     <label className="font-semibold">Provider</label>
                     <p className="text-xs text-slate/50">
                         Choose the provider for the retrieval process.
@@ -114,15 +117,28 @@ const RetrievalForm = () => {
                                     provider: e.target.value,
                                 },
                             }));
-                            sessionStorage.setItem('provider', e.target.value);
+                            sessionStorage.setItem("provider", e.target.value);
                         }}
                         value={initChatPayload.retrieval.provider}
                     >
-                        <option value="redis">Redis</option>
-                        {!ON_PREM && <option value="pinecone">Pinecone</option>}
-                        <option value="mongo" disabled className="bg-gray-200">
-                            Mongo
+                        <option value={SearchProvider.POSTGRES}>
+                            Postgres
                         </option>
+                        <option value={SearchProvider.REDIS}>Redis</option>
+                        {!ON_PREM && (
+                            <option value={SearchProvider.PINECONE}>
+                                Pinecone
+                            </option>
+                        )}
+                        {!ON_PREM && (
+                            <option
+                                value={SearchProvider.MONGO}
+                                disabled
+                                className="bg-gray-200"
+                            >
+                                Mongo
+                            </option>
+                        )}
                     </Select>
                 </Field>
                 <Field className={"border px-2 rounded-md p-3 mt-4"}>
@@ -142,18 +158,20 @@ const RetrievalForm = () => {
                                     embedding: e.target.value,
                                 },
                             }));
-                            sessionStorage.setItem('embedding', e.target.value);
+                            sessionStorage.setItem("embedding", e.target.value);
                         }}
                         value={initChatPayload.retrieval.embedding}
                     >
-                        {models.filter((model: LLM) => model.embedding).map((embedding: LLM) => (
-                            <option
-                                key={embedding.model_name}
-                                value={embedding.model_name}
-                            >
-                                {embedding.model_name}
-                            </option>
-                        ))}
+                        {models
+                            .filter((model: LLM) => model.embedding)
+                            .map((embedding: LLM) => (
+                                <option
+                                    key={embedding.model_name}
+                                    value={embedding.model_name}
+                                >
+                                    {embedding.model_name}
+                                </option>
+                            ))}
                     </Select>
                 </Field>
             </Fieldset>
@@ -186,7 +204,10 @@ const RetrievalForm = () => {
                                             search_type: e.target.value,
                                         },
                                     }));
-                                    sessionStorage.setItem('search_type', e.target.value);
+                                    sessionStorage.setItem(
+                                        "search_type",
+                                        e.target.value
+                                    );
                                 }}
                             >
                                 <option value="similarity">Similarity</option>
@@ -208,7 +229,8 @@ const RetrievalForm = () => {
                                 max="100"
                                 className="p-1 border rounded-md w-full mt-1"
                                 value={
-                                    initChatPayload.retrieval.search_kwargs.k || ''
+                                    initChatPayload.retrieval.search_kwargs.k ||
+                                    ""
                                 }
                                 onChange={(e) => {
                                     setInitChatPayload((prev: ChatPayload) => ({
@@ -221,7 +243,7 @@ const RetrievalForm = () => {
                                             },
                                         },
                                     }));
-                                    sessionStorage.setItem('k', e.target.value);
+                                    sessionStorage.setItem("k", e.target.value);
                                 }}
                             />
                         </Field>
@@ -243,7 +265,7 @@ const RetrievalForm = () => {
                                 placeholder="Enter a number"
                                 value={
                                     initChatPayload.retrieval.search_kwargs
-                                        .fetch_k || ''
+                                        .fetch_k || ""
                                 }
                                 onChange={(e) => {
                                     setInitChatPayload((prev: ChatPayload) => ({
@@ -256,7 +278,10 @@ const RetrievalForm = () => {
                                             },
                                         },
                                     }));
-                                    sessionStorage.setItem('fetch_k', e.target.value);
+                                    sessionStorage.setItem(
+                                        "fetch_k",
+                                        e.target.value
+                                    );
                                 }}
                             />
                         </Field>
@@ -274,7 +299,7 @@ const RetrievalForm = () => {
                                 placeholder="0.5"
                                 value={
                                     initChatPayload.retrieval.search_kwargs
-                                        .score_threshold || ''
+                                        .score_threshold || ""
                                 }
                                 onChange={(e) => {
                                     setInitChatPayload((prev: ChatPayload) => ({
@@ -283,11 +308,16 @@ const RetrievalForm = () => {
                                             ...prev.retrieval,
                                             search_kwargs: {
                                                 ...prev.retrieval.search_kwargs,
-                                                score_threshold: e.target.value,
+                                                score_threshold: parseFloat(
+                                                    e.target.value
+                                                ),
                                             },
                                         },
                                     }));
-                                    sessionStorage.setItem('score_threshold', e.target.value);
+                                    sessionStorage.setItem(
+                                        "score_threshold",
+                                        e.target.value
+                                    );
                                 }}
                             />
                         </Field>
