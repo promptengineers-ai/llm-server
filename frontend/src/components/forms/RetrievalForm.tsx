@@ -12,6 +12,7 @@ import {
 } from "@headlessui/react";
 import { useEffect } from "react";
 import { FaChevronDown } from "react-icons/fa";
+import IndexMultiSelect from "../selects/IndexMultiSelect";
 
 const RetrievalForm = () => {
     const {initChatPayload, setInitChatPayload, models} = useChatContext();
@@ -98,7 +99,8 @@ const RetrievalForm = () => {
     return (
         <>
             <Fieldset>
-                <Field className={"border px-2 rounded-md p-3"}>
+                <IndexMultiSelect />
+                <Field className={"border px-2 rounded-md p-3 mt-4"}>
                     <label className="font-semibold">Provider</label>
                     <p className="text-xs text-slate/50">
                         Choose the provider for the retrieval process.
