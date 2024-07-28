@@ -138,7 +138,6 @@ class RetrievalService:
     ):
 		if len(retrieval.indexes) > 1:
 			retrievers = []
-			retrieval.search_kwargs.k = int(retrieval.search_kwargs.k / 2)
 			for index in retrieval.indexes:				
 				config = self.config(
 					provider=retrieval.provider,

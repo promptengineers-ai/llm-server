@@ -298,16 +298,16 @@ MODEL_LIST = [
 			"api_key": GROQ_API_KEY
 		},
 	},
-	{
-		"model_name": ModelType.GROQ_LLAMA_3_1_405B,
-		"multimodal": False,
-		"embedding": False,
-		"open_source": False,
-		"litellm_params": {
-			"model": f"groq/llama-3.1-405b-reasoning",
-			"api_key": GROQ_API_KEY
-		},
-	},
+	# {
+	# 	"model_name": ModelType.GROQ_LLAMA_3_1_405B,
+	# 	"multimodal": False,
+	# 	"embedding": False,
+	# 	"open_source": False,
+	# 	"litellm_params": {
+	# 		"model": f"groq/llama-3.1-405b-reasoning",
+	# 		"api_key": GROQ_API_KEY
+	# 	},
+	# },
 	## Anthropic
 	{
 		"model_name": ModelType.ANTHROPIC_HAIKU,

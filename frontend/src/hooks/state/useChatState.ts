@@ -54,7 +54,7 @@ export const defaultState = {
             indexes: [],
             search_type: SearchType.MMR,
             search_kwargs: {
-                k: 20,
+                k: 10,
                 fetch_k: null,
                 score_threshold: null,
             },
