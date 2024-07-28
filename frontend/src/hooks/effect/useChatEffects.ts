@@ -211,5 +211,5 @@ export const useFetchIndexesEffect = (provider: 'pinecone'|'redis'|'postgres', s
         return () => {
             // Cleanup logic if needed
         };
-    }, []);
+    }, [provider]);
 };

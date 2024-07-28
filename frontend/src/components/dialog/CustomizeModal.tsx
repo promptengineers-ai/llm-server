@@ -32,7 +32,7 @@ const CustomizeModal = () => {
 
     useUpdateInitChatPayloadEffect(setInitChatPayload);
     useFetchToolsEffect(setTools);
-    useFetchIndexesEffect('postgres', setIndexes);
+    useFetchIndexesEffect(initChatPayload.retrieval.provider, setIndexes);
 
     if (!isOpen) {
         return null;
