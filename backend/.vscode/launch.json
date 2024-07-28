@@ -21,7 +21,7 @@
             "type": "debugpy",
             "request": "launch",
             "module": "pytest",
-            "args": ["-s", "-v", "test/unit/infra/vectorstores/test_pg.py"],
+            "args": ["-s", "-v", "test/unit/repositories/test_index.py"],
             "envFile": "${workspaceFolder}/.env.test",
             "justMyCode": false,
             "preLaunchTask": "Unset DATABASE_URL"

@@ -175,7 +175,7 @@ const LoginForm = () => {
                         </div>
                     </form>
                     {loading && timeoutExceeded && (
-                        <div className="mt-4 text-center text-sm text-red-600 font-semibold">
+                        <div className="mt-4 text-center text-xs text-red-600">
                             Serverless Enabled: please wait for cold boot to
                             finish
                         </div>

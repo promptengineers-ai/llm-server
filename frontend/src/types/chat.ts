@@ -20,6 +20,7 @@ export type ChatPayload = {
         provider: SearchProvider;
         embedding: EmbeddingModel;
         index_name: string;
+        indexes?: string[];
         search_type: SearchType;
         search_kwargs: {
             k: number;

@@ -42,7 +42,7 @@ retrieval_service = RetrievalService()
 async def chat(request: Request, body: Agent):
 	chain_type = 'chat'
 	try:     
-		if not body.tools and body.retrieval.provider and body.retrieval.index_name:
+		if not body.tools and body.retrieval.provider and body.retrieval.indexes:
 			chain_type = 'retrieval'
 			chain = retrieval_chain(body, request.state.user_id)
 			query = {'input': body.messages[-1]['content']}
