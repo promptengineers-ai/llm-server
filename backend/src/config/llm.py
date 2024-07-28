@@ -2,7 +2,7 @@ from enum import Enum
 from src.config import (ANTHROPIC_API_KEY, GROQ_API_KEY, 
                         OLLAMA_BASE_URL, OPENAI_API_KEY, 
                         AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT,
-                        AZURE_OPENAI_DEPLOYMENT, AZURE_OPENAI_API_VERSION)
+                        AZURE_OPENAI_API_VERSION)
 from src.utils.llm import model_sets
 
 class OpenAIModels(Enum):
@@ -33,9 +33,11 @@ class OllamaModels(Enum):
 	
 class AzureModels(Enum):
 	GPT_4_OMNI = 'gpt-4o'
+	TEXT_EMBED_3_LARGE = 'text-embedding-3-large'
 	
 class ModelType(str, Enum):
 	AZURE_GPT_4_OMNI = 'azure-gpt-4o'
+	AZURE_TEXT_EMBED_3_LARGE = 'azure-text-embedding-3-large'
 	OPENAI_EMBED_ADA = 'openai-text-embedding-ada'
 	OPENAI_TEXT_EMBED_3_SMALL = 'openai-text-embedding-3-small'
 	OPENAI_TEXT_EMBED_3_LARGE = 'openai-text-embedding-3-large'
@@ -94,7 +96,20 @@ MODEL_LIST = [
 		"litellm_params": {
 			"model": f"azure/{AzureModels.GPT_4_OMNI.value}",
 			"api_key": AZURE_OPENAI_API_KEY,
-			"azure_deployment": AZURE_OPENAI_DEPLOYMENT,
+			"azure_deployment": 'pe-gpt-4o',
+			"azure_endpoint": AZURE_OPENAI_ENDPOINT,
+			"api_version": AZURE_OPENAI_API_VERSION
+		},
+	},
+    {
+		"model_name": ModelType.AZURE_TEXT_EMBED_3_LARGE,
+		"embedding": True,
+		"multimodal": False,
+		"open_source": False,
+		"litellm_params": {
+			"model": f"azure/{AzureModels.TEXT_EMBED_3_LARGE.value}",
+			"api_key": AZURE_OPENAI_API_KEY,
+			"azure_deployment": 'pe-text-embedding-3-large',
 			"azure_endpoint": AZURE_OPENAI_ENDPOINT,
 			"api_version": AZURE_OPENAI_API_VERSION
 		},
@@ -140,24 +155,6 @@ MODEL_LIST = [
 			"api_key": OPENAI_API_KEY
 		},
 	},
-	# {
-	# 	"model_name": ModelType.OPENAI_GPT_4_VISION_PREVIEW,
-	# 	"multimodal": True,
-	# 	"embedding": False,
-	# 	"litellm_params": {
-	# 		"model": f"openai/gpt-4-vision-preview",
-	# 		"api_key": OPENAI_API_KEY
-	# 	},
-	# },
-	# {
-	# 	"model_name": ModelType.OPENAI_GPT_4_TURBO_PREVIEW,
-	# 	"multimodal": False,
-	# 	"embedding": False,
-	# 	"litellm_params": {
-	# 		"model": f"openai/gpt-4-turbo-preview",
-	# 		"api_key": OPENAI_API_KEY
-	# 	},
-	# },
  	{
 		"model_name": ModelType.OPENAI_GPT_4_OMNI,
 		"multimodal": True,
@@ -239,24 +236,6 @@ MODEL_LIST = [
 			"api_base": OLLAMA_BASE_URL
 		},
 	},
-	# {
-	# 	"model_name": ModelType.OLLAMA_LLAMA_2,
-	# 	"multimodal": False,
-	# 	"embedding": True,
-	# 	"litellm_params": {
-	# 		"model": f"ollama/llama2",
-	# 		"api_base": OLLAMA_BASE_URL
-	# 	},
-	# },
-	# {
-	# 	"model_name": ModelType.OLLAMA_LLAMA_3,
-	# 	"multimodal": False,
-	# 	"embedding": False,
-	# 	"litellm_params": {
-	# 		"model": f"ollama/llama3",
-	# 		"api_base": OLLAMA_BASE_URL
-	# 	},
-	# },
 	{
 		"model_name": ModelType.OLLAMA_LLAMA_2_CHAT,
 		"multimodal": False,
