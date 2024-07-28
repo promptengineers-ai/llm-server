@@ -75,7 +75,7 @@ export const defaultState = {
 };
 
 export const useChatState = () => {
-    const {setLoading} = useAppContext();
+    const {setLoading, isMobile} = useAppContext();
     const searchParams = useSearchParams();
     const chatInputRef = useRef<HTMLInputElement | null>(defaultState.chatInputRef);
     const chatboxRef = useRef<HTMLInputElement | null>(defaultState.chatboxRef);
@@ -142,12 +142,15 @@ export const useChatState = () => {
     };
 
     const fetchChats = async () => {
+        setLoading(true);
         try {
             const data = await chatClient.list();
             setChats(data.chats);
         } catch (err) {
             alert(err);
             console.error(err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -271,7 +274,7 @@ export const useChatState = () => {
     const submitCleanUp = () => {
         setChatPayload({ ...chatPayload, query: "" });
         setUserInput("");
-        chatInputRef.current?.focus();
+        !isMobile() && chatInputRef.current?.focus();
     };
 
     async function updateMessages(
