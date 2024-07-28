@@ -58,7 +58,8 @@ class ModelType(str, Enum):
 	OLLAMA_PHI3_14B = 'ollama-phi3-14b'
 	GROQ_MIXTRAL = 'groq-mixtral'
 	GROQ_GEMMA_7B_IT = 'groq-gemma-7b-it'
-	GROQ_LLAMA_3_70B = 'groq-llama3-70b'
+	GROQ_LLAMA_3_1_70B = 'groq-llama3.1-70b'
+	GROQ_LLAMA_3_1_405B = 'groq-llama3.1-405b'
 	ANTHROPIC_HAIKU = 'anthropic-claude-3-haiku'
 	ANTHROPIC_OPUS = 'anthropic-claude-3-opus'
 	ANTHROPIC_SONNET = 'anthropic-claude-3.5-sonnet'
@@ -277,13 +278,33 @@ MODEL_LIST = [
 			"api_key": GROQ_API_KEY
 		},
 	},
+	# {
+	# 	"model_name": ModelType.GROQ_LLAMA_3_70B,
+	# 	"multimodal": False,
+	# 	"embedding": False,
+	# 	"open_source": False,
+	# 	"litellm_params": {
+	# 		"model": f"groq/llama3-70b-8192",
+	# 		"api_key": GROQ_API_KEY
+	# 	},
+	# },
 	{
-		"model_name": ModelType.GROQ_LLAMA_3_70B,
+		"model_name": ModelType.GROQ_LLAMA_3_1_70B,
 		"multimodal": False,
 		"embedding": False,
 		"open_source": False,
 		"litellm_params": {
-			"model": f"groq/llama3-70b-8192",
+			"model": f"groq/llama-3.1-70b-versatile",
+			"api_key": GROQ_API_KEY
+		},
+	},
+	{
+		"model_name": ModelType.GROQ_LLAMA_3_1_405B,
+		"multimodal": False,
+		"embedding": False,
+		"open_source": False,
+		"litellm_params": {
+			"model": f"groq/llama-3.1-405b-reasoning",
 			"api_key": GROQ_API_KEY
 		},
 	},
