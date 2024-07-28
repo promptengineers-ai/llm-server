@@ -60,7 +60,7 @@ const IndexMultiSelect = () => {
     const { indexes, setInitChatPayload, initChatPayload } = useChatContext();
     const [options, setOptions] = useState<OptionType[]>([]);
 
-    const formattedIndexes = indexes.map((index: any) => ({
+    const formattedIndexes = indexes?.map((index: any) => ({
         value: index.name,
         label: index.name,
     }));
