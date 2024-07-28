@@ -12,7 +12,7 @@ import {
 } from "@headlessui/react";
 import { ChatPayload } from "@/types/chat";
 import RetrievalForm from "../forms/RetrievalForm";
-import { useFetchToolsEffect, useUpdateInitChatPayloadEffect } from "@/hooks/effect/useChatEffects";
+import { useFetchIndexesEffect, useFetchToolsEffect, useUpdateInitChatPayloadEffect } from "@/hooks/effect/useChatEffects";
 import ToolList from "../lists/ToolList";
 import { FaSpinner } from "react-icons/fa";
 
@@ -27,10 +27,12 @@ const CustomizeModal = () => {
         isSaveEnabled,
         resetOnCancel,
         setTools,
+        setIndexes,
     } = useChatContext();
 
     useUpdateInitChatPayloadEffect(setInitChatPayload);
     useFetchToolsEffect(setTools);
+    useFetchIndexesEffect('postgres', setIndexes);
 
     if (!isOpen) {
         return null;

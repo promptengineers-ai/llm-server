@@ -29,6 +29,7 @@ export const defaultState = {
     actions: [],
     logs: [],
     tools: [],
+    indexes: [],
     loaders: [],
     expand: false,
     done: true,
@@ -94,6 +95,7 @@ export const useChatState = () => {
     const [actions, setActions] = useState<any[]>(defaultState.actions);
     const [logs, setLogs] = useState<any[]>(defaultState.logs);
     const [tools, setTools] = useState<Tool[]>(defaultState.tools);
+    const [indexes, setIndexes] = useState<any[]>(defaultState.indexes);
     const [loaders, setLoaders] = useState<Tool[]>(defaultState.loaders);
     const [userInput, setUserInput] = useState(defaultState.userInput);
     const [response, setResponse] = useState(defaultState.response);
@@ -550,6 +552,8 @@ export const useChatState = () => {
         setMessages,
         images,
         setImages,
+        indexes,
+        setIndexes,
         files,
         setFiles,
         userInput,

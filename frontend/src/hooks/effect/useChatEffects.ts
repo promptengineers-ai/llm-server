@@ -186,3 +186,30 @@ export const useFetchToolsEffect = (setTools: any) => {
     }, []);
 
 }
+
+export const useFetchIndexesEffect = (provider: 'pinecone'|'redis'|'postgres', setIndexes: any) => {
+    useEffect(() => {
+        const fetchIndexes = async () => {
+            try {
+                const response = await fetch(
+                    `${API_URL}/api/v1/indexes/${provider}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
+                    }
+                );
+                const data = await response.json();
+                setIndexes(data.indexes);
+            } catch (error) {
+                console.error("Error fetching tools:", error);
+            }
+        };
+
+        fetchIndexes();
+        return () => {
+            // Cleanup logic if needed
+        };
+    }, []);
+};
