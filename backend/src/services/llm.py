@@ -8,7 +8,7 @@ from langchain_experimental.agents.agent_toolkits import create_csv_agent
 from langchain_community.memory.kg import ConversationKGMemory
 from langchain.agents.openai_functions_agent.agent_token_buffer_memory import AgentTokenBufferMemory
 # from litellm import Router
-from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI, AzureChatOpenAI
 from langchain_groq import ChatGroq
 from langchain_community.chat_models import ChatOllama
 from langchain_anthropic import ChatAnthropic
@@ -84,7 +84,7 @@ class LLMService:
   
 	def select(self, temperature=0, streaming=False, callbacks=None, cache=False):
 		params = self.model_list[0]['litellm_params']
-		model = params['model']
+		model = params.get('model', None)
 		api_key = params.get('api_key', None)
 		api_base = params.get('api_base', None)
 		split = model.split('/')
@@ -100,6 +100,19 @@ class LLMService:
 				callbacks=callbacks,
 				cache=cache,
 			)
+		if model_provider.startswith('azure'):
+			## https://api.python.langchain.com/en/latest/chat_models/langchain_openai.chat_models.azure.AzureChatOpenAI.html
+			return AzureChatOpenAI(
+				api_version=params.get('api_version'),
+				azure_deployment=params.get('azure_deployment'),
+				azure_endpoint=params.get('azure_endpoint'),
+				openai_api_key=api_key,
+				streaming=streaming,
+				temperature=temperature,
+				callbacks=callbacks,
+				cache=cache,
+			)
+	
 		if model_provider.startswith('anthropic'):
 			return ChatAnthropic(
 				model=model_name,

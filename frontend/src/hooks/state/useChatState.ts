@@ -5,7 +5,7 @@ import { useAppContext } from "@/contexts/AppContext";
 import { LLM, Message, Tool } from "@/types/chat";
 import { EmbeddingModel, ModelType, SearchProvider, SearchType, acceptRagSystemMessage } from "@/types/llm";
 import { ChatClient } from "@/utils/api";
-import { combinePrompts, parseCSV, shallowUrl } from "@/utils/chat";
+import { combinePrompts, parseCSV, removeByKeyValue, shallowUrl } from "@/utils/chat";
 import { log } from "@/utils/log";
 import { generateRandomNumber } from "@/utils/random";
 import { useSearchParams } from "next/navigation";
@@ -29,6 +29,7 @@ export const defaultState = {
     actions: [],
     logs: [],
     tools: [],
+    indexes: [],
     loaders: [],
     expand: false,
     done: true,
@@ -51,9 +52,10 @@ export const defaultState = {
                 ? EmbeddingModel.OLLAMA_NOMIC_EMBED_TEXT
                 : EmbeddingModel.OPENAI_TEXT_EMBED_3_LARGE,
             index_name: "",
+            indexes: [],
             search_type: SearchType.MMR,
             search_kwargs: {
-                k: 20,
+                k: 10,
                 fetch_k: null,
                 score_threshold: null,
             },
@@ -93,6 +95,7 @@ export const useChatState = () => {
     const [actions, setActions] = useState<any[]>(defaultState.actions);
     const [logs, setLogs] = useState<any[]>(defaultState.logs);
     const [tools, setTools] = useState<Tool[]>(defaultState.tools);
+    const [indexes, setIndexes] = useState<any[]>(defaultState.indexes);
     const [loaders, setLoaders] = useState<Tool[]>(defaultState.loaders);
     const [userInput, setUserInput] = useState(defaultState.userInput);
     const [response, setResponse] = useState(defaultState.response);
@@ -114,6 +117,83 @@ export const useChatState = () => {
             setLoading(false);
             setSseSource(null);
             console.log("SSE request aborted");
+        }
+    };
+
+    const fetchIndexes = async (
+        provider: "pinecone" | "redis" | "postgres"
+    ) => {
+        try {
+            const response = await fetch(
+                `${API_URL}/api/v1/indexes/${provider}`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                }
+            );
+            const data = await response.json();
+            setIndexes(data.indexes);
+        } catch (error) {
+            console.error("Error fetching tools:", error);
+        }
+    };
+
+    const updateIndexName = async (
+        provider: "pinecone" | "redis" | "postgres",
+        index_name: string,
+        new_index_name: string
+    ) => {
+        try {
+            const response = await fetch(
+                `${API_URL}/api/v1/indexes/${provider}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        accept: "application/json",
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                    body: JSON.stringify({ index_name, new_index_name }),
+                }
+            );
+            const data = await response.json();
+            alert(data.message);
+            await fetchIndexes(provider);
+        } catch (error) {
+            console.error("Error deleting index:", error);
+        }
+    };
+
+    const deleteIndex = async (
+        provider: "pinecone" | "redis" | "postgres",
+        index_name: string
+    ) => {
+        try {
+            const response = await fetch(
+                `${API_URL}/api/v1/indexes/${provider}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        accept: "application/json",
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                    body: JSON.stringify({ index_name }),
+                }
+            );
+            const updatedIndexes = removeByKeyValue(indexes, "name", index_name);
+            console.log(updatedIndexes);
+            setIndexes(updatedIndexes);
+        } catch (error) {
+            console.error("Error deleting index:", error);
         }
     };
 
@@ -326,18 +406,27 @@ export const useChatState = () => {
     const createIndex = (e: any) => {
         return new Promise<void>(async (resolve, reject) => {
             e.preventDefault();
-
+            
             // If index exists, use it, otherwise generate a random number
             const index_name =
                 chatPayload.retrieval.index_name ||
-                generateRandomNumber().toString();
+                prompt('Enter an index name:');
 
-            setStatus((prev: any) => ({ ...prev, task_id: index_name }));
+            const task_id = generateRandomNumber().toString();
+            
             try {
+                if (!index_name) {
+                    // alert("Index name is required");
+                    return;
+                }
+                setStatus((prev: any) => ({ ...prev, task_id: index_name }));
                 const chatClient = new ChatClient();
-                const docs = await chatClient.createDocuments({ data: files, task_id: index_name });
+                const docs = await chatClient.createDocuments({
+                    data: files,
+                    task_id,
+                });
                 await chatClient.upsert({
-                    task_id: index_name,
+                    task_id,
                     documents: docs.documents,
                     index_name: index_name,
                     provider: chatPayload.retrieval.provider,
@@ -347,14 +436,14 @@ export const useChatState = () => {
                     ...prev,
                     retrieval: {
                         ...prev.retrieval,
-                        index_name: index_name,
+                        indexes: [index_name],
                     },
                 }));
                 setFiles([]);
                 resolve();
             } catch (error) {
                 console.error(error);
-                alert("Error uploading the file");
+                alert(error);
                 reject(error);
             }
         });
@@ -540,6 +629,8 @@ export const useChatState = () => {
         setMessages,
         images,
         setImages,
+        indexes,
+        setIndexes,
         files,
         setFiles,
         userInput,
@@ -568,5 +659,8 @@ export const useChatState = () => {
         submitQuestionStream,
         abortSseRequest,
         createIndex,
+        fetchIndexes,
+        updateIndexName,
+        deleteIndex,
     };
 };
