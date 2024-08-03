@@ -1,5 +1,5 @@
 from enum import Enum
-from src.config import (ANTHROPIC_API_KEY, GROQ_API_KEY, 
+from src.config import (ANTHROPIC_API_KEY, AZURE_OPENAI_EMBED_DEPLOYMENT, AZURE_OPENAI_LLM_DEPLOYMENT, GROQ_API_KEY, 
                         OLLAMA_BASE_URL, OPENAI_API_KEY, 
                         AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT,
                         AZURE_OPENAI_API_VERSION)
@@ -97,7 +97,7 @@ MODEL_LIST = [
 		"litellm_params": {
 			"model": f"azure/{AzureModels.GPT_4_OMNI.value}",
 			"api_key": AZURE_OPENAI_API_KEY,
-			"azure_deployment": 'pe-gpt-4o',
+			"azure_deployment": AZURE_OPENAI_LLM_DEPLOYMENT,
 			"azure_endpoint": AZURE_OPENAI_ENDPOINT,
 			"api_version": AZURE_OPENAI_API_VERSION
 		},
@@ -110,7 +110,7 @@ MODEL_LIST = [
 		"litellm_params": {
 			"model": f"azure/{AzureModels.TEXT_EMBED_3_LARGE.value}",
 			"api_key": AZURE_OPENAI_API_KEY,
-			"azure_deployment": 'pe-text-embedding-3-large',
+			"azure_deployment": AZURE_OPENAI_EMBED_DEPLOYMENT,
 			"azure_endpoint": AZURE_OPENAI_ENDPOINT,
 			"api_version": AZURE_OPENAI_API_VERSION
 		},
