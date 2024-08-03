@@ -21,7 +21,7 @@
             "type": "debugpy",
             "request": "launch",
             "module": "pytest",
-            "args": ["-s", "-v", "test/unit/repositories/test_index.py"],
+            "args": ["-s", "-v", "test"],
             "envFile": "${workspaceFolder}/.env.test",
             "justMyCode": false,
             "preLaunchTask": "Unset DATABASE_URL"
