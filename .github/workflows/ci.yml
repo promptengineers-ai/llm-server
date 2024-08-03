@@ -6,7 +6,7 @@ on:
       - "*"
     paths-ignore:
       - 'frontend/**'
-      - '.github/workflows/ci.yml'
+      # - '.github/workflows/ci.yml'
       - 'Changelog.md'
       - 'docker/**'
       - 'docker-compose.yml'
