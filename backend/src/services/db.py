@@ -6,13 +6,9 @@ from sqlalchemy.orm import sessionmaker
 from src.config import APP_ADMIN_EMAIL, APP_ADMIN_PASS, APP_SECRET, DATABASE_URL, database_engine
 from src.models.sql.user import User 
 
-engine = create_async_engine(DATABASE_URL, echo=True, connect_args={"statement_cache_size": 0} if database_engine() == 'postgresql' else {})
-AsyncSessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine,
-    class_=AsyncSession
-)
+
+def configure_engine(db_url: str = None):
+    return create_async_engine(db_url or DATABASE_URL, echo=True, connect_args={"statement_cache_size": 0} if database_engine() == 'postgresql' else {})
 
 async def create_default_user(session):
     default_user = await session.execute(
@@ -43,6 +39,28 @@ async def create_default_user(session):
     return default_user
 
 async def get_db():
+    AsyncSessionLocal = sessionmaker(
+        autocommit=False,
+        autoflush=False,
+        bind=configure_engine(DATABASE_URL),
+        class_=AsyncSession
+    )
+    db = AsyncSessionLocal()
+    try:
+        yield db
+    finally:
+        await db.close()
+
+
+async def get_vector_db(url: str = None):
+    """Found out that if argument was used in get_db it would show the argumment in swagger whereever
+    get_db was used with Depends. THIS IS NO GOOD. So I created a new function get_vector_db"""
+    AsyncSessionLocal = sessionmaker(
+        autocommit=False,
+        autoflush=False,
+        bind=configure_engine(url or DATABASE_URL),
+        class_=AsyncSession
+    )
     db = AsyncSessionLocal()
     try:
         yield db

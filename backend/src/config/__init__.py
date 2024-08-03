@@ -21,6 +21,11 @@ REDIS_URL = os.environ.get("REDIS_URL", 'redis://localhost:6379/0')
 POSTGRES_URL = os.environ.get("POSTGRES_URL", 'postgresql+psycopg://langchain:langchain@localhost:6024/langchain')
 
 ## LLM
+AZURE_OPENAI_API_VERSION = os.environ.get("AZURE_OPENAI_API_VERSION", "2024-06-01")
+AZURE_OPENAI_LLM_DEPLOYMENT = os.environ.get("AZURE_OPENAI_DEPLOYMENT", 'pe-gpt-4o')
+AZURE_OPENAI_EMBED_DEPLOYMENT = os.environ.get("AZURE_OPENAI_EMBED_DEPLOYMENT", 'pe-text-embedding-3-large')
+AZURE_OPENAI_ENDPOINT = os.environ.get("AZURE_OPENAI_ENDPOINT")
+AZURE_OPENAI_API_KEY = os.environ.get("AZURE_OPENAI_API_KEY")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL")

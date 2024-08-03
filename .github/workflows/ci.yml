@@ -33,7 +33,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APP_ENV: development
-      APP_SECRET: this-is-a-test-secret    
+      APP_SECRET: this-is-a-test-secret
+      AZURE_OPENAI_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
+      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}    
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       BUCKET: pe-oss-bucket
       S3_REGION: us-east-1
@@ -138,10 +140,13 @@ jobs:
       PINECONE_ENV: ${{ secrets.PINECONE_ENV }}
       PINECONE_INDEX: ${{ secrets.PINECONE_INDEX }}
       REDIS_URL: ${{ secrets.REDIS_URL }}
+      POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
       DOCKER_USERNAME: promptengineers
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
       GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      AZURE_OPENAI_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
+      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -188,6 +193,7 @@ jobs:
           "PINECONE_ENV=$PINECONE_ENV"
           "PINECONE_INDEX=$PINECONE_INDEX"
           "REDIS_URL=$REDIS_URL"
+          "POSTGRES_URL=$POSTGRES_URL"
 
           ## LLM
           "OPENAI_API_KEY=$OPENAI_API_KEY"

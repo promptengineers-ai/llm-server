@@ -151,16 +151,15 @@ class LoaderController:
 		body: UpsertDocuments = Body(...)
 	):
 		try:
-			# Initialize the set for excluded keys
-			excluded_from_defaults = {"REDIS_URL"}
-
 			# Define the set of default keys
-			default_keys = {"PINECONE_API_KEY", "PINECONE_ENV", "PINECONE_INDEX", "OPENAI_API_KEY", "REDIS_URL"}
+			default_keys = {"PINECONE_API_KEY", "PINECONE_ENV", "PINECONE_INDEX", "OPENAI_API_KEY", "REDIS_URL", "POSTGRES_URL"}
    
 			if body.provider == 'redis':
-				keys = default_keys - {"PINECONE_API_KEY", "PINECONE_ENV", "PINECONE_INDEX"}
+				keys = default_keys - {"PINECONE_API_KEY", "PINECONE_ENV", "PINECONE_INDEX", "POSTGRES_URL"}
 			elif body.provider == 'pinecone':
-				keys = default_keys - excluded_from_defaults
+				keys = default_keys - {"REDIS_URL", "POSTGRES_URL"}
+			elif body.provider == 'postgres':
+				keys = default_keys - {"REDIS_URL", "PINECONE_API_KEY", "PINECONE_ENV", "PINECONE_INDEX"}
 			else:
 				raise HTTPException(
 					status_code=400,
@@ -188,8 +187,7 @@ class LoaderController:
 			logging.error(err.detail)
 			raise
 		except BaseException as err:
-			tb = traceback.format_exc()
-			logging.error(f"[routes.{PathLib(__file__).resolve().stem}.upsert_documents]: %s\n%s", err, tb)
+			logging.exception(err)
 			raise HTTPException(
 				status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
 				detail=f"An unexpected error occurred. {str(err)}"

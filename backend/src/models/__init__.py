@@ -25,6 +25,7 @@ class SearchProvider(str, Enum):
 	PINECONE = 'pinecone'
 	REDIS = 'redis'
 	MONGO = 'mongo'
+	POSTGRES = 'postgres'
 	FAISS = 'faiss'
 	
 class Splitter(BaseModel):
@@ -102,11 +103,11 @@ class RetrievalTool(BaseModel):
 	search_kwargs: SearchKwargs
 	
 class RetrievalParams(BaseModel):
-	provider: SearchProvider = SearchProvider.PINECONE
-	embedding: Embedding = Embedding.TEXT_EMBED_3_SMALL
-	index_name: str
-	search_type: SearchType
-	search_kwargs: SearchKwargs
+    provider: SearchProvider = SearchProvider.POSTGRES
+    embedding: Embedding = Embedding.TEXT_EMBED_3_SMALL
+    indexes: List[str]
+    search_type: SearchType
+    search_kwargs: SearchKwargs
 	
 class Chat(BaseModel):
 	streaming: bool = False
@@ -215,3 +216,28 @@ class Agent(Chat):
 			}
 		}
 	}
+ 
+ 
+class PostgresPut(BaseModel):
+	index_name: str
+	new_index_name: str
+ 
+	__config__ = {
+		"json_schema_extra": {
+			"example": {
+				"index_name": "6901622865",
+				"new_index_name": "my-new-index-name"
+			}
+   		}
+  	}
+ 
+class PostgresDelete(BaseModel):
+	index_name: str
+ 
+	__config__ = {
+		"json_schema_extra": {
+			"example": {
+				"index_name": "my-new-index-name"
+			}
+   		}
+  	}

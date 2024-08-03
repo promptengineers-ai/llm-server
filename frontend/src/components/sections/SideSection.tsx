@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useAppContext } from "@/contexts/AppContext";
 import { FaSpinner } from "react-icons/fa";
-import { PiBatteryEmptyBold } from "react-icons/pi";
+import { RxValueNone } from "react-icons/rx";
 
 interface DrawerProps {
     isOpen: boolean;
@@ -145,14 +145,15 @@ const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
                                                             ) : (
                                                                 <>
                                                                     <div>
-                                                                        <PiBatteryEmptyBold
+                                                                        <RxValueNone
                                                                             fontSize={
                                                                                 22
                                                                             }
                                                                         />
                                                                     </div>
                                                                     <div className="ml-2">
-                                                                        No History
+                                                                        No
+                                                                        History
                                                                     </div>
                                                                 </>
                                                             )}
