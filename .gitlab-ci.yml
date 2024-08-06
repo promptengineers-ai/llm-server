@@ -7,7 +7,15 @@ variables:
   BUCKET: pe-oss-bucket
   S3_REGION: us-east-1
   PYTHONPATH: "${CI_PROJECT_DIR}/backend/src:${CI_PROJECT_DIR}/backend"
-  DOCKER_IMAGE_TAG: $([[ "$CI_COMMIT_REF_NAME" == "development" ]] && echo "$CI_COMMIT_SHORT_SHA" || echo "$CI_COMMIT_REF_NAME")
+
+# Define the template to set DOCKER_IMAGE_TAG
+.set_docker_image_tag_template: &set_docker_image_tag_template
+  - |
+    if [ "$CI_COMMIT_REF_NAME" == "development" ]; then
+      export DOCKER_IMAGE_TAG="$CI_COMMIT_SHORT_SHA"
+    else
+      export DOCKER_IMAGE_TAG="$CI_COMMIT_REF_NAME"
+    fi
 
 cache:
   paths:
@@ -42,6 +50,7 @@ build:
     - docker:dind
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
+    - *set_docker_image_tag_template
   script:
     - cd backend
     - docker build -t "$CI_REGISTRY_IMAGE:${DOCKER_IMAGE_TAG}" .
@@ -65,6 +74,8 @@ deploy:
     GCP_SERVICE_NAME: llm-server-dev
     DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG
   before_script:
+    - *set_docker_image_tag_template
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG"
     - env | sort
     - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp-key.json
     - gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
