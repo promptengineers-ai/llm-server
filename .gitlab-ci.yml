@@ -1,11 +1,13 @@
 stages:
   - test
   - build
+  - deploy
 
 variables:
   BUCKET: pe-oss-bucket
   S3_REGION: us-east-1
-  PYTHONPATH: "${CI_PROJECT_DIR}/backend/src:${CI_PROJECT_DIR}/backend"  
+  PYTHONPATH: "${CI_PROJECT_DIR}/backend/src:${CI_PROJECT_DIR}/backend"
+  DOCKER_IMAGE_TAG: $([[ "$CI_COMMIT_REF_NAME" == "development" ]] && echo "$CI_COMMIT_SHORT_SHA" || echo "$CI_COMMIT_REF_NAME")
 
 cache:
   paths:
@@ -42,8 +44,70 @@ build:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
   script:
     - cd backend
-    - docker build -t "$CI_REGISTRY_IMAGE:latest" .
-    - docker push "$CI_REGISTRY_IMAGE:latest"
+    - docker build -t "$CI_REGISTRY_IMAGE:${DOCKER_IMAGE_TAG}" .
+    - docker push "$CI_REGISTRY_IMAGE:${DOCKER_IMAGE_TAG}"
   only:
     - development
-    - master
+    - tags
+
+deploy:
+  stage: deploy
+  image: google/cloud-sdk:latest
+  needs: [build]
+  environment:
+    name: $CI_COMMIT_REF_NAME
+  variables:
+    APP_ENV: development
+    APP_ADMIN_EMAIL: admin@example.com
+    APP_ADMIN_PASS: test1234
+    APP_WORKERS: 1
+    GCP_PROJECT: pe-open-source-chat
+    GCP_SERVICE_NAME: llm-server-dev
+    DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG
+  before_script:
+    - env | sort
+    - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp-key.json
+    - gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
+    - gcloud config set project $GCP_PROJECT
+  script:
+    - echo "Deploying $DOCKER_IMAGE to Cloud Run Server"
+    - |
+      declare -a ENV_VARS=(
+        ## App
+        "APP_ENV=$APP_ENV"
+        "APP_VERSION=$DOCKER_IMAGE_TAG"
+        "APP_SECRET=$APP_SECRET"
+        "APP_ADMIN_EMAIL=$APP_ADMIN_EMAIL"
+        "APP_ADMIN_PASS=$APP_ADMIN_PASS"
+        "APP_WORKERS=$APP_WORKERS"
+
+        ## Database
+        "DATABASE_URL=$DATABASE_URL"
+        "REDIS_URL=$REDIS_URL"
+        "POSTGRES_URL=$POSTGRES_URL"
+
+        ## LLM
+        "OPENAI_API_KEY=$OPENAI_API_KEY"
+        "GROQ_API_KEY=$GROQ_API_KEY"
+        "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
+
+        ## Storage
+        "BUCKET=$BUCKET"
+        "S3_REGION=$S3_REGION"
+        "ACCESS_KEY_ID=$ACCESS_KEY_ID"
+        "ACCESS_SECRET_KEY=$ACCESS_SECRET_KEY"
+      )
+
+      # Join array elements into a comma-separated string
+      VARS=$(IFS=,; echo "${ENV_VARS[*]}")
+
+      # Deploy
+      gcloud run deploy $GCP_SERVICE_NAME \
+        --image $DOCKER_IMAGE \
+        --platform managed \
+        --region us-central1 \
+        --allow-unauthenticated \
+        --set-env-vars $VARS
+  only:
+    - development
+    - tags
