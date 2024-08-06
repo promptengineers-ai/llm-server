@@ -22,6 +22,7 @@ test:
   before_script:
     - python --version
     - pip install --upgrade pip
+    - env | sort
   script:
     - cd backend
     - mkdir -p data
