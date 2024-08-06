@@ -81,9 +81,7 @@ deploy:
     - gcloud auth activate-service-account --key-file=/tmp/gcp_key.json
     - gcloud config set project $GCP_PROJECT
     - |
-      # Fetch GitLab registry credentials from Secret Manager
-      GITLAB_USERNAME=$(gcloud secrets versions access latest --secret="gitlab-deploy-token-username")
-      GITLAB_PASSWORD=$(gcloud secrets versions access latest --secret="gitlab-deploy-token-password")
+      # Configure Docker to use GitLab deploy token for authentication
       echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$GITLAB_USERNAME\",\"password\":\"$GITLAB_PASSWORD\"}}}" > ~/.docker/config.json
   after_script:
     - rm /tmp/gcp_key.json
