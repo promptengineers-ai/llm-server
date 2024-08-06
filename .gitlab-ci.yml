@@ -69,6 +69,10 @@ deploy:
     - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp-key.json
     - gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
     - gcloud config set project $GCP_PROJECT
+    - |
+      # Fetch GitLab registry credentials from Secret Manager
+      GITLAB_USERNAME=$(gcloud secrets versions access latest --secret="gitlab-deploy-token-username")
+      GITLAB_PASSWORD=$(gcloud secrets versions access latest --secret="gitlab-deploy-token-password")
   script:
     - echo "Deploying $DOCKER_IMAGE to Cloud Run Server"
     - |
