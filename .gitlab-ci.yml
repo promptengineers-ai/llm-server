@@ -80,6 +80,9 @@ deploy:
     - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp_key.json
     - gcloud auth activate-service-account --key-file=/tmp/gcp_key.json
     - gcloud config set project $GCP_PROJECT
+    - |
+      mkdir -p ~/.docker
+      echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$GITLAB_USERNAME\",\"password\":\"$GITLAB_PASSWORD\"}}}" > ~/.docker/config.json
   after_script:
     - rm /tmp/gcp_key.json
   script:
