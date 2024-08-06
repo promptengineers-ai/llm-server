@@ -77,13 +77,15 @@ deploy:
     - *set_docker_image_tag_template
     - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG"
     - env | sort
-    - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp-key.json
-    - gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
+    - echo "$GCP_SA_KEY" > /tmp/gcp_key.json
+    - gcloud auth activate-service-account --key-file=/tmp/gcp_key.json
     - gcloud config set project $GCP_PROJECT
     - |
       # Fetch GitLab registry credentials from Secret Manager
       GITLAB_USERNAME=$(gcloud secrets versions access latest --secret="gitlab-deploy-token-username")
       GITLAB_PASSWORD=$(gcloud secrets versions access latest --secret="gitlab-deploy-token-password")
+  after_script:
+    - rm /tmp/gcp_key.json
   script:
     - echo "Deploying $DOCKER_IMAGE to Cloud Run Server"
     - |
