@@ -37,7 +37,7 @@ class TestChatRepository(unittest.IsolatedAsyncioTestCase):
             "retrieval": {
                 "provider": "redis",
                 "embedding": "openai-text-embedding-3-large",
-                "index_name": "",
+                "indexes": [],
                 "search_type": "mmr",
                 "search_kwargs": {
                     "k": 20,
