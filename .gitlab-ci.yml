@@ -1,5 +1,6 @@
 stages:
   - test
+  - build
 
 variables:
   BUCKET: pe-oss-bucket
@@ -29,3 +30,19 @@ test:
   # only:
   #   changes:
   #     - backend/**/*
+  except:
+    - tags
+
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
+  script:
+    - docker build -t "$CI_REGISTRY_IMAGE:latest" .
+    - docker push "$CI_REGISTRY_IMAGE:latest"
+  only:
+    - development
+    - master
