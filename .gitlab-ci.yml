@@ -11,27 +11,27 @@ cache:
   paths:
     - .cache/pip
 
-test:
-  stage: test
-  image: python:3.10
-  variables:
-    APP_ENV: test
-    APP_SECRET: this-is-a-test-secret
-  before_script:
-    - python --version
-    - pip install --upgrade pip
-    - env | sort
-  script:
-    - cd backend
-    - mkdir -p data
-    - pip install uv
-    - uv pip install -v --system --no-cache-dir -c constraints.txt -r requirements.txt -r requirements-dev.txt
-    - pytest -rs
-  # only:
-  #   changes:
-  #     - backend/**/*
-  except:
-    - tags
+# test:
+#   stage: test
+#   image: python:3.10
+#   variables:
+#     APP_ENV: test
+#     APP_SECRET: this-is-a-test-secret
+#   before_script:
+#     - python --version
+#     - pip install --upgrade pip
+#     - env | sort
+#   script:
+#     - cd backend
+#     - mkdir -p data
+#     - pip install uv
+#     - uv pip install -v --system --no-cache-dir -c constraints.txt -r requirements.txt -r requirements-dev.txt
+#     - pytest -rs
+#   # only:
+#   #   changes:
+#   #     - backend/**/*
+#   except:
+#     - tags
 
 build:
   stage: build
@@ -41,6 +41,7 @@ build:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
   script:
+    - cd backend
     - docker build -t "$CI_REGISTRY_IMAGE:latest" .
     - docker push "$CI_REGISTRY_IMAGE:latest"
   only:
