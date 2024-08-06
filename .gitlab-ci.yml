@@ -2,8 +2,6 @@ stages:
   - test
 
 variables:
-  APP_ENV: development
-  APP_SECRET: this-is-a-test-secret
   OPENAI_API_KEY: $OPENAI_API_KEY
   BUCKET: pe-oss-bucket
   S3_REGION: us-east-1
@@ -18,11 +16,12 @@ cache:
 test:
   stage: test
   image: python:3.10
+  variables:
+    APP_ENV: test
+    APP_SECRET: this-is-a-test-secret
   before_script:
     - python --version
     - pip install --upgrade pip
-    - ls -R 
-    - echo $PYTHONPATH
   script:
     - mkdir -p data
     - cd backend

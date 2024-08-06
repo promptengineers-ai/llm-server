@@ -6,6 +6,7 @@ from sqlalchemy.dialects.mysql import LONGTEXT
 APP_ENV = os.environ.get("APP_ENV", "local")
 APP_VERSION = os.environ.get("APP_VERSION", "0.0.1")
 APP_SECRET = os.environ.get("APP_SECRET")
+
 APP_LOG_LEVEL = os.environ.get("APP_LOG_LEVEL", "INFO")
 APP_ALGORITHM = os.environ.get("APP_ALGORITHM", "HS256")
 APP_WORKERS = os.environ.get("APP_WORKERS", 1)
