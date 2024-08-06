@@ -82,6 +82,7 @@ deploy:
     - gcloud config set project $GCP_PROJECT
     - |
       # Configure Docker to use GitLab deploy token for authentication
+      mkdir -p ~/.docker
       echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$GITLAB_USERNAME\",\"password\":\"$GITLAB_PASSWORD\"}}}" > ~/.docker/config.json
   after_script:
     - rm /tmp/gcp_key.json
