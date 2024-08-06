@@ -9,6 +9,7 @@ variables:
   S3_REGION: us-east-1
   ACCESS_KEY_ID: $ACCESS_KEY_ID
   ACCESS_SECRET_KEY: $ACCESS_SECRET_KEY
+  PYTHONPATH: "${CI_PROJECT_DIR}/backend/src:${CI_PROJECT_DIR}/backend"  
 
 cache:
   paths:
@@ -20,6 +21,8 @@ test:
   before_script:
     - python --version
     - pip install --upgrade pip
+    - ls -R 
+    - echo $PYTHONPATH
   script:
     - mkdir -p data
     - cd backend
