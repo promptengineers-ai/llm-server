@@ -7,9 +7,12 @@ import { FaChevronDown } from "react-icons/fa";
 import { useChatContext } from "@/contexts/ChatContext";
 import { Tool } from "@/types/chat";
 import { useEffect } from "react";
-
+import { FaTrash } from "react-icons/fa"; // Import the trash icon
+import { useToolContext } from "@/contexts/ToolContext";
+import TrashIcon from "../icons/TrashIcon";
 
 const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
+    const { deleteTool } = useToolContext();
     const { initChatPayload, setInitChatPayload, setChatPayload } =
         useChatContext();
 
@@ -27,6 +30,16 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                 tools: updatedTools,
             };
         });
+    };
+
+    const handleDeleteClick = async (tool: any) => {
+        const confirmDelete = confirm(
+            `Are you sure you want to delete ${tool.name} tool?`
+        );
+        if (!confirmDelete) {
+            return;
+        }
+        await deleteTool(tool);
     };
 
     useEffect(() => {
@@ -64,6 +77,7 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                                 <div className="font-bold">
                                     <a
                                         href={tool.link}
+                                        target="_blank"
                                         className="text-blue-500 underline"
                                     >
                                         {tool.name}
@@ -73,7 +87,7 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                                     {tool.description}
                                 </div>
                             </div>
-                            <div className="flex items-center mt-2">
+                            <div className="flex items-center justify-between mt-2">
                                 <input
                                     type="checkbox"
                                     checked={initChatPayload.tools.includes(
@@ -82,6 +96,13 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                                     className="mr-2"
                                     onChange={() => toggleTool(tool.value)}
                                 />
+                                <button
+                                    className="hover:text-red-700"
+                                    onClick={async () => handleDeleteClick(tool)}
+                                    title="Delete tool"
+                                >
+                                    <TrashIcon />
+                                </button>
                             </div>
                         </li>
                     ))}

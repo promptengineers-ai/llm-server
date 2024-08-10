@@ -1,14 +1,13 @@
 from enum import Enum
-from src.infrastructure.logger import logger as logging
 from typing import Optional
+
 from fastapi import HTTPException, status, APIRouter, Query
 from fastapi.responses import StreamingResponse
 
-
+from src.infrastructure.logger import logger as logging
 from src.config import APP_VERSION, REDIS_URL
 from src.services.cache import CacheService
 from src.utils.llm import available_models
-from src.tools import tool_details
 
 TAG = "Status"
 router = APIRouter()
@@ -33,7 +32,6 @@ async def get_application_version():
 async def get_events(channel_name: str):
     event_generator = await cache_service.redis_listener(channel_name)
     return StreamingResponse(event_generator(), media_type="text/event-stream")
-
 
 
 #######################################################################
@@ -66,35 +64,4 @@ async def list_models(type: Optional[ModelType] = Query(None, description="Filte
     models = available_models(type)  # Assuming available_models can handle the type filter
     return {"models": models}
 
-
-@router.get("/tools", tags=['Tool'], responses={
-    200: {
-        "content": {
-            "application/json": {
-                "example": {
-                    "tools": [
-                        {
-                            "name": "Repl Tool",
-                            "value": "repl_tool",
-                            "description": "Interactive Python REPL tool.",
-                            "link": "/tools/repl_tool",
-                            "toolkit": "Basic"
-                        },
-                        {
-                            "name": "Csv Tool",
-                            "value": "csv_tool",
-                            "description": "Tool for processing CSV files.",
-                            "link": "/tools/csv_tool",
-                            "toolkit": "Basic"
-                        }
-                    ]
-                }
-            }
-        },
-        "description": "Successful Response"
-    }
-})
-async def list_tools():
-    tools = tool_details()
-    return {"tools": tools}
 
