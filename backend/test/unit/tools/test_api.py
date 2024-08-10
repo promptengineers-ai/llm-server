@@ -15,7 +15,6 @@ class TestApiTools(unittest.TestCase):
         result = tool.run({
             "title": "Test",
             "body": "World",
-            "userId": 3,
             "postId": 1
         })
         print(result)

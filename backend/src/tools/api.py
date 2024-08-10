@@ -1,6 +1,6 @@
 import re
 import httpx
-import logging
+from src.infrastructure.logger import logger as logging
 from typing import Any, Dict, List, Type
 from langchain.tools import StructuredTool
 from langchain_core.pydantic_v1 import BaseModel, Field, create_model
@@ -35,7 +35,7 @@ def create_schema(model_name: str, fields_json: Dict[str, Any]) -> Type[BaseMode
         field_type = get_field_type(field_info["type"])
         field_params = {"description": field_info.get("description", "")}
         if field_info.get("required", False):
-            field_params["default"] = ...
+            field_params["default"] = field_info.get('default', None) or ...
         else:
             field_params["default"] = field_info.get("default", None)
         fields[field_name] = (field_type, Field(**field_params))
@@ -49,6 +49,7 @@ async def api_request(
     body: dict = None, 
     params: dict = None
 ):
+    logging.debug({'url': url, 'method': method, 'headers': headers, 'body': body, 'params': params})
     method = method.upper()
     async with httpx.AsyncClient() as client:
         if method == 'GET':

@@ -46,7 +46,8 @@ class APITool(BaseModel):
                     "title": {
                         "type": "str",
                         "description": "The title of the post",
-                        "required": True
+                        "required": True,
+                        "default": "Updated Post"
                     },
                     "body": {
                         "type": "str",
@@ -56,6 +57,7 @@ class APITool(BaseModel):
                     "userId": {
                         "type": "int",
                         "description": "The ID of the user creating the post",
+                        "default": 1,
                         "required": True
                     },
                     "postId": {
