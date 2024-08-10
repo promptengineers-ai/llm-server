@@ -69,7 +69,7 @@ export default function ArgsDataGrid() {
                     className="p-4 border rounded-md bg-white space-y-4"
                 >
                     <Fieldset className="space-y-4">
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="grid grid-cols-5 gap-2">
                             <Field className="col-span-1">
                                 <label className="block font-medium">
                                     Type
@@ -116,7 +116,7 @@ export default function ArgsDataGrid() {
                                     }
                                 />
                             </Field>
-                            {/* <Field className="col-span-2">
+                            <Field className="col-span-2">
                                 <label className="block font-medium">
                                     Default
                                 </label>
@@ -138,7 +138,7 @@ export default function ArgsDataGrid() {
                                         )
                                     }
                                 />
-                            </Field> */}
+                            </Field>
                         </div>
                         <Field>
                             <label className="block font-medium">

@@ -1,4 +1,5 @@
 import os
+from src.models.tools import APITool
 from src.tools import searx_search_tool, multi_modal_tool
 
 ## Configuration for tools
@@ -59,9 +60,11 @@ ENDPOINTS = [
         "url": "https://jsonplaceholder.typicode.com/users",
         "method": "GET",
         "headers": {
-            "Content-Type": "application/json"
+            "Content-Type": {
+                "value":"application/json; charset=UTF-8",
+                "encrypted": False
+            }
         },
-        "encrypt_headers": False,
         "args": None
     },
     {
@@ -72,9 +75,11 @@ ENDPOINTS = [
         "url": "https://jsonplaceholder.typicode.com/posts",
         "method": "GET",
         "headers": {
-            "Content-Type": "application/json"
+            "Content-Type": {
+                "value":"application/json; charset=UTF-8",
+                "encrypted": False
+            }
         },
-        "encrypt_headers": False,
         "args": None
     },
     {
@@ -85,9 +90,11 @@ ENDPOINTS = [
         "url": "https://jsonplaceholder.typicode.com/posts",
         "method": "POST",
         "headers": {
-            "Content-Type": "application/json; charset=UTF-8"
+            "Content-Type": {
+                "value":"application/json; charset=UTF-8",
+                "encrypted": False
+            }
         },
-        "encrypt_headers": False,
         "args": {
             "title": {
                 "type": "str",
@@ -106,38 +113,5 @@ ENDPOINTS = [
             }
         }
     },
-    {
-        "name": "update_post",
-        "description": "To update an existing post.",
-        "link": '/tools/update_post',
-        'toolkit': 'API',
-        "url": "https://jsonplaceholder.typicode.com/posts/{postId}",
-        "method": "PUT",
-        "headers": {
-            "Content-Type": "application/json; charset=UTF-8"
-        },
-        "encrypt_headers": False,
-        "args": {
-            "title": {
-                "type": "str",
-                "description": "The title of the post",
-                "required": True
-            },
-            "body": {
-                "type": "str",
-                "description": "The body content of the post",
-                "required": True
-            },
-            "userId": {
-                "type": "int",
-                "description": "The ID of the user creating the post",
-                "required": True
-            },
-            "postId": {
-                "type": "string",
-                "description": "The ID of the post to be updated",
-                "required": True
-            }
-        }
-    }
+    APITool.__config__['json_schema_extra']['example']
 ]
