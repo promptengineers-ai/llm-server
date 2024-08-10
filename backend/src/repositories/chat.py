@@ -1,5 +1,4 @@
 import ujson
-import hashlib
 from datetime import datetime
 
 from sqlalchemy import select

@@ -1,8 +1,8 @@
 # import nest_asyncio
 from langchain_core.tools import StructuredTool
 
-from langchain_community.tools.playwright.utils import create_async_playwright_browser
-from langchain_community.agent_toolkits.playwright.toolkit import PlayWrightBrowserToolkit
+# from langchain_community.tools.playwright.utils import create_async_playwright_browser
+# from langchain_community.agent_toolkits.playwright.toolkit import PlayWrightBrowserToolkit
 
 from src.models.tools.search import SearxNgSchema
 from src.models.tools import HumanQuery
@@ -79,62 +79,3 @@ defined in the PDF form, and each value is the value to set for that field.
 #     toolkit = PlayWrightBrowserToolkit.from_browser(async_browser=browser)
 #     tools = toolkit.get_tools()
 #     return tools
-
-
-
-
-AVAILABLE_TOOLS = {
-    'image_summary': multi_modal_tool,
-    "searx_search": searx_search_tool,
-	# 'repl_tool': repl_tool,
-    # 'csv_tool': csv_tool,
-    # 'pdf_get_field_names': pdf_get_field_names,
-    # 'pdf_fill_form_fields': pdf_fill_form_fields,
-    # 'playwright_toolkit': playwright_toolkit(),
-}
-
-TOOL_DESCRIPTIONS = {
-    'image_summary': {
-        'description': 'Tool for understanding context in an image. Uses GPT-4o (currently).',
-        'link': '/tools/image_summary',
-        'toolkit': 'Advanced'
-    },
-    'searx_search': {
-        'name': 'SearxNG Search',
-        'description': searx_search_tool.description,
-        'link': 'https://api.python.langchain.com/en/latest/utilities/langchain_community.utilities.searx_search.SearxSearchWrapper.html',
-        'toolkit': 'Advanced'
-    },
-    'repl_tool': {
-        'description': 'Python REPL can execute arbitrary code. Use with caution',
-        'link': '/tools/repl_tool',
-        'toolkit': 'Advanced'
-    },
-    'csv_tool': {
-        'description': 'Tool for processing CSV files.',
-        'link': '/tools/csv_tool',
-        'toolkit': 'Basic'
-    },
-    'pdf_get_field_names': {
-        'description': 'Extract field names from PDF forms.',
-        'link': '/tools/pdf_get_field_names',
-        'toolkit': 'Advanced'
-    },
-    'pdf_fill_form_fields': {
-        'description': 'Fill form fields in PDF documents.',
-        'link': '/tools/pdf_fill_form_fields',
-        'toolkit': 'Advanced'
-    },
-}
-
-def tool_details():
-    return [
-        {
-            'name': TOOL_DESCRIPTIONS[key].get('name') if TOOL_DESCRIPTIONS[key].get('name') else key.replace('_', ' ').title(),
-            'value': key,
-            'description': TOOL_DESCRIPTIONS[key]['description'],
-            'link': TOOL_DESCRIPTIONS[key]['link'],
-            'toolkit': TOOL_DESCRIPTIONS[key]['toolkit']
-        }
-        for key in AVAILABLE_TOOLS
-    ]

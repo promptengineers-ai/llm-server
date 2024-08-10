@@ -8,41 +8,13 @@ import { useHandleOutsideClickEffect } from "@/hooks/effect/useAppEffects";
 export const AppContext = createContext({});
 
 export default function AppProvider({ children }: IContextProvider) {
-    const {
-        loading,
-        setLoading,
-        isOpen,
-        setIsOpen,
-        isDrawerOpen,
-        setIsDrawerOpen,
-        isPopoverOpen,
-        setIsPopoverOpen,
-        isWebLoaderOpen,
-        setIsWebLoaderOpen,
-        isMobile,
-        toggleDrawer,
-        closeDrawer,
-    } = useAppState();
+    const appState = useAppState();
 
-    useHandleOutsideClickEffect(isDrawerOpen, closeDrawer);
+    useHandleOutsideClickEffect(appState.isDrawerOpen, appState.closeDrawer);
 
     return (
         <AppContext.Provider
-            value={{
-                loading,
-                setLoading,
-                isOpen,
-                setIsOpen,
-                isDrawerOpen,
-                setIsDrawerOpen,
-                isPopoverOpen,
-                setIsPopoverOpen,
-                isWebLoaderOpen,
-                setIsWebLoaderOpen,
-                isMobile,
-                toggleDrawer,
-                closeDrawer,
-            }}
+            value={appState}
         >
             {children}
         </AppContext.Provider>
