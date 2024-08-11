@@ -1,8 +1,10 @@
 import { Field, Fieldset } from "@headlessui/react";
 import { useToolContext } from "@/contexts/ToolContext";
+import SearchableInput from "@/components/selects/SearchableInput";
 
 export default function ToolDetailsForm() {
-    const { tool, updateToolState } = useToolContext();
+    const { tool, updateToolState, fetchToolkits } = useToolContext();
+
     return (
         <div className="overflow-y-auto max-h-[85dvh]">
             <Fieldset className={"mb-2"}>
@@ -20,6 +22,18 @@ export default function ToolDetailsForm() {
                             updateToolState({ name: e.target.value })
                         }
                         value={tool.name}
+                    />
+                </Field>
+            </Fieldset>
+            <Fieldset className={"mb-2"}>
+                <Field className={"border rounded-md p-2"}>
+                    <label className="font-semibold">Toolkit</label>
+                    <p className="text-xs text-slate/50">
+                        The toolkit to be used for the tool
+                    </p>
+                    <SearchableInput
+                        options={fetchToolkits()}
+                        value={tool.toolkit}
                     />
                 </Field>
             </Fieldset>
@@ -58,15 +72,6 @@ export default function ToolDetailsForm() {
                     />
                 </Field>
             </Fieldset>
-            {/* <Fieldset className={"mb-2"}>
-                <Field className={"border rounded-md p-2"}>
-                    <label className="font-semibold">Toolkit</label>
-                    <p className="text-xs text-slate/50">
-                        The toolkit to be used for the tool
-                    </p>
-                    <ToolkitComboBox />
-                </Field>
-            </Fieldset> */}
         </div>
     );
 }

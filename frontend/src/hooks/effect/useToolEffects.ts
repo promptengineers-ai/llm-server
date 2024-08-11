@@ -69,3 +69,14 @@ export const useAssignArgsEffect = (rows: any) => {
         updateToolState({ args: transformedObject });
     }, [rows]); // Add updateToolState to the dependency array
 };
+
+export const useAssignToolkitEffect = (query: string) => {
+    const { updateToolState } = useToolContext();
+    useEffect(() => {
+        updateToolState({ toolkit: query });
+
+        return () => {
+            // Cleanup logic if needed
+        };
+    }, [query]);
+};

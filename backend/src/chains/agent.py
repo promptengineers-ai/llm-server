@@ -12,7 +12,7 @@ def agent_chain(body: Agent, endpoints: list[dict] = None):
     chat_history = list(zip(filtered_messages[::2], filtered_messages[1::2]))
     vectorstore = None
     if body.retrieval.provider and body.retrieval.indexes:
-        return Exception('Under Maintenance')
+        return ValueError('Agent Retrieval Under Maintenance')
         documents = retrieval_service.load('pdf', {'path': 'static/contract_filled.pdf'})
         chunks = retrieval_service.split(documents, 'char', 500, 0)
         vectorstore = retrieval_service.db('faiss', chunks)
