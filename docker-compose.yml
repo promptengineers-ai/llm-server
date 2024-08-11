@@ -18,11 +18,12 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: test1234
-      POSTGRES_DB: llm_server_dev
+      POSTGRES_MULTIPLE_DATABASES: "llm_server_dev,llm_server_dev_vectordb"
     ports:
       - "5432:5432"
     volumes:
       - ./backend/data/postgres:/var/lib/postgresql/data
+      - ./docker/postgres/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
       
   # # phpMyAdmin
   pgadmin:
@@ -33,6 +34,8 @@ services:
       PGADMIN_DEFAULT_PASSWORD: test1234
     ports:
       - "4040:80"
+    volumes:
+      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json
     depends_on:
       - postgres
 

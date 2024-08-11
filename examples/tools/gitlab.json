@@ -1,0 +1,82 @@
+[
+    {
+        "name": "pe_create_project_issue",
+        "description": "Allows to create Gitlab project issue.",
+        "link": "",
+        "toolkit": "Gitlab",
+        "url": "https://gitlab.com/api/v4/projects/{project_id}/issues",
+        "method": "POST",
+        "args": {
+            "project_id": {
+                "description": "This is a URL param for the Gitlab project ID.",
+                "type": "str",
+                "default": "60281633",
+                "required": true
+            },
+            "title": {
+                "description": "Gitlab project issue title. If enhancement prefix with \"FEATURE:\", if is a fix prefix with \"BUG:\"",
+                "type": "str",
+                "default": "",
+                "required": true
+            },
+            "description": {
+                "description": "Gitlab project issue description. Includes concise details and acceptance criteria.",
+                "type": "str",
+                "default": "",
+                "required": true
+            }
+        },
+        "headers": {
+            "PRIVATE-TOKEN": {
+                "value": "my_private_token",
+                "encrypted": true
+            }
+        }
+    },
+    {
+        "name": "pe_create_project_merge_request",
+        "description": "Allows to create Gitlab project merge request.",
+        "link": "",
+        "toolkit": "Gitlab",
+        "url": "https://gitlab.com/api/v4/projects/{project_id}/merge_requests",
+        "method": "POST",
+        "args": {
+            "project_id": {
+                "description": "This is a URL param for the Gitlab project ID.",
+                "type": "str",
+                "default": "60281633",
+                "required": true
+            },
+            "source_branch": {
+                "description": "Gitlab project source branch.",
+                "type": "str",
+                "default": "",
+                "required": true
+            },
+            "target_branch": {
+                "description": "Gitlab project target branch.",
+                "type": "str",
+                "default": "development",
+                "required": true
+            },
+            "title": {
+                "description": "Gitlab project merge request title. If enhancement prefix with \"FEATURE:\", if is a fix prefix with \"BUG:\"",
+                "type": "str",
+                "default": "",
+                "required": true
+            },
+            "description": {
+                "description": "Gitlab project merge request description. Includes concise details and acceptance criteria.",
+                "type": "str",
+                "default": "",
+                "required": true
+            }
+        },
+        "headers": {
+            "PRIVATE-TOKEN": {
+                "value": "my_private_token",
+                "encrypted": true
+            }
+        }
+    }
+]
