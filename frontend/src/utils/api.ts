@@ -318,6 +318,47 @@ export class ToolClient extends Client {
         }
     }
 
+    public async find(tool: any) {
+        try {
+            const response = await fetch(
+                `${this.apiUrl}/api/v1/tools/${tool.value}`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                }
+            );
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error: " + error);
+        }
+    }
+
+    public async update(tool: any) {
+        try {
+            const response = await fetch(`${this.apiUrl}/api/v1/tools/${tool.name}`, {
+                method: "PUT",
+                headers: {
+                    accept: "application/json",
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify(tool),
+            });
+
+            const data = await response.json();
+            return data; // This will return the response data from the server
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error: " + error);
+        }
+    }
+
     public async delete(tool: any) {
         try {
             await fetch(`${this.apiUrl}/api/v1/tools/${tool.value}`, {

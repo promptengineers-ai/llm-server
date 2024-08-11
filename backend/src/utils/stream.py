@@ -19,14 +19,14 @@ def token_stream(
             'message': "",
             'type': 'end'
         }
-        logging.debug('[utils.stream.token_stream] End: %s', str(data))
+        logging.debug(f'[utils.stream.token_stream] End: {str(data)}')
     elif action_type == 'tool':
         data = {
             'sender': 'assistant',
             'message': token,
             'type': 'tool'
         }
-        logging.debug('[utils.stream.token_stream] Action: %s', str(data))
+        logging.debug(f'[utils.stream.token_stream] Action: {str(data)}')
     elif action_type == 'input':
         data = {
             'sender': 'assistant',
@@ -34,7 +34,7 @@ def token_stream(
             'type': 'input',
             'tool': tool,
         }
-        logging.debug('[utils.stream.token_stream] Input: %s', str(data))
+        logging.debug(f'[utils.stream.token_stream] Input: {str(data)}')
     elif action_type == 'output':
         data = {
             'sender': 'assistant',
@@ -42,26 +42,26 @@ def token_stream(
             'type': 'output',
             'tool': tool,
         }
-        logging.debug('[utils.stream.token_stream] Output: %s', str(data))
+        logging.debug(f'[utils.stream.token_stream] Output: {str(data)}')
     elif action_type == 'doc':
         data = {
             'sender': 'assistant',
             'message': token,
             'type': 'doc'
         }
-        logging.debug('[utils.stream.token_stream] Document: %s', str(data))
+        logging.debug(f'[utils.stream.token_stream] Document: {str(data)}')
     elif action_type == 'log':
         data = {
             'sender': 'assistant',
             'message': token,
             'type': 'log'
         }
-        logging.debug('[utils.stream.token_stream] Log: %s', str(data))
+        logging.debug(f'[utils.stream.token_stream] Log: {str(data)}')
     else:
         data = {
             'sender': 'assistant',
             'message': token,
             'type': 'stream'
         }
-        logging.debug('[utils.stream.token_stream] Token: %s', str(data))
+        logging.debug(f'[utils.stream.token_stream] Token: {str(data)}')
     return f"data: {json.dumps(data)}\n\n"

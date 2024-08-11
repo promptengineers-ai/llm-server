@@ -7,12 +7,17 @@ import { FaChevronDown } from "react-icons/fa";
 import { useChatContext } from "@/contexts/ChatContext";
 import { Tool } from "@/types/chat";
 import { useEffect } from "react";
-import { FaTrash } from "react-icons/fa"; // Import the trash icon
 import { useToolContext } from "@/contexts/ToolContext";
 import TrashIcon from "../icons/TrashIcon";
+import EditIcon from "../icons/EditIcon";
+import { useAppContext } from "@/contexts/AppContext";
+import { ToolClient } from "@/utils/api";
+
+const toolClient = new ToolClient();
 
 const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
-    const { deleteTool } = useToolContext();
+    const { setIsCustomizeOpen, setIsNewToolOpen } = useAppContext();
+    const { deleteTool, updateToolState } = useToolContext();
     const { initChatPayload, setInitChatPayload, setChatPayload } =
         useChatContext();
 
@@ -96,13 +101,33 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                                     className="mr-2"
                                     onChange={() => toggleTool(tool.value)}
                                 />
-                                <button
-                                    className="hover:text-red-700"
-                                    onClick={async () => handleDeleteClick(tool)}
-                                    title="Delete tool"
-                                >
-                                    <TrashIcon />
-                                </button>
+                                
+                                {tool.id && (
+                                    <div className="flex space-x-2">
+                                        <button
+                                            className="hover:text-blue-500"
+                                            onClick={async () => {
+                                                setIsCustomizeOpen(false);
+                                                setIsNewToolOpen(true);
+                                                const item = await toolClient.find(tool)
+                                                updateToolState(item.tool);
+                                            }}
+                                            title="Edit tool"
+                                        >
+                                            <EditIcon />
+                                        </button>
+                                        <button
+                                            className="hover:text-red-700"
+                                            onClick={async () =>
+                                                handleDeleteClick(tool)
+                                            }
+                                            title="Delete tool"
+                                        >
+                                            <TrashIcon />
+                                        </button>
+                                    </div>
+                                )}
+                            
                             </div>
                         </li>
                     ))}

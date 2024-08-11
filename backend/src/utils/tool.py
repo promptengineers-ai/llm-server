@@ -57,7 +57,9 @@ def gather_tools(
 def tool_details(endpoints):
     available_tools, tool_descriptions = construct_tools_and_descriptions(endpoints)
     return [
-        {
+        {   
+            **({'id': tool_descriptions[key]['id']} if 'id' in tool_descriptions[key] else {}),
+            **({'type': tool_descriptions[key]['type']} if 'type' in tool_descriptions[key] else {}),
             'name': tool_descriptions[key].get('name') if tool_descriptions[key].get('name') else key.replace('_', ' ').title(),
             'value': key,
             'description': tool_descriptions[key]['description'],
@@ -79,6 +81,8 @@ def construct_tools_and_descriptions(endpoints):
         )
         available_tools[endpoint['name']] = tool_func
         tool_descriptions[endpoint['name']] = {
+            'id': endpoint['id'],
+            'type': 'api',
             'description': endpoint['description'],
             'link': endpoint['link'],
             'toolkit': endpoint['toolkit']
