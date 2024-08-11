@@ -6,6 +6,8 @@ import { useState } from "react";
 const toolClient = new ToolClient();
 export const initToolState = {
     tool: {
+        id: "",
+        type: "",
         name: "",
         description: "",
         link: "",
@@ -31,6 +33,12 @@ export const useToolState = () => {
         setTools(res.tools);
     };
 
+    const updateTool = async (updated: any) => {
+        await toolClient.update(updated);
+        const res = await toolClient.list();
+        setTools(res.tools);
+    };
+
     const deleteTool = async (tool: any) => {
         await toolClient.delete(tool);
         const res = await toolClient.list();
@@ -42,6 +50,7 @@ export const useToolState = () => {
         setTool,
         updateToolState,
         createTool,
+        updateTool,
         deleteTool,
     };
 };

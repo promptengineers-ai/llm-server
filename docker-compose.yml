@@ -13,7 +13,7 @@ services:
 
   # Database (Postgres)
   postgres:
-    image: postgres:13
+    image: pgvector/pgvector:pg16
     container_name: postgres
     environment:
       POSTGRES_USER: admin

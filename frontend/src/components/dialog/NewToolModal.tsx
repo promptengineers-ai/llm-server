@@ -18,12 +18,15 @@ import { useToolContext } from "@/contexts/ToolContext";
 import { initToolState } from "@/hooks/state/useToolState";
 
 const NewToolModal = () => {
-    const { tool, updateToolState, createTool } = useToolContext();
-    const { isNewToolOpen, setIsNewToolOpen, setIsOpen } = useAppContext();
+    const { tool, updateToolState, createTool, updateTool, } = useToolContext();
+    const { isNewToolOpen, setIsNewToolOpen, setIsOpen, setIsCustomizeOpen } =
+        useAppContext();
 
     if (!isNewToolOpen) {
         return null;
     }
+
+    const action = tool.id ? "Update" : "Create";
 
     return (
         <div
@@ -41,7 +44,7 @@ const NewToolModal = () => {
                                             id="radix-:re0:"
                                             className="text-lg font-semibold leading-6 text-token-text-primary"
                                         >
-                                            Create Tool
+                                            {action} Tool
                                         </h2>
                                     </div>
                                 </div>
@@ -121,29 +124,64 @@ const NewToolModal = () => {
                                 >
                                     Cancel
                                 </button>
-                                <button
-                                    onClick={async () => {
-                                        try {
-                                            await createTool(tool);
-                                            alert("Tool created successfully");
-                                            setIsNewToolOpen(false);
-                                            updateToolState(initToolState.tool);
-                                        } catch (e) {
-                                            alert("Failed to create tool");
-                                        }
-                                    }}
-                                    className={`px-4 py-2 rounded-3xl ${
-                                        tool.name &&
-                                        tool.description &&
-                                        tool.method &&
-                                        tool.url &&
-                                        tool.toolkit
-                                            ? "bg-gray-500 text-white"
-                                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                                    }`}
-                                >
-                                    Create
-                                </button>
+                                {tool.id ? (
+                                    <button
+                                        onClick={async () => {
+                                            try {
+                                                await updateTool(tool);
+                                                alert(
+                                                    "Tool updated successfully"
+                                                );
+                                                setIsNewToolOpen(false);
+                                                updateToolState(
+                                                    initToolState.tool
+                                                );
+                                                setIsCustomizeOpen(true);
+                                            } catch (e) {
+                                                alert("Failed to update tool");
+                                            }
+                                        }}
+                                        className={`px-4 py-2 rounded-3xl ${
+                                            tool.name &&
+                                            tool.description &&
+                                            tool.method &&
+                                            tool.url &&
+                                            tool.toolkit
+                                                ? "bg-gray-500 text-white"
+                                                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                        }`}
+                                    >
+                                        Update
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={async () => {
+                                            try {
+                                                await createTool(tool);
+                                                alert(
+                                                    "Tool created successfully"
+                                                );
+                                                setIsNewToolOpen(false);
+                                                updateToolState(
+                                                    initToolState.tool
+                                                );
+                                            } catch (e) {
+                                                alert("Failed to create tool");
+                                            }
+                                        }}
+                                        className={`px-4 py-2 rounded-3xl ${
+                                            tool.name &&
+                                            tool.description &&
+                                            tool.method &&
+                                            tool.url &&
+                                            tool.toolkit
+                                                ? "bg-gray-500 text-white"
+                                                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                        }`}
+                                    >
+                                        Create
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </DialogPanel>

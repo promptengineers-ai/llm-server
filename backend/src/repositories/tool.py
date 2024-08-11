@@ -1,4 +1,4 @@
-
+from datetime import datetime
 from fastapi import HTTPException, Request, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
@@ -10,6 +10,7 @@ from src.models.tools import APITool
 from src.services.db import get_db
 from src.utils.auth import decrypt, encrypt
 from src.utils.exception import NotFoundException
+from src.utils.format import find_differences
 from src.utils.tool import tool_details
 
 
@@ -101,23 +102,107 @@ class ToolRepository:
 				await transaction.rollback()
 				raise e
 
+	async def find(self, tool_value: str):
+		stmt = select(Tool).options(joinedload(Tool.headers)).where(Tool.name == tool_value, Tool.user_id == self.user_id)
+		result = await self.db.execute(stmt)
+		tool = result.scalars().first()
+		if tool:
+			tool_json = {
+				"id": tool.id,
+				"name": tool.name,
+				"description": tool.description,
+				"link": tool.link,
+				"toolkit": tool.toolkit,
+				"url": tool.url,
+				"method": tool.method,
+				"args": tool.args,
+				"headers": {
+					header.key: {
+						"value": decrypt(header.value) if header.encrypted else header.value,
+						"encrypted": header.encrypted
+					} for header in tool.headers
+				}
+			}
+			return tool_json
+		raise NotFoundException(f"Tool with name {tool_value} not found.")
+
 	async def update(self, tool_value: str, updates: APITool):
 		async with self.db.begin() as transaction:
 			try:
-				# Fetch the chat and its messages
+				# Fetch the tool and its headers
 				stmt = select(Tool).options(joinedload(Tool.headers)).where(Tool.name == tool_value, Tool.user_id == self.user_id)
 				result = await self.db.execute(stmt)
 				tool = result.scalars().first()
 
 				if tool:
-					print(tool, updates)
+					tool_json = {
+						"name": tool.name,
+						"description": tool.description,
+						"link": tool.link,
+						"toolkit": tool.toolkit,
+						"url": tool.url,
+						"method": tool.method,
+						"args": tool.args,
+						"headers": {
+							header.key: {
+								"value": decrypt(header.value) if header.encrypted else header.value,
+								"encrypted": header.encrypted
+							} for header in tool.headers
+						}
+					}
+					diff = find_differences(tool_json, updates.dict())
+					logging.debug(f"Found differences: {diff}")
 					
+					if 'headers' in diff:
+						# Delete existing headers
+						for header in tool.headers:
+							await self.db.delete(header)
+						await self.db.flush()
 
-					# Return the updated chat information
-					return {"id": tool.id, "updated_at": tool.updated_at.isoformat()}
+						# Add new headers
+						for key, data in updates.headers.items():
+							encrypted = data.get("encrypted", False)
+							if encrypted:
+								data["value"] = encrypt(data["value"])
+
+							new_header = Header(
+								key=key,
+								value=data["value"],
+								encrypted=encrypted,
+								tool_id=tool.id
+							)
+							self.db.add(new_header)
+
+						await self.db.flush()
+
+					# Update other fields
+					for key in diff:
+						if key != 'headers':
+							setattr(tool, key, updates.dict()[key])
+					
+					if diff:
+						tool.updated_at = datetime.utcnow()
+					else:
+						logging.debug("No differences found, skipping update.")
+
+					# Return the updated tool information
+					return {"value": tool.name, "updated_at": tool.updated_at.isoformat()}
+				else:
+					raise NotFoundException(f"Tool with name {tool_value} not found.")
+					
+			except IntegrityError as e:
+				if "duplicate key value violates unique constraint" in str(e.orig):
+					# Handle specific unique constraint violation
+					logging.warning("Duplicate header key detected, rolling back transaction.")
+				await transaction.rollback()
+				raise e
+			except NotFoundException as e:
+				await transaction.rollback()
+				raise NotFoundException(str(e))
 			except Exception as e:
 				await transaction.rollback()
 				raise e
+
 
 	async def delete(self, tool_name: str):
 		async with self.db.begin():
