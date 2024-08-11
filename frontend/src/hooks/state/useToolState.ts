@@ -12,7 +12,7 @@ export const initToolState = {
         description: "",
         link: "",
         method: "GET",
-        toolkit: "API",
+        toolkit: "",
         url: "",
         headers: {},
         args: {},
@@ -20,7 +20,7 @@ export const initToolState = {
 };
 
 export const useToolState = () => {
-    const { setTools } = useChatContext();
+    const { setTools, tools } = useChatContext();
     const [tool, setTool] = useState(initToolState.tool);
 
     const updateToolState = (newState: any) => {
@@ -45,6 +45,21 @@ export const useToolState = () => {
         setTools(res.tools);
     };
 
+    const fetchToolkits = () => {
+        const toolkits = tools.map((tool: any) => ({
+            id: tool.toolkit,
+            name: tool.toolkit,
+        }));
+
+        const uniqueToolkits = Array.from(
+            new Set(toolkits.map((toolkit: any) => toolkit.id))
+        ).map((id) => {
+            return toolkits.find((toolkit: any) => toolkit.id === id);
+        });
+
+        return uniqueToolkits;
+    };
+
     return {
         tool,
         setTool,
@@ -52,5 +67,6 @@ export const useToolState = () => {
         createTool,
         updateTool,
         deleteTool,
+        fetchToolkits,
     };
 };
