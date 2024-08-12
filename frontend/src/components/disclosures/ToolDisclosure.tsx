@@ -17,7 +17,7 @@ const toolClient = new ToolClient();
 
 const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
     const { setIsCustomizeOpen, setIsNewToolOpen } = useAppContext();
-    const { deleteTool, updateToolState } = useToolContext();
+    const { deleteTool, updateToolState, setInitTool } = useToolContext();
     const { initChatPayload, setInitChatPayload, setChatPayload } =
         useChatContext();
 
@@ -111,6 +111,7 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                                                 setIsNewToolOpen(true);
                                                 const item = await toolClient.find(tool)
                                                 updateToolState(item.tool);
+                                                setInitTool(item.tool);
                                             }}
                                             title="Edit tool"
                                         >
