@@ -18,7 +18,8 @@ import { useToolContext } from "@/contexts/ToolContext";
 import { initToolState } from "@/hooks/state/useToolState";
 
 const NewToolModal = () => {
-    const { tool, updateToolState, createTool, updateTool, } = useToolContext();
+    const { tool, updateToolState, createTool, updateTool, toolEqual } =
+        useToolContext();
     const { isNewToolOpen, setIsNewToolOpen, setIsOpen, setIsCustomizeOpen } =
         useAppContext();
 
@@ -142,11 +143,7 @@ const NewToolModal = () => {
                                             }
                                         }}
                                         className={`px-4 py-2 rounded-3xl ${
-                                            tool.name &&
-                                            tool.description &&
-                                            tool.method &&
-                                            tool.url &&
-                                            tool.toolkit
+                                            !toolEqual
                                                 ? "bg-gray-500 text-white"
                                                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
                                         }`}

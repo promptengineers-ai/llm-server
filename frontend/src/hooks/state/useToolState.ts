@@ -1,13 +1,14 @@
 // https://chatgpt.com/share/9da3c401-7e86-4ad9-a635-2729a0d015d5
 import { useChatContext } from "@/contexts/ChatContext";
 import { ToolClient } from "@/utils/api";
+import equal from "fast-deep-equal/react";
 import { useState } from "react";
 
 const toolClient = new ToolClient();
 export const initToolState = {
     tool: {
         id: "",
-        type: "",
+        // type: "",
         name: "",
         description: "",
         link: "",
@@ -21,7 +22,10 @@ export const initToolState = {
 
 export const useToolState = () => {
     const { setTools, tools } = useChatContext();
+    const [initTool, setInitTool] = useState(initToolState.tool);
     const [tool, setTool] = useState(initToolState.tool);
+
+    const toolEqual = equal(tool, initTool);
 
     const updateToolState = (newState: any) => {
         setTool((prev: any) => ({ ...prev, ...newState }));
@@ -63,6 +67,9 @@ export const useToolState = () => {
     return {
         tool,
         setTool,
+        initTool,
+        setInitTool,
+        toolEqual,
         updateToolState,
         createTool,
         updateTool,
