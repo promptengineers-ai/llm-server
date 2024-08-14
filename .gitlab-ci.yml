@@ -64,14 +64,17 @@ cache:
 
 build-gcr:
   stage: build
-  image: google/cloud-sdk:latest
+  image: google/cloud-sdk:alpine
   services:
-    - docker:dind
+    - name: docker:dind
+      command: ["--tls=false"]
   variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
     DOCKER_IMAGE: gcr.io/$PROJECT_ID/$CI_PROJECT_NAME:$DOCKER_IMAGE_TAG
-    DOCKER_TLS_CERTDIR: ""
   before_script:
+    - apk add --no-cache docker-cli
     - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp_key.json
     - gcloud auth activate-service-account --key-file=/tmp/gcp_key.json
     - gcloud config set project $PROJECT_ID
