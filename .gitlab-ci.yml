@@ -43,9 +43,9 @@ test:
     - pip install uv
     - uv pip install -v --system --no-cache-dir -c constraints.txt -r requirements.txt -r requirements-dev.txt
     - pytest -rs
-  only:
-    changes:
-      - backend/**/*
+  # only:
+  #   changes:
+  #     - backend/**/*
   except:
     - tags
 
