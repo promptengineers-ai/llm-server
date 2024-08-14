@@ -31,6 +31,8 @@ test:
   image: python:3.10
   variables:
     APP_ENV: test
+  environment:
+    name: $APP_ENV
   before_script:
     - python --version
     - pip install --upgrade pip
