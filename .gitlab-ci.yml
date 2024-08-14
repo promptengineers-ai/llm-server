@@ -68,11 +68,11 @@ build-gcr:
   services:
     - docker:dind
   variables:
-    DOCKER_IMAGE: gcr.io/$GCP_PROJECT/$CI_PROJECT_NAME:$DOCKER_IMAGE_TAG
+    DOCKER_IMAGE: gcr.io/$PROJECT_ID/$CI_PROJECT_NAME:$DOCKER_IMAGE_TAG
   before_script:
     - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp_key.json
     - gcloud auth activate-service-account --key-file=/tmp/gcp_key.json
-    - gcloud config set project $GCP_PROJECT
+    - gcloud config set project $PROJECT_ID
     - gcloud auth configure-docker
     - docker login -u _json_key --password-stdin https://gcr.io < /tmp/gcp_key.json
     - *set_docker_image_tag_template
