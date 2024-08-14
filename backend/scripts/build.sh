@@ -2,6 +2,9 @@
 
 SHORT_SHA=$(git rev-parse --short HEAD)
 
+########################################################################
+## Google Artifact Registry
+########################################################################
 # Define your GCP parameters
 LOCATION="us-central1"  # Update this if your repository is in a different location
 PROJECT_ID="pe-open-source-chat"  # Replace with your GCP project ID
