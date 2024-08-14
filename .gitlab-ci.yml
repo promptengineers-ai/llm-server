@@ -63,7 +63,6 @@ cache:
 #     - tags
 
 build-gcr:
-build-gcr:
   stage: build
   image: google/cloud-sdk:alpine
   services:
@@ -92,75 +91,61 @@ build-gcr:
     - development
     - tags
 
-# deploy:
-#   stage: deploy
-#   image: google/cloud-sdk:latest
-#   needs: [build]
-#   environment:
-#     name: $CI_COMMIT_REF_NAME
-#   variables:
-#     APP_ENV: development
-#     APP_ADMIN_EMAIL: admin@example.com
-#     APP_ADMIN_PASS: test1234
-#     APP_WORKERS: 1
-#     GCP_PROJECT: pe-open-source-chat
-#     GCP_SERVICE_NAME: llm-server-dev
-#     DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG
-#   before_script:
-#     - *set_docker_image_tag_template
-#     - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG"
-#     - env | sort
-#     - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp_key.json
-#     - gcloud auth activate-service-account --key-file=/tmp/gcp_key.json
-#     - gcloud config set project $GCP_PROJECT
-#     - |
-#       mkdir -p ~/.docker
-#       echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$GITLAB_USERNAME\",\"password\":\"$GITLAB_PASSWORD\"}}}" > ~/.docker/config.json
-#   after_script:
-#     - rm /tmp/gcp_key.json
-#   script:
-#     - echo "Deploying $DOCKER_IMAGE to Cloud Run Server"
-#     - |
-#       declare -a ENV_VARS=(
-#         ## App
-#         "APP_ENV=$APP_ENV"
-#         "APP_VERSION=$DOCKER_IMAGE_TAG"
-#         "APP_SECRET=$APP_SECRET"
-#         "APP_ADMIN_EMAIL=$APP_ADMIN_EMAIL"
-#         "APP_ADMIN_PASS=$APP_ADMIN_PASS"
-#         "APP_WORKERS=$APP_WORKERS"
+deploy:
+  stage: deploy
+  image: google/cloud-sdk:latest
+  needs: [build-gcr]
+  environment:
+    name: $CI_COMMIT_REF_NAME
+  variables:
+    APP_ENV: development
+    APP_ADMIN_EMAIL: admin@example.com
+    APP_ADMIN_PASS: test1234
+    APP_WORKERS: 1
+    GCP_PROJECT: pe-open-source-chat
+    GCP_SERVICE_NAME: llm-server-dev
+    DOCKER_IMAGE: $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/llm-server:$DOCKER_IMAGE_TAG
+  before_script:
+    - *set_docker_image_tag_template
+    - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp_key.json
+    - gcloud auth activate-service-account --key-file=/tmp/gcp_key.json
+    - gcloud config set project $GCP_PROJECT
+  after_script:
+    - rm /tmp/gcp_key.json
+  script:
+    - echo "Deploying $DOCKER_IMAGE to Cloud Run Server"
+    - |
+      declare -a ENV_VARS=(
+        "APP_ENV=$APP_ENV"
+        "APP_VERSION=$DOCKER_IMAGE_TAG"
+        "APP_SECRET=$APP_SECRET"
+        "APP_ADMIN_EMAIL=$APP_ADMIN_EMAIL"
+        "APP_ADMIN_PASS=$APP_ADMIN_PASS"
+        "APP_WORKERS=$APP_WORKERS"
+        "DATABASE_URL=$DATABASE_URL"
+        "REDIS_URL=$REDIS_URL"
+        "POSTGRES_URL=$POSTGRES_URL"
+        "AZURE_OPENAI_API_KEY=$AZURE_OPENAI_API_KEY"
+        "AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT"
+        "OPENAI_API_KEY=$OPENAI_API_KEY"
+        "GROQ_API_KEY=$GROQ_API_KEY"
+        "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
+        "BUCKET=$BUCKET"
+        "S3_REGION=$S3_REGION"
+        "ACCESS_KEY_ID=$ACCESS_KEY_ID"
+        "ACCESS_SECRET_KEY=$ACCESS_SECRET_KEY"
+      )
 
-#         ## Database
-#         "DATABASE_URL=$DATABASE_URL"
-#         "REDIS_URL=$REDIS_URL"
-#         "POSTGRES_URL=$POSTGRES_URL"
+      # Join array elements into a comma-separated string
+      VARS=$(IFS=,; echo "${ENV_VARS[*]}")
 
-#         ## LLM
-#         "AZURE_OPENAI_API_KEY=$AZURE_OPENAI_API_KEY"
-#         "AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT"
-#         "OPENAI_API_KEY=$OPENAI_API_KEY"
-#         "GROQ_API_KEY=$GROQ_API_KEY"
-#         "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
-
-#         ## Storage
-#         "BUCKET=$BUCKET"
-#         "S3_REGION=$S3_REGION"
-#         "ACCESS_KEY_ID=$ACCESS_KEY_ID"
-#         "ACCESS_SECRET_KEY=$ACCESS_SECRET_KEY"
-#       )
-
-#       # Join array elements into a comma-separated string
-#       VARS=$(IFS=,; echo "${ENV_VARS[*]}")
-
-#       # Deploy
-#       gcloud run deploy $GCP_SERVICE_NAME \
-#         --image $DOCKER_IMAGE \
-#         --platform managed \
-#         --region us-central1 \
-#         --allow-unauthenticated \
-#         --set-env-vars $VARS \
-#         --update-secrets=google-cloud-secret=gitlab-docker-config:latest
-
-#   only:
-#     - development
-#     - tags
+      # Deploy
+      gcloud run deploy $GCP_SERVICE_NAME \
+        --image $DOCKER_IMAGE \
+        --platform managed \
+        --region us-central1 \
+        --allow-unauthenticated \
+        --set-env-vars $VARS
+  only:
+    - development
+    - tags
