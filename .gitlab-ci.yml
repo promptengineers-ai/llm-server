@@ -66,10 +66,15 @@ build-gcr:
   stage: build
   image: google/cloud-sdk:latest
   services:
-    - docker:dind
+    - name: docker:20.10.16-dind
+      command: ["--tls=false"]
   variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
     DOCKER_IMAGE: gcr.io/$PROJECT_ID/$CI_PROJECT_NAME:$DOCKER_IMAGE_TAG
   before_script:
+    - apt-get update && apt-get install -y docker-ce-cli
     - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp_key.json
     - gcloud auth activate-service-account --key-file=/tmp/gcp_key.json
     - gcloud config set project $PROJECT_ID
