@@ -83,6 +83,9 @@ build:
   only:
     - development
     - tags
+  # Ensure the job has the necessary privileges
+  privileged: true
+
 
 # deploy:
 #   stage: deploy
