@@ -7,7 +7,9 @@ variables:
   BUCKET: pe-oss-bucket
   S3_REGION: us-east-1
   PYTHONPATH: "${CI_PROJECT_DIR}/backend/src:${CI_PROJECT_DIR}/backend"
-  GCP_PROJECT: pe-open-source-chat
+  PROJECT_ID: pe-open-source-chat
+  REPOSITORY: promptengineers
+  LOCATION: us-central1
 
 # Define the template to set DOCKER_IMAGE_TAG
 .set_docker_image_tag_template: &set_docker_image_tag_template
@@ -60,9 +62,9 @@ cache:
 #     - development
 #     - tags
 
-build:
+build-gcr:
   stage: build
-  image: docker:20.10.16
+  image: google/cloud-sdk:latest
   services:
     - docker:dind
   variables:
@@ -76,15 +78,13 @@ build:
     - *set_docker_image_tag_template
   script:
     - cd backend
-    - docker build -t "$DOCKER_IMAGE" .
-    - docker push "$DOCKER_IMAGE"
+    - docker build -t "$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/llm-server:$DOCKER_IMAGE_TAG"
+    - docker push "$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/llm-server:$DOCKER_IMAGE_TAG"
   after_script:
     - rm /tmp/gcp_key.json
   only:
     - development
     - tags
-  privileged: true
-
 
 # deploy:
 #   stage: deploy
