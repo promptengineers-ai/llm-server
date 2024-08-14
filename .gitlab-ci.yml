@@ -78,7 +78,7 @@ build-gcr:
     - *set_docker_image_tag_template
   script:
     - cd backend
-    - docker build -t "$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/llm-server:$DOCKER_IMAGE_TAG"
+    - docker build -t "$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/llm-server:$DOCKER_IMAGE_TAG" .
     - docker push "$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/llm-server:$DOCKER_IMAGE_TAG"
   after_script:
     - rm /tmp/gcp_key.json
