@@ -62,7 +62,7 @@ cache:
 
 build:
   stage: build
-  image: google/cloud-sdk:latest
+  image: docker:20.10.16
   services:
     - docker:dind
   variables:
@@ -83,7 +83,6 @@ build:
   only:
     - development
     - tags
-  # Ensure the job has the necessary privileges
   privileged: true
 
 
