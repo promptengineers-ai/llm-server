@@ -104,7 +104,7 @@ deploy:
     APP_WORKERS: 1
     GCP_PROJECT: pe-open-source-chat
     GCP_SERVICE_NAME: llm-server-dev
-    DOCKER_IMAGE: $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/llm-server:$DOCKER_IMAGE_TAG
+    DOCKER_IMAGE: $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/llm-server
   before_script:
     - *set_docker_image_tag_template
     - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp_key.json
@@ -141,7 +141,7 @@ deploy:
 
       # Deploy
       gcloud run deploy $GCP_SERVICE_NAME \
-        --image $DOCKER_IMAGE \
+        --image $DOCKER_IMAGE:$DOCKER_IMAGE_TAG \
         --platform managed \
         --region us-central1 \
         --allow-unauthenticated \
