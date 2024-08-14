@@ -63,6 +63,7 @@ cache:
 #     - tags
 
 build-gcr:
+build-gcr:
   stage: build
   image: google/cloud-sdk:alpine
   services:
@@ -72,19 +73,19 @@ build-gcr:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
-    DOCKER_IMAGE: gcr.io/$PROJECT_ID/$CI_PROJECT_NAME:$DOCKER_IMAGE_TAG
+    DOCKER_IMAGE: $LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/llm-server:$DOCKER_IMAGE_TAG
   before_script:
     - apk add --no-cache docker-cli
     - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp_key.json
     - gcloud auth activate-service-account --key-file=/tmp/gcp_key.json
     - gcloud config set project $PROJECT_ID
-    - gcloud auth configure-docker
-    - docker login -u _json_key --password-stdin https://gcr.io < /tmp/gcp_key.json
+    - gcloud auth configure-docker $LOCATION-docker.pkg.dev
+    - echo "$GCP_SA_KEY" | docker login -u _json_key_base64 --password-stdin https://$LOCATION-docker.pkg.dev
     - *set_docker_image_tag_template
   script:
     - cd backend
-    - docker build -t "$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/llm-server:$DOCKER_IMAGE_TAG" .
-    - docker push "$LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/llm-server:$DOCKER_IMAGE_TAG"
+    - docker build -t "$DOCKER_IMAGE" .
+    - docker push "$DOCKER_IMAGE"
   after_script:
     - rm /tmp/gcp_key.json
   only:
