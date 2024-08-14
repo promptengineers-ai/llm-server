@@ -31,7 +31,6 @@ test:
   image: python:3.10
   variables:
     APP_ENV: test
-    APP_SECRET: this-is-a-test-secret
   before_script:
     - python --version
     - pip install --upgrade pip
