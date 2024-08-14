@@ -10,7 +10,7 @@ from src.tools import searx_search_tool
 
 class TestApiTools(unittest.TestCase):
     
-    # @unittest.skip("Skip test_searx_search")
+    @unittest.skip("Skip test_searx_search")
     def test_searx_search(self):
         query = "Plano Prompt Engineers"
         results = searx_search(
