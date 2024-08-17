@@ -79,7 +79,7 @@ async def list_tools(repo: ToolRepository = Depends(tool_repo)):
 	}
 )
 async def create_tool( 
-	tool: APITool = Body(..., example=APITool.__config__["json_schema_extra"]["example"]),
+	tool: APITool = Body(..., examples=APITool.__config__["json_schema_extra"]["examples"]['update_reqbody']),
 	repo: ToolRepository = Depends(tool_repo)
 ):
 	tool = await repo.create(tool)
@@ -149,7 +149,7 @@ async def find_tool(
 )
 async def update_tool(
 	tool_value: str, 
-	tool: APITool = Body(..., example=APITool.__config__["json_schema_extra"]["example"]),
+	tool: APITool = Body(..., examples=APITool.__config__["json_schema_extra"]["examples"]['update_reqbody']),
 	repo: ToolRepository = Depends(tool_repo)
 ):
 	try:

@@ -8,7 +8,11 @@ from src.models.sql.user import User
 
 
 def configure_engine(db_url: str = None):
-    return create_async_engine(db_url or DATABASE_URL, echo=True, connect_args={"statement_cache_size": 0} if database_engine() == 'postgresql' else {})
+    return create_async_engine(
+        db_url or DATABASE_URL, 
+        echo=True, 
+        connect_args={"statement_cache_size": 0} if database_engine() == 'postgresql' and not db_url else {}
+    )
 
 async def create_default_user(session):
     default_user = await session.execute(

@@ -14,6 +14,25 @@ export class Client {
     }
 }
 
+export class AuthClient extends Client {
+    
+    public async login(provider: string) {
+        try {
+            const res = await fetch(`${this.apiUrl}/auth/${provider}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const data = await res.json();
+            window.location.href = data.url;
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error: " + error);
+        }
+    }
+}
+
 export class ChatClient extends Client {
     protected controller: AbortController | null = null;
 

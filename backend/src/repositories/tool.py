@@ -25,31 +25,36 @@ class ToolRepository:
 		self.user_id = user_id or request.state.user_id
   
 	async def endpoints(self):
-		stmt = (
-			select(Tool)
-			.options(joinedload(Tool.headers))
-			.where(Tool.user_id == self.user_id)
-		)
-		result = await self.db.execute(stmt)
-		tools = result.unique().scalars().all()
-		endpoints = [
-			{
-				"id": tool.id,
-				"name": tool.name,
-				"description": tool.description,
-				"link": tool.link,
-				"toolkit": tool.toolkit,
-				"url": tool.url,
-				"method": tool.method,
-				"args": tool.args,
-				"headers": {
-					header.key: decrypt(header.value) if header.encrypted else header.value
-					for header in tool.headers
-				}
-			}
-			for tool in tools
-		]
-		return endpoints
+		async with self.db.begin() as transaction:
+			try:
+				stmt = (
+					select(Tool)
+					.options(joinedload(Tool.headers))
+					.where(Tool.user_id == self.user_id)
+				)
+				result = await self.db.execute(stmt)
+				tools = result.unique().scalars().all()
+				endpoints = [
+					{
+						"id": tool.id,
+						"name": tool.name,
+						"description": tool.description,
+						"link": tool.link,
+						"toolkit": tool.toolkit,
+						"url": tool.url,
+						"method": tool.method,
+						"args": tool.args,
+						"headers": {
+							header.key: decrypt(header.value) if header.encrypted else header.value
+							for header in tool.headers
+						}
+					}
+					for tool in tools
+				]
+				return endpoints
+			except Exception as e:
+				await transaction.rollback()
+				raise e
 	
 	async def list(self):
 		endpoints = await self.endpoints()
@@ -103,28 +108,33 @@ class ToolRepository:
 				raise e
 
 	async def find(self, tool_value: str):
-		stmt = select(Tool).options(joinedload(Tool.headers)).where(Tool.name == tool_value, Tool.user_id == self.user_id)
-		result = await self.db.execute(stmt)
-		tool = result.scalars().first()
-		if tool:
-			tool_json = {
-				"id": tool.id,
-				"name": tool.name,
-				"description": tool.description,
-				"link": tool.link,
-				"toolkit": tool.toolkit,
-				"url": tool.url,
-				"method": tool.method,
-				"args": tool.args,
-				"headers": {
-					header.key: {
-						"value": decrypt(header.value) if header.encrypted else header.value,
-						"encrypted": header.encrypted
-					} for header in tool.headers
-				}
-			}
-			return tool_json
-		raise NotFoundException(f"Tool with name {tool_value} not found.")
+		async with self.db.begin() as transaction:
+			try:
+				stmt = select(Tool).options(joinedload(Tool.headers)).where(Tool.name == tool_value, Tool.user_id == self.user_id)
+				result = await self.db.execute(stmt)
+				tool = result.scalars().first()
+				if tool:
+					tool_json = {
+						"id": tool.id,
+						"name": tool.name,
+						"description": tool.description,
+						"link": tool.link,
+						"toolkit": tool.toolkit,
+						"url": tool.url,
+						"method": tool.method,
+						"args": tool.args,
+						"headers": {
+							header.key: {
+								"value": decrypt(header.value) if header.encrypted else header.value,
+								"encrypted": header.encrypted
+							} for header in tool.headers
+						}
+					}
+					return tool_json
+				raise NotFoundException(f"Tool with name {tool_value} not found.")
+			except Exception as e:
+				await transaction.rollback()
+				raise Exception(str(e))
 
 	async def update(self, tool_value: str, updates: APITool):
 		async with self.db.begin() as transaction:

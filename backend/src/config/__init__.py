@@ -13,6 +13,14 @@ APP_WORKERS = os.environ.get("APP_WORKERS", 1)
 APP_ADMIN_EMAIL = os.environ.get("APP_ADMIN_EMAIL", "admin@example.com")
 APP_ADMIN_PASS= os.environ.get("APP_ADMIN_PASS", "test1234")
 
+## Auth
+OAUTH_GITHUB_REDIRECT_URI = os.environ.get("OAUTH_GITHUB_REDIRECT_URI")
+OAUTH_GITHUB_CLIENT_ID = os.environ.get("OAUTH_GITHUB_CLIENT_ID")
+OAUTH_GITHUB_CLIENT_SECRET = os.environ.get("OAUTH_GITHUB_CLIENT_SECRET")
+OAUTH_AZURE_CLIENT_ID = os.environ.get("OAUTH_AZURE_CLIENT_ID")
+OAUTH_AZURE_CLIENT_SECRET = os.environ.get("OAUTH_AZURE_CLIENT_SECRET")
+OAUTH_AZURE_REDIRECT_URI = os.environ.get("OAUTH_AZURE_REDIRECT_URI")
+
 ## DB
 DATABASE_URL = os.environ.get("DATABASE_URL", 'sqlite+aiosqlite:///./data/test.sqlite')
 PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')

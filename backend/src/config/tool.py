@@ -113,5 +113,5 @@ ENDPOINTS = [
             }
         }
     },
-    APITool.__config__['json_schema_extra']['example']
+    APITool.__config__['json_schema_extra']['examples']['update_reqbody']
 ]

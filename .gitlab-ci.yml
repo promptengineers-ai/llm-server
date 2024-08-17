@@ -31,8 +31,19 @@ test:
   image: python:3.10
   variables:
     APP_ENV: test
+    POSTGRES_USER: admin
+    POSTGRES_PASSWORD: test1234
+    POSTGRES_DB: llm_server_test
+    DATABASE_URL: postgresql+asyncpg://admin:test1234@postgres:5432/llm_server_test
+    POSTGRES_URL: postgresql+psycopg://admin:test1234@postgres:5432/llm_server_test
+    REDIS_URL: redis://redis:6379/0  # Add the Redis URL as a variable
   environment:
     name: $APP_ENV
+  services:
+    - name: pgvector/pgvector:pg16
+      alias: postgres
+    - name: redis:alpine  # Add Redis service
+      alias: redis
   before_script:
     - python --version
     - pip install --upgrade pip
@@ -41,7 +52,11 @@ test:
     - cd backend
     - mkdir -p data
     - pip install uv
-    - uv pip install -v --system --no-cache-dir -c constraints.txt -r requirements.txt -r requirements-dev.txt
+    - |
+      uv pip install -v --system --no-cache-dir \
+      -c constraints.txt \
+      -r requirements.txt \
+      -r requirements-dev.txt
     - pytest -rs
   # only:
   #   changes:
@@ -72,86 +87,89 @@ test:
 #################################################################
 ## Google Container Registry
 #################################################################
-build-gcr:
-  stage: build
-  image: google/cloud-sdk:alpine
-  services:
-    - name: docker:dind
-      command: ["--tls=false"]
-  variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
-    DOCKER_DRIVER: overlay2
-  before_script:
-    - apk add --no-cache docker-cli
-    - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp_key.json
-    - gcloud auth activate-service-account --key-file=/tmp/gcp_key.json
-    - gcloud config set project $GCP_PROJECT
-    - gcloud auth configure-docker $LOCATION-docker.pkg.dev
-    - echo "$GCP_SA_KEY" | docker login -u _json_key_base64 --password-stdin https://$LOCATION-docker.pkg.dev
-    - *set_docker_image_tag_template
-  script:
-    - cd backend
-    - docker build -t "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" .
-    - docker push "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG"
-  after_script:
-    - rm /tmp/gcp_key.json
-  only:
-    - development
-    - tags
+# build-gcr:
+#   stage: build
+#   image: google/cloud-sdk:alpine
+#   services:
+#     - name: docker:dind
+#       command: ["--tls=false"]
+#   variables:
+#     DOCKER_HOST: tcp://docker:2375
+#     DOCKER_TLS_CERTDIR: ""
+#     DOCKER_DRIVER: overlay2
+#   before_script:
+#     - apk add --no-cache docker-cli
+#     - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp_key.json
+#     - gcloud auth activate-service-account --key-file=/tmp/gcp_key.json
+#     - gcloud config set project $GCP_PROJECT
+#     - gcloud auth configure-docker $LOCATION-docker.pkg.dev
+#     - echo "$GCP_SA_KEY" | docker login -u _json_key_base64 --password-stdin https://$LOCATION-docker.pkg.dev
+#     - *set_docker_image_tag_template
+#   script:
+#     - cd backend
+#     - docker build -t "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" .
+#     - docker push "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG"
+#   after_script:
+#     - rm /tmp/gcp_key.json
+#   only:
+#     - development
+#     - tags
 
-deploy:
-  stage: deploy
-  image: google/cloud-sdk:latest
-  needs: [build-gcr]
-  environment:
-    name: $CI_COMMIT_REF_NAME
-  variables:
-    APP_ENV: development
-    APP_ADMIN_EMAIL: admin@example.com
-    APP_ADMIN_PASS: test1234
-    APP_WORKERS: 1
-  before_script:
-    - *set_docker_image_tag_template
-    - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp_key.json
-    - gcloud auth activate-service-account --key-file=/tmp/gcp_key.json
-    - gcloud config set project $GCP_PROJECT
-  after_script:
-    - rm /tmp/gcp_key.json
-  script:
-    - echo "Deploying $DOCKER_IMAGE:$DOCKER_IMAGE_TAG to Cloud Run Server"
-    - |
-      declare -a ENV_VARS=(
-        "APP_ENV=$APP_ENV"
-        "APP_VERSION=$DOCKER_IMAGE_TAG"
-        "APP_SECRET=$APP_SECRET"
-        "APP_ADMIN_EMAIL=$APP_ADMIN_EMAIL"
-        "APP_ADMIN_PASS=$APP_ADMIN_PASS"
-        "APP_WORKERS=$APP_WORKERS"
-        "DATABASE_URL=$DATABASE_URL"
-        "REDIS_URL=$REDIS_URL"
-        "POSTGRES_URL=$POSTGRES_URL"
-        "AZURE_OPENAI_API_KEY=$AZURE_OPENAI_API_KEY"
-        "AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT"
-        "OPENAI_API_KEY=$OPENAI_API_KEY"
-        "GROQ_API_KEY=$GROQ_API_KEY"
-        "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
-        "BUCKET=$BUCKET"
-        "S3_REGION=$S3_REGION"
-        "ACCESS_KEY_ID=$ACCESS_KEY_ID"
-        "ACCESS_SECRET_KEY=$ACCESS_SECRET_KEY"
-      )
+# deploy:
+#   stage: deploy
+#   image: google/cloud-sdk:latest
+#   needs: [build-gcr]
+#   environment:
+#     name: $CI_COMMIT_REF_NAME
+#   variables:
+#     APP_ENV: development
+#     APP_ADMIN_EMAIL: admin@example.com
+#     APP_ADMIN_PASS: test1234
+#     APP_WORKERS: 1
+#   before_script:
+#     - *set_docker_image_tag_template
+#     - echo "$GCP_SA_KEY" | base64 -d > /tmp/gcp_key.json
+#     - gcloud auth activate-service-account --key-file=/tmp/gcp_key.json
+#     - gcloud config set project $GCP_PROJECT
+#   after_script:
+#     - rm /tmp/gcp_key.json
+#   script:
+#     - echo "Deploying $DOCKER_IMAGE:$DOCKER_IMAGE_TAG to Cloud Run Server"
+#     - |
+#       declare -a ENV_VARS=(
+#         "APP_ENV=$APP_ENV"
+#         "APP_VERSION=$DOCKER_IMAGE_TAG"
+#         "APP_SECRET=$APP_SECRET"
+#         "APP_ADMIN_EMAIL=$APP_ADMIN_EMAIL"
+#         "APP_ADMIN_PASS=$APP_ADMIN_PASS"
+#         "APP_WORKERS=$APP_WORKERS"
+#         "DATABASE_URL=$DATABASE_URL"
+#         "REDIS_URL=$REDIS_URL"
+#         "POSTGRES_URL=$POSTGRES_URL"
+#         "AZURE_OPENAI_API_KEY=$AZURE_OPENAI_API_KEY"
+#         "AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT"
+#         "OPENAI_API_KEY=$OPENAI_API_KEY"
+#         "GROQ_API_KEY=$GROQ_API_KEY"
+#         "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
+#         "BUCKET=$BUCKET"
+#         "S3_REGION=$S3_REGION"
+#         "ACCESS_KEY_ID=$ACCESS_KEY_ID"
+#         "ACCESS_SECRET_KEY=$ACCESS_SECRET_KEY"
+#         "OAUTH_GITHUB_REDIRECT_URI=$OAUTH_GITHUB_REDIRECT_URI"
+#         "OAUTH_GITHUB_CLIENT_ID=$OAUTH_GITHUB_CLIENT_ID"
+#         "OAUTH_GITHUB_CLIENT_SECRET=$OAUTH_GITHUB_CLIENT_SECRET"
+#       )
 
-      # Join array elements into a comma-separated string
-      VARS=$(IFS=,; echo "${ENV_VARS[*]}")
+#       # Join array elements into a comma-separated string
+#       VARS=$(IFS=,; echo "${ENV_VARS[*]}")
 
-      # Deploy
-      gcloud run deploy $GCP_SERVICE_NAME \
-        --image $DOCKER_IMAGE:$DOCKER_IMAGE_TAG \
-        --platform managed \
-        --region us-central1 \
-        --allow-unauthenticated \
-        --set-env-vars $VARS
-  only:
-    - development
-    - tags
+#       # Deploy
+#       gcloud run deploy $GCP_SERVICE_NAME \
+#         --image $DOCKER_IMAGE:$DOCKER_IMAGE_TAG \
+#         --platform managed \
+#         --region us-central1 \
+#         --allow-unauthenticated \
+#         --set-env-vars $VARS
+#   only:
+#     - development
+#     - tags
