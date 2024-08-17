@@ -155,7 +155,9 @@ class DocumentService:
 		)
 		# Create a vector store service context
 		self.vectorstore_service = VectorstoreContext(retrieval_provider.create_strategy())
-		
+		if body.provider == 'postgres':
+			self.vectorstore_service.strategy.service.client.create_tables_if_not_exists()
+  
 		# Add logging to verify the initialization
 		logging.debug(f"Vectorstore service initialized: {self.vectorstore_service}")
   
@@ -164,6 +166,7 @@ class DocumentService:
 							metadata=self.to_serializable(x.metadata)), body.documents))
 
 		# Upsert Documents
+		result = None
 		try:
 			if self.parallel:
 				result = await self.upsert_in_parallel_batches(documents)

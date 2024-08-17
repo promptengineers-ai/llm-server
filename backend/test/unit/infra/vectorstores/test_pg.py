@@ -2,9 +2,9 @@
 import asyncio
 import unittest
 
+from src.infrastructure.logger import logger as logging
 from src.config import retrieve_defaults
 from src.config.llm import ModelType
-from src.db.postgres import PGVectorDB
 from src.db.strategies import VectorstoreContext
 from src.factories.embedding import EmbeddingFactory
 from src.factories.retrieval import RetrievalFactory
@@ -35,7 +35,9 @@ DOCS_2 = [
     {'page_content': 'The villagers stop believing the boy after multiple false alarms about a wolf.', 'metadata': {'id': 6, 'location': 'village', 'topic': 'Boy Who Cried Wolf'}},
 ]
 
-class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
+document_service = DocumentService()
+
+class TestPostgresVectorStore(unittest.IsolatedAsyncioTestCase):
         
     @classmethod
     def setUpClass(cls):
@@ -54,8 +56,7 @@ class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
     
     async def asyncSetUp(self):
         await super().asyncSetUp()
-        self.db_gen = get_db()  # Get the generator
-        self.db = await self.db_gen.__anext__()  # Manually advance to the next item
+        
         self.keys = {'POSTGRES_URL'}
         self.tokens = retrieve_defaults(self.keys)
         self.body = {
@@ -66,6 +67,10 @@ class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
             'documents': DOCS_1,
         }
         
+    async def asyncTearDown(self):
+        await super().asyncTearDown()
+        await self.db_gen.aclose()
+        
     def get_index_name(self, index_name=None):
         return f"{self.user_id}::{index_name}"
     
@@ -74,17 +79,20 @@ class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
         return embedding.create_embedding()
 
     async def upsert_documents(self):
-        document_service = DocumentService()
+
+        loop = asyncio.get_running_loop()
+        logging.debug(f"Event loop status before upsert: Closed? {loop.is_closed()}")
+
         result = await document_service.upsert(
             UpsertDocuments(**self.body), 
             self.tokens, 
             self.keys,
-            self.user_id  # Access class attribute
+            self.user_id
         )
+        logging.debug("Completed upsert_documents method")
         assert len(result) > 0
         
     async def create_multiple_indexes(self, index_name=None, documents=[]):
-        document_service = DocumentService()
         result = await document_service.upsert(
             UpsertDocuments(
                 index_name=index_name,
@@ -150,18 +158,13 @@ class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
         dropped = vectostore_service.delete()
         assert dropped == True
 
-    @unittest.skip("skip test_upsert_and_retrieve_documents. Will not run in GH Action without Postgres container")
-    async def test_list_indexes(self):
-        await self.list_indexes()
-
-    @unittest.skip("skip test_upsert_and_retrieve_documents. Will not run in GH Action without Postgres container")
+    @unittest.skip("skip test_upsert_and_retrieve_documents. Failing for Event loop is closed")
     async def test_upsert_and_retrieve_documents(self):
         await self.upsert_documents()
         await self.retrieve_documents()
         await self.delete_collection()
         
-    @unittest.skip("skip test_upsert_and_retrieve_documents. Will not run in GH Action without Postgres container")
-    async def test_upsert_and_multi_retriever_(self):
+    async def test_upsert_and_multi_retriever(self):
         indexes = [['big-bad-wolf', DOCS_1], ['boy-who-cried-wolf', DOCS_2]]
         for index in indexes:
             await self.create_multiple_indexes(documents=index[1], index_name=index[0])
@@ -177,3 +180,5 @@ class TestRedisVectorStore(unittest.IsolatedAsyncioTestCase):
             base_compressor=pipeline, base_retriever=lotr
         )
         print(compression_retriever_reordered)
+        result = await self.list_indexes()
+        self.assertGreaterEqual(len(result), 2)

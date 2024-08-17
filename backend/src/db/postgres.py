@@ -1,6 +1,6 @@
 """Service for removing PII from text."""
 from langchain_postgres import PGVector
-
+from src.infrastructure.logger import logger as logging
 
 class PGVectorDB:
 	def __init__(
@@ -19,7 +19,8 @@ class PGVectorDB:
 			collection_name=self.collection_name,
 			embeddings=self.embeddings[0] if self.embeddings else None,
 			use_jsonb=True,
-			async_mode=self.async_mode
+			async_mode=self.async_mode,
+			logger=logging
 		)
 
 	def add_docs(self, documents: list):

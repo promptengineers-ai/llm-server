@@ -11,22 +11,29 @@ class TestToolRepository(unittest.IsolatedAsyncioTestCase):
     
     @classmethod
     def setUpClass(cls):
-        async def setup():
-            # Run migrations
-            await apply_migrations()
-            cls.db_gen = get_db()
-            cls.db = await cls.db_gen.__anext__() 
-            # Create the default user
-            default_user = await create_default_user(cls.db)
-            cls.user_id = default_user.id
-            cls.repo = ToolRepository(user_id=cls.user_id, db=cls.db)
-            cls.mock_tool = APITool.__config__['json_schema_extra']['example']
-            cls.created_tool = await cls.repo.create(APITool(**cls.mock_tool))
-        asyncio.run(setup())    
+        # Run migrations before any tests
+        asyncio.run(apply_migrations())   
 
     @classmethod
     def tearDownClass(cls):
         asyncio.run(cleanup_database())
+        
+    async def asyncSetUp(self):
+        await super().asyncSetUp()
+        self.db_gen = get_db()  # Get the generator
+        self.db = await self.db_gen.__anext__()  # Manually advance to the next item
+        default_user = await create_default_user(self.db)
+        self.user_id = default_user.id
+        self.repo = ToolRepository(db=self.db, user_id=self.user_id)
+        self.mock_tool = APITool.__config__['json_schema_extra']['examples']['update_reqbody']
+        self.created_tool = await self.repo.create(APITool(**self.mock_tool))
+        
+    async def asyncTearDown(self):
+        if self.db.in_transaction():
+            await self.db.rollback()
+        await self.db.close()
+        await self.repo.delete(self.created_tool.get("value"))
+        await super().asyncTearDown()
 
     async def test_create(self):
         # Test the create function

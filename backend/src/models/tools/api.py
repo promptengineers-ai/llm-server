@@ -69,49 +69,49 @@ class APITool(BaseModel):
                         "value": "update_post",
                         "updated_at": "2024-08-11T02:21:53.477131"
                     }
-                }
-            },
-            "example": {
-                "name": "update_post",
-                "description": "To update an existing post.",
-                "link": '/tools/update_post',
-                'toolkit': 'API',
-                "url": "https://jsonplaceholder.typicode.com/posts/{postId}",
-                "method": "PUT",
-                "headers": {
-                    "Content-Type": {
-                        "value":"application/json; charset=UTF-8",
-                        "encrypted": False
-                    },
-                    "x-api-key": {
-                        "value": "abcdefghijklmnopqrstuvwxyz",
-                        "encrypted": True
-                    }
                 },
-                "args": {
-                    "title": {
-                        "type": "str",
-                        "description": "The title of the post",
-                        "required": True,
-                        "default": "Updated Post"
+                "update_reqbody": {
+                    "name": "update_post",
+                    "description": "To update an existing post.",
+                    "link": '/tools/update_post',
+                    'toolkit': 'API',
+                    "url": "https://jsonplaceholder.typicode.com/posts/{postId}",
+                    "method": "PUT",
+                    "headers": {
+                        "Content-Type": {
+                            "value":"application/json; charset=UTF-8",
+                            "encrypted": False
+                        },
+                        "x-api-key": {
+                            "value": "abcdefghijklmnopqrstuvwxyz",
+                            "encrypted": True
+                        }
                     },
-                    "body": {
-                        "type": "str",
-                        "description": "The body content of the post",
-                        "required": True
-                    },
-                    "userId": {
-                        "type": "int",
-                        "description": "The ID of the user creating the post",
-                        "default": 1,
-                        "required": True
-                    },
-                    "postId": {
-                        "type": "string",
-                        "description": "The ID of the post to be updated",
-                        "required": True
+                    "args": {
+                        "title": {
+                            "type": "str",
+                            "description": "The title of the post",
+                            "required": True,
+                            "default": "Updated Post"
+                        },
+                        "body": {
+                            "type": "str",
+                            "description": "The body content of the post",
+                            "required": True
+                        },
+                        "userId": {
+                            "type": "int",
+                            "description": "The ID of the user creating the post",
+                            "default": 1,
+                            "required": True
+                        },
+                        "postId": {
+                            "type": "string",
+                            "description": "The ID of the post to be updated",
+                            "required": True
+                        }
                     }
                 }
-            }
+            } 
         }
     }

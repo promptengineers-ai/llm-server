@@ -2,7 +2,7 @@
 
 ### Set Environment Variables
 set -a # automatically export all variables
-source .env
+source .env.test
 set +a
 
 # Default action to 'up'
