@@ -119,7 +119,7 @@ const NewToolModal = () => {
                                 <button
                                     onClick={() => {
                                         setIsNewToolOpen(false);
-                                        setIsOpen(true);
+                                        setIsCustomizeOpen(true);
                                         updateToolState(initToolState.tool);
                                     }}
                                 >
