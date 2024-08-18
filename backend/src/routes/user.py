@@ -93,7 +93,7 @@ async def login_for_access_token(
 async def auth(provider: str):
 	try:
 		oauth_service = OAuthService(provider)
-		return await oauth_service.oauth.create_authorization_url()
+		return await oauth_service.oauth.create_authorization_url(redirect_uri=oauth_service.oauth.server_metadata['redirect_uri'])
 	except Exception as e:
 		return UJSONResponse(detail=str(e), status_code=status.HTTP_400_BAD_REQUEST)
 
@@ -108,13 +108,9 @@ async def auth_callback(provider: str, code: str, db: AsyncSession = Depends(get
 		status_code = user_info.get('status') or None
 		if status_code and int(status_code) != 200:
 			raise HTTPException(status_code=int(status_code), detail=user_info.get('message'))
-
-		# Check if the user_info has an email
-		primary_email = user_info.get('emails')[0].get('email')
-		primary_username = user_info.get('login')
   
 		# Check if the user already exists
-		existing_user = await db.execute(select(User).where((User.email == primary_email) | (User.username == primary_username)))
+		existing_user = await db.execute(select(User).where((User.email == user_info.get('email')) | (User.username == user_info.get('username'))))
 		existing_user = existing_user.scalars().first()
 		if existing_user:
 			access_token = create_access_token(data={
@@ -131,8 +127,8 @@ async def auth_callback(provider: str, code: str, db: AsyncSession = Depends(get
 		# Create a new user instance
 		new_user = User(
 			full_name=user_info.get('name'), 
-			email=primary_email,
-			username=primary_username,
+			email=user_info.get('email'),
+			username=user_info.get('username'),
 			oauth_provider=provider,
 			access=1
 		)

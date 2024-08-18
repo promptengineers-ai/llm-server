@@ -197,12 +197,10 @@ const LoginForm = () => {
                         <div>
                             <button
                                 type="button"
-                                disabled={true}
                                 className="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                                // onClick={() => oauthLogin("azure")}
-                                onClick={() => alert("Not implemented")}
+                                onClick={() => oauthLogin("google")}
                             >
-                                <FaMicrosoft className="w-5 h-5" />
+                                <FaGoogle className="w-5 h-5" />
                             </button>
                         </div>
                         <div>
@@ -217,10 +215,12 @@ const LoginForm = () => {
                         <div>
                             <button
                                 type="button"
+                                disabled={true}
                                 className="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                                // onClick={() => oauthLogin("azure")}
                                 onClick={() => alert("Not implemented")}
                             >
-                                <FaGoogle className="w-5 h-5" />
+                                <FaMicrosoft className="w-5 h-5" />
                             </button>
                         </div>
                     </div>
