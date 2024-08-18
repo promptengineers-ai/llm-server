@@ -94,6 +94,8 @@ export default function ArgsDataGrid() {
                                     <option value="int">int</option>
                                     <option value="bool">bool</option>
                                     <option value="float">float</option>
+                                    <option value="array">array</option>
+                                    <option value="object">object</option>
                                 </select>
                             </Field>
                             <Field className="col-span-2">

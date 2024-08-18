@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - bugfix/42-redis-is-default-vector-db (2024-05-26)
   - bugfix/33-groq-rag-not-working (2024-05-19)
 ### Changed 
+  - feature/14-settings-page (2024-08-18)
   - feature/16-improve-oauth-callback-page-ux (2024-08-18)
   - feature/17-google-oauth (2024-08-18)
   - feature/10-add-oauth-github (2024-08-14)
