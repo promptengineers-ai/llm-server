@@ -112,6 +112,10 @@ build-gcr:
   after_script:
     - rm /tmp/gcp_key.json
   only:
+    changes:
+      - backend/**/*
+      - .gitlab-ci.yml
+  only:
     - development
     - tags
 
