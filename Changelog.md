@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v0.0.1
 ### Fixed
+  - bugfix/24-fix-retrieval-agent (2024-08-18)
   - bugfix/18-processing-spinner-showing-back-up (2024-08-18)
   - bugfix/20-reopen-customize-on-new-tool-cancel (2024-08-18)
   - bugfix/7-code-block-does-not-wrap (2024-08-11)

@@ -52,7 +52,7 @@ async def chat(request: Request, body: Agent, repo: ToolRepository = Depends(too
 			if body.tools:
 				chain_type = 'agent'
 				endpoints = await repo.endpoints()	
-			chain, filtered_messages = agent_chain(body, endpoints)
+			chain, filtered_messages = agent_chain(body, endpoints, user_id=request.state.user_id)
 			query = filtered_messages
    
 		if body.streaming:
