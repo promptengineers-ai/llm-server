@@ -26,7 +26,8 @@ def agent_chain(body: Agent, endpoints: list[dict] = None, user_id: str = None):
         tools = gather_tools(
             tools=body.tools,
             retriever=retriever,
-            endpoints=endpoints
+            endpoints=endpoints,
+            user_id=user_id
         )
         agent = llm_service.agent(
             system=system,

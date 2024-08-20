@@ -6,6 +6,7 @@ from langchain.agents.agent_toolkits import create_retriever_tool
 
 from src.models import RetrievalTool
 from src.config.tool import AVAILABLE_TOOLS, ENDPOINTS, TOOL_DESCRIPTIONS
+from src.tools.advanced import construct_user_tool
 from src.tools.api import construct_api_tool
 from src.utils.format import flatten_array
 
@@ -27,10 +28,11 @@ def gather_tools(
 	available_tools: dict[str, any] = None,
 	retriever: VectorStoreRetriever = None,
 	plugins: list[str] = None,
-	endpoints: list[dict] = None
+	endpoints: list[dict] = None,
+	user_id: str = None
 ):
 	"""Gather tools from the tools list"""
-	constructed_available_tools, _ = construct_tools_and_descriptions(endpoints=endpoints or ENDPOINTS)
+	constructed_available_tools, _ = construct_tools_and_descriptions(endpoints=endpoints or ENDPOINTS, user_id=user_id)
 	filtered_tools = filter_tools(tools or [], available_tools or constructed_available_tools)
 
 	## Add docs tool
@@ -55,8 +57,8 @@ def gather_tools(
 
 	return flatten_array(filtered_tools)
 
-def tool_details(endpoints):
-	available_tools, tool_descriptions = construct_tools_and_descriptions(endpoints)
+def tool_details(endpoints, user_id=None):
+	available_tools, tool_descriptions = construct_tools_and_descriptions(endpoints, user_id=user_id)
 	return [
 		{   
 			**({'id': tool_descriptions[key]['id']} if 'id' in tool_descriptions[key] else {}),
@@ -70,7 +72,7 @@ def tool_details(endpoints):
 		for key in available_tools
 	]
 	
-def construct_tools_and_descriptions(endpoints):
+def construct_tools_and_descriptions(endpoints, user_id=None):
 	# Create copies of the original constants
 	available_tools = copy.deepcopy(AVAILABLE_TOOLS)
 	tool_descriptions = copy.deepcopy(TOOL_DESCRIPTIONS)
@@ -88,5 +90,15 @@ def construct_tools_and_descriptions(endpoints):
 			'link': endpoint['link'],
 			'toolkit': endpoint['toolkit']
 		}
+  
+	if user_id:
+		tool_name = 'create_api_tool'
+		create_api_tool = construct_user_tool(
+			user_id=user_id,
+			tool_name=tool_name,
+			tool_description=tool_descriptions[tool_name]['description'],
+		)
+		available_tools[tool_name] = create_api_tool
+		tool_descriptions[tool_name] = tool_descriptions[tool_name]
 	
 	return available_tools, tool_descriptions

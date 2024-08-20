@@ -38,6 +38,12 @@ TOOL_DESCRIPTIONS = {
         'link': '/tools/pdf_fill_form_fields',
         'toolkit': 'Advanced'
     },
+    'create_api_tool': {
+        'name': 'Create API Tool',
+        'description': 'Create a new API tool.',
+        'link': '/tools/create_api_tool',
+        'toolkit': 'Advanced'
+    },
 }
 
 ## Available tools
