@@ -152,6 +152,7 @@ async def auth_callback(provider: str, code: str, db: AsyncSession = Depends(get
 	except ValueError as e:
 		return HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 	except Exception as e:
+		logging.exception(str(e))
 		return UJSONResponse(detail=str(e), status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 ##################################################################################################################

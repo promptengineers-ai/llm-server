@@ -58,7 +58,7 @@ class ToolRepository:
 	
 	async def list(self):
 		endpoints = await self.endpoints()
-		tools = tool_details(endpoints)
+		tools = tool_details(endpoints, user_id=self.user_id)
 		return tools
 
 	async def create(self, tool: APITool):
@@ -224,9 +224,9 @@ class ToolRepository:
 				return True
 			return None
 
-def tool_repo(request: Request, db: AsyncSession = Depends(get_db)) -> ToolRepository:
+def tool_repo(request: Request = None, db: AsyncSession = Depends(get_db), user_id: str = None) -> ToolRepository:
 	try:
-		return ToolRepository(request=request, db=db)
+		return ToolRepository(request=request, db=db, user_id=user_id)
 	except NotFoundException as e:
 		# Handle specific NotFoundException with a custom message or logging
 		logging.warning(f"Failed to initialize ToolRepository: {str(e)}")
