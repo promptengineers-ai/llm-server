@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - bugfix/42-redis-is-default-vector-db (2024-05-26)
   - bugfix/33-groq-rag-not-working (2024-05-19)
 ### Changed 
+  - feature/139-simple-static-frontend-for-standalone-deploy (2024-09-27)
   - feature/136-lord-of-the-retriever (2024-07-18)
   - feature/131-pgvector-support (2024-07-13)
   - feature/124-message-out-of-order (2024-07-02)
