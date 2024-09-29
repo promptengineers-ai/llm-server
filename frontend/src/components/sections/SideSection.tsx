@@ -104,7 +104,7 @@ const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
                                                     </h3>
                                                 </div>
                                                 <ol className="bg-primary-800">
-                                                    {chats.length > 0 ? (
+                                                    {chats?.length > 0 ? (
                                                         <>
                                                             {chats?.map(
                                                                 (chat: any) => (

@@ -40,7 +40,7 @@ class TestIndexRepository(unittest.IsolatedAsyncioTestCase):
         if items:
             self.assertIsInstance(items[0], dict)
     
-    # @unittest.skip("skip test_update_name. requires manual intervention")
+    @unittest.skip("skip test_update_name. requires manual intervention")
     async def test_update_name(self):
         # Update the name
         old = 'big-bad-wolf'
