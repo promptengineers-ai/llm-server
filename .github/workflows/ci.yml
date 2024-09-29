@@ -34,6 +34,8 @@ jobs:
     env:
       APP_ENV: development
       APP_SECRET: this-is-a-test-secret
+      AZURE_OPENAI_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
+      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}    
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       BUCKET: pe-oss-bucket
       S3_REGION: us-east-1
