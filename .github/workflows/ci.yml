@@ -34,7 +34,7 @@ jobs:
     env:
       APP_ENV: development
       APP_SECRET: this-is-a-test-secret
-      AZURE_OPENAI_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
+      AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
       AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}    
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       BUCKET: pe-oss-bucket
@@ -146,7 +146,7 @@ jobs:
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
       GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-      AZURE_OPENAI_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
+      AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
       AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -197,7 +197,7 @@ jobs:
           "POSTGRES_URL=$POSTGRES_URL"
 
           ## LLM
-          "AZURE_OPENAI_KEY=$AZURE_OPENAI_KEY"
+          "AZURE_OPENAI_API_KEY=$AZURE_OPENAI_API_KEY"
           "AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT"
           "OPENAI_API_KEY=$OPENAI_API_KEY"
           "GROQ_API_KEY=$GROQ_API_KEY"
