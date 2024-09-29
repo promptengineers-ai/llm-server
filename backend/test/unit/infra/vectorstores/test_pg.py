@@ -5,6 +5,7 @@ import unittest
 from src.infrastructure.logger import logger as logging
 from src.config import retrieve_defaults
 from src.config.llm import ModelType
+from src.db.postgres import PGVectorDB
 from src.db.strategies import VectorstoreContext
 from src.factories.embedding import EmbeddingFactory
 from src.factories.retrieval import RetrievalFactory
