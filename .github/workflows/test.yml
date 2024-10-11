@@ -50,6 +50,29 @@ jobs:
       ACCESS_KEY_ID: ${{ vars.ACCESS_KEY_ID }}
       ACCESS_SECRET_KEY: ${{ secrets.ACCESS_SECRET_KEY }}
       S3_REGION: ${{ vars.S3_REGION }}
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: test1234
+          POSTGRES_DB: llm_server_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -86,7 +109,6 @@ jobs:
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/backend/requirements.txt', '**/backend/requirements-dev.txt', '**/backend/constraints.txt') }}
-
 
     - name: Run tests
       working-directory: ./backend
