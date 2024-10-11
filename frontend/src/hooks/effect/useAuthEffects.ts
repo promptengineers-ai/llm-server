@@ -8,6 +8,9 @@ export const useInitAuthFromStorageEffect = (
     useEffect(() => {
         const token = localStorage.getItem("token");
         const user = localStorage.getItem("user");
+        if (!token && !user) {
+            return;
+        }
 
         // Check if token or user is invalid
         if (!token || token === "null" || !user || user === "{}") {

@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import AuthProvider from "@/contexts/AuthContext";
 import AppProvider from "@/contexts/AppContext";
 import ChatProvider from "@/contexts/ChatContext";
+import ToolProvider from "@/contexts/ToolContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,7 +28,10 @@ export default function RootLayout({
     return (
         <html lang="en">
             <head>
-                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+                />
                 <link
                     href="splashscreens/iphone5_splash.png"
                     media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"
@@ -83,7 +87,9 @@ export default function RootLayout({
                 <ThemeProvider>
                     <AppProvider>
                         <AuthProvider>
-                            <ChatProvider>{children}</ChatProvider>
+                            <ChatProvider>
+                                <ToolProvider>{children}</ToolProvider>
+                            </ChatProvider>
                         </AuthProvider>
                     </AppProvider>
                 </ThemeProvider>

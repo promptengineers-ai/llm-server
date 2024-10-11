@@ -1,3 +1,4 @@
+authlib
 langchain 
 langchain_openai 
 langchain-anthropic

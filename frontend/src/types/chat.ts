@@ -1,6 +1,8 @@
 import { SearchProvider, ModelType, SearchType, EmbeddingModel } from "./llm";
 
 export interface Tool {
+    id: string,
+    type: string,
     name: string;
     value: string;
     description: string;

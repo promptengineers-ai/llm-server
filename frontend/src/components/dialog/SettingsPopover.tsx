@@ -1,9 +1,13 @@
+"use client";
+
 import { useAppContext } from "@/contexts/AppContext";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 const SettingsPopover = () => {
+    const router = useRouter();
     const { logout, retrieveUser } = useAuthContext();
-    const { setIsOpen } = useAppContext();
+    const { setIsCustomizeOpen } = useAppContext();
 
     return (
         <div
@@ -109,7 +113,7 @@ const SettingsPopover = () => {
                     id="headlessui-menu-item-:rmj:"
                     role="menuitem"
                     data-headlessui-state=""
-                    onMouseDown={() => setIsOpen(true)}
+                    onMouseDown={() => setIsCustomizeOpen(true)}
                 >
                     <svg
                         width="24"
@@ -137,6 +141,10 @@ const SettingsPopover = () => {
                     id="headlessui-menu-item-:rmk:"
                     role="menuitem"
                     data-headlessui-state=""
+                    onClick={(event) => {
+                        event.preventDefault();
+                        router.push("/settings");
+                    }}
                 >
                     <svg
                         width="24"

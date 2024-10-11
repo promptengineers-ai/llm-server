@@ -1,0 +1,121 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - '*'
+    paths-ignore:
+      - 'frontend/**'
+      - 'Changelog.md'
+      - 'docker/**'
+      - 'docker-compose.yml'
+      - 'docs/**'
+      - '.dockerignore'
+      - 'README.md'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths-ignore:
+      - 'frontend/**'
+      - 'Changelog.md'
+      - 'docker/**'
+      - 'docker-compose.yml'
+      - 'docs/**'
+      - '.dockerignore'
+      - 'README.md'
+
+jobs:
+  ###############################################################
+  ## Test Backend use Cache
+  ###############################################################
+  test:
+    runs-on: ubuntu-latest
+    environment: Test
+    env:
+      APP_ENV: ${{ vars.APP_ENV }}
+      APP_LOG_LEVEL: ${{ vars.APP_LOG_LEVEL }}
+      APP_SECRET: ${{ secrets.APP_SECRET }}
+      APP_ADMIN_EMAIL: ${{ vars.APP_ADMIN_EMAIL }}
+      APP_ADMIN_PASS: ${{ secrets.APP_ADMIN_PASS }}
+      POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
+      AZURE_OPENAI_API_VERSION: ${{ vars.AZURE_OPENAI_API_VERSION }}
+      AZURE_OPENAI_DEPLOYMENT: ${{ vars.AZURE_OPENAI_DEPLOYMENT }}
+      AZURE_OPENAI_ENDPOINT: ${{ vars.AZURE_OPENAI_ENDPOINT }}
+      AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      BUCKET: ${{ vars.BUCKET }}
+      ACCESS_KEY_ID: ${{ vars.ACCESS_KEY_ID }}
+      ACCESS_SECRET_KEY: ${{ secrets.ACCESS_SECRET_KEY }}
+      S3_REGION: ${{ vars.S3_REGION }}
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: test1234
+          POSTGRES_DB: llm_server_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Cache Python dependencies
+      id: cache-python
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/backend/requirements.txt', '**/backend/requirements-dev.txt', '**/backend/constraints.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      working-directory: ./backend
+      run: |
+        env | sort
+        pip install --upgrade pip
+        pip install uv
+        uv pip install -v --system --no-cache-dir \
+        -c constraints.txt \
+        -r requirements.txt \
+        -r requirements-dev.txt
+
+    - name: Save Python dependencies cache
+      if: steps.cache-python.outputs.cache-hit != 'true'
+      id: save-cache-python
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/backend/requirements.txt', '**/backend/requirements-dev.txt', '**/backend/constraints.txt') }}
+
+    - name: Run tests
+      working-directory: ./backend
+      env:
+        PYTHONPATH: ./src:.
+      run: |
+        # Create the database directory
+        mkdir -p data
+        # Run your tests
+        pytest -rs

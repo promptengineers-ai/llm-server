@@ -1,0 +1,214 @@
+[
+    {
+        "name": "create_project_issue",
+        "description": "Allows to create Gitlab project issue.",
+        "link": "",
+        "toolkit": "Gitlab",
+        "url": "https://gitlab.com/api/v4/projects/{project_id}/issues",
+        "method": "POST",
+        "args": {
+            "project_id": {
+                "description": "This is a URL param for the Gitlab project ID.",
+                "type": "str",
+                "default": "60281633",
+                "required": true
+            },
+            "title": {
+                "description": "Gitlab project issue title. If enhancement prefix with \"FEATURE:\", if is a fix prefix with \"BUG:\"",
+                "type": "str",
+                "default": "",
+                "required": true
+            },
+            "description": {
+                "description": "Gitlab project issue description. Includes concise details and acceptance criteria.",
+                "type": "str",
+                "default": "",
+                "required": true
+            }
+        },
+        "headers": {
+            "PRIVATE-TOKEN": {
+                "value": "my_private_token",
+                "encrypted": true
+            }
+        }
+    },
+    {
+        "name": "create_project_merge_request",
+        "description": "Allows to create Gitlab project merge request.",
+        "link": "",
+        "toolkit": "Gitlab",
+        "url": "https://gitlab.com/api/v4/projects/{project_id}/merge_requests",
+        "method": "POST",
+        "args": {
+            "project_id": {
+                "description": "This is a URL param for the Gitlab project ID.",
+                "type": "str",
+                "default": "60281633",
+                "required": true
+            },
+            "source_branch": {
+                "description": "Gitlab project source branch.",
+                "type": "str",
+                "default": "",
+                "required": true
+            },
+            "target_branch": {
+                "description": "Gitlab project target branch.",
+                "type": "str",
+                "default": "development",
+                "required": true
+            },
+            "title": {
+                "description": "Gitlab project merge request title. If enhancement prefix with \"FEATURE:\", if is a fix prefix with \"BUG:\"",
+                "type": "str",
+                "default": "",
+                "required": true
+            },
+            "description": {
+                "description": "Gitlab project merge request description. Includes concise details and acceptance criteria.",
+                "type": "str",
+                "default": "",
+                "required": true
+            }
+        },
+        "headers": {
+            "PRIVATE-TOKEN": {
+                "value": "my_private_token",
+                "encrypted": true
+            }
+        }
+    },
+    {
+        "name": "create_repo_branch",
+        "description": "Create a new branch in the repository.",
+        "link": "https://docs.gitlab.com/ee/api/branches.html#create-repository-branch",
+        "method": "POST",
+        "toolkit": "Gitlab",
+        "url": "https://gitlab.com/api/v4/projects/{project_id}/repository/branches?branch={branch}&ref={ref}",
+        "headers": {
+            "PRIVATE-TOKEN": {
+                "value": "my_private_token",
+                "encrypted": true
+            }
+        },
+        "args": {
+            "project_id": {
+                "description": "This is the project ID for a Gitlab repository to be used as a URL param.",
+                "type": "str",
+                "default": "60281633",
+                "required": true
+            },
+            "branch": {
+                "description": "Name of new branch. Should be prefixed with either \"feature/\" or \"bugfix/\" then the issue id will follow and brief desc of title.\nExample: feature/24-add-functionality-for-item",
+                "type": "str",
+                "default": "",
+                "required": true
+            },
+            "ref": {
+                "description": "Branch name or commit SHA to create branch from.",
+                "type": "str",
+                "default": "",
+                "required": true
+            }
+        }
+    },
+    {
+        "name": "create_merge_request",
+        "description": "Creates a new merge request.",
+        "link": "https://docs.gitlab.com/ee/api/merge_requests.html#create-mr",
+        "method": "POST",
+        "toolkit": "Gitlab",
+        "url": "https://gitlab.com/api/v4/projects/{project_id}/merge_requests",
+        "headers": {
+            "PRIVATE-TOKEN": {
+                "value": "my_private_token",
+                "encrypted": true
+            }
+        },
+        "args": {
+            "project_id": {
+                "description": "This is the project ID for a Gitlab repository to be used as a URL param.",
+                "type": "str",
+                "default": "60281633",
+                "required": true
+            },
+            "source_branch": {
+                "description": "The source branch. Branch where changes have been made.",
+                "type": "str",
+                "default": "",
+                "required": true
+            },
+            "target_branch": {
+                "description": "The target branch. Branch where changes will be merged into.",
+                "type": "str",
+                "default": "development",
+                "required": true
+            },
+            "title": {
+                "description": "Title of Merge Request. \n---\nExample Title:\nFROM <source_branch> INTO <target_branch>",
+                "type": "str",
+                "default": "",
+                "required": true
+            },
+            "description": {
+                "description": "Description of the merge request. If issue number is included in the source_branch add \"Closes #<issuenumber>\" so that issue will automatically close on merge.",
+                "type": "str",
+                "default": "",
+                "required": false
+            },
+            "squash": {
+                "description": "If true, squash all commits into a single commit on merge.",
+                "type": "str",
+                "default": "true",
+                "required": false
+            }
+        }
+    },
+   {
+       "name": "create_commit",
+       "description": "Creates a new commit with multiple files and actions.",
+       "link": "https://docs.gitlab.com/ee/api/commits.html#create-a-commit-with-multiple-files-and-actions",
+       "method": "POST",
+       "toolkit": "Gitlab",
+       "url": "https://gitlab.com/api/v4/projects/{id}/repository/commits",
+       "headers": {
+           "PRIVATE-TOKEN": {
+               "value": "my_private_token",
+               "encrypted": true
+           }
+       },
+       "args": {
+           "id": {
+               "description": "The ID or URL-encoded path of the project.",
+               "type": "str",
+               "default": "60281633",
+               "required": true
+           },
+           "branch": {
+               "description": "Name of the branch to commit into. To create a new branch, also provide either start_branch or start_sha, and optionally start_project.",
+               "type": "str",
+               "default": "",
+               "required": true
+           },
+           "commit_message": {
+               "description": "Commit message describing the changes.",
+               "type": "str",
+               "default": "",
+               "required": true
+           },
+           "start_branch": {
+               "description": "Name of the branch to start the new branch from.",
+               "type": "str",
+               "default": "development",
+               "required": true
+           },
+           "actions": {
+               "description": "An array of action hashes to commit as a batch. Actions include create, delete, move, update, and chmod. \n\nExamples: \n1. Create a new file: {\"action\": \"create\", \"file_path\": \"foo/bar\", \"content\": \"some content\"} \n2. Delete a file: {\"action\": \"delete\", \"file_path\": \"foo/bar2\"} \n3. Move a file: {\"action\": \"move\", \"file_path\": \"foo/bar3\", \"previous_path\": \"foo/bar4\", \"content\": \"some content\"} \n4. Update a file: {\"action\": \"update\", \"file_path\": \"foo/bar5\", \"content\": \"new content\"} \n5. Change file permissions (chmod): {\"action\": \"chmod\", \"file_path\": \"foo/bar5\", \"execute_filemode\": true}",
+               "type": "array",
+               "default": "",
+               "required": true
+           }
+       }
+    }
+]

@@ -30,14 +30,14 @@ def get_test_token():
     return json_str['token']
 
 async def apply_migrations():
-    if database_engine() != 'sqlite':
-            raise Exception("Database engine is not SQLite")
+    # if database_engine() != 'sqlite':
+    #         raise Exception("Database engine is not SQLite")
     alembic_cfg = Config("alembic.ini")
     command.upgrade(alembic_cfg, "head")
     
 async def drop_all_tables():
-    if database_engine() != 'sqlite':
-        return Exception("Database engine is not SQLite")
+    # if database_engine() != 'sqlite':
+    #     return Exception("Database engine is not SQLite")
     engine = create_async_engine(
         DATABASE_URL, 
         connect_args=database_type('connect_args')
@@ -46,9 +46,9 @@ async def drop_all_tables():
         await conn.run_sync(Base.metadata.drop_all)
         
 async def cleanup_database():
-    if database_engine() != 'sqlite':
-            raise Exception("Database engine is not SQLite")
-    await drop_all_tables()
+    # if database_engine() != 'sqlite':
+    #         raise Exception("Database engine is not SQLite")
+    # await drop_all_tables()
     remove_database_file()
         
 def remove_database_file():

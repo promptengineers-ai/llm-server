@@ -1,8 +1,6 @@
 from langchain_core.tools import ToolException
 from langchain_community.utilities import SearxSearchWrapper
 
-from src.config.tool import SEARX_SEARCH_HOST_URL
-
 def searx_search(
     query: str,  # The search query.
     num_results: int = 5,  # The number of results to return. Defaults to 5.
@@ -26,6 +24,7 @@ def searx_search(
     Raises:
         ToolException: If SEARX_SEARCH_HOST_URL is not provided.
     """
+    from src.config.tool import SEARX_SEARCH_HOST_URL
     # Check if SEARX_SEARCH_HOST_URL is provided.
     if not SEARX_SEARCH_HOST_URL:
         raise ToolException("No SEARX_SEARCH_HOST_URL provided")

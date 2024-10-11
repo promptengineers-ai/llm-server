@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "LLM Database",
+            "Group": "Servers",
+            "Host": "postgres",
+            "Port": 5432,
+            "MaintenanceDB": "admin",
+            "Username": "admin",
+            "Password": "test1234"
+        }
+    }
+}
