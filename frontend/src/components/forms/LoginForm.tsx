@@ -176,7 +176,7 @@ const LoginForm = () => {
                     )}
 
                     {/* Separator */}
-                    <div className="relative mt-6">
+                    {/* <div className="relative mt-6">
                         <div
                             className="absolute inset-0 flex items-center"
                             aria-hidden="true"
@@ -190,10 +190,10 @@ const LoginForm = () => {
                                 Or continue with
                             </span>
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* OAuth Buttons */}
-                    <div className="mt-6 grid grid-cols-3 gap-3">
+                    {/* <div className="mt-6 grid grid-cols-3 gap-3">
                         <div>
                             <button
                                 type="button"
@@ -223,7 +223,7 @@ const LoginForm = () => {
                                 <FaMicrosoft className="w-5 h-5" />
                             </button>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </>

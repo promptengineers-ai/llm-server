@@ -4,12 +4,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from fastapi import APIRouter, Depends, Body, HTTPException, status, Request
 from fastapi.responses import UJSONResponse
-from authlib.integrations.starlette_client import OAuth
+# from authlib.integrations.starlette_client import OAuth
 from sqlalchemy.future import select
 from pydantic import BaseModel, Field
 
 from src.config import default_app_tokens
-from src.services.auth import OAuthService
+# from src.services.auth import OAuthService
 from src.services.db import get_db
 from src.middleware.auth import current_user
 from src.models.sql.user import User
@@ -18,7 +18,7 @@ from src.utils.auth import hash_password, verify_password, create_access_token
 
 TAG = "Auth"
 router = APIRouter()
-oauth: OAuth = OAuth()
+# oauth: OAuth = OAuth()
 
 @router.get("/auth/user", tags=[TAG], dependencies=[Depends(current_user)])
 async def read_user_details(request: Request, db: AsyncSession = Depends(get_db)):
@@ -89,71 +89,71 @@ async def login_for_access_token(
 ##################################################################################################################
 ## OAuth2
 ##################################################################################################################
-@router.get('/auth/{provider}', tags=[TAG], include_in_schema=False)
-async def auth(provider: str):
-	try:
-		oauth_service = OAuthService(provider)
-		return await oauth_service.oauth.create_authorization_url(redirect_uri=oauth_service.oauth.server_metadata['redirect_uri'])
-	except Exception as e:
-		return UJSONResponse(detail=str(e), status_code=status.HTTP_400_BAD_REQUEST)
+# @router.get('/auth/{provider}', tags=[TAG], include_in_schema=False)
+# async def auth(provider: str):
+# 	try:
+# 		oauth_service = OAuthService(provider)
+# 		return await oauth_service.oauth.create_authorization_url(redirect_uri=oauth_service.oauth.server_metadata['redirect_uri'])
+# 	except Exception as e:
+# 		return UJSONResponse(detail=str(e), status_code=status.HTTP_400_BAD_REQUEST)
 
-@router.get("/auth/{provider}/callback", tags=[TAG], include_in_schema=False)
-async def auth_callback(provider: str, code: str, db: AsyncSession = Depends(get_db)):
-	try:
-		# Get the user info from the OAuth provider
-		oauth_service = OAuthService(provider)
-		user_info = oauth_service.login(code)
+# @router.get("/auth/{provider}/callback", tags=[TAG], include_in_schema=False)
+# async def auth_callback(provider: str, code: str, db: AsyncSession = Depends(get_db)):
+# 	try:
+# 		# Get the user info from the OAuth provider
+# 		oauth_service = OAuthService(provider)
+# 		user_info = oauth_service.login(code)
   
-		# Check if the user_info has a status code
-		status_code = user_info.get('status') or None
-		if status_code and int(status_code) != 200:
-			raise HTTPException(status_code=int(status_code), detail=user_info.get('message'))
+# 		# Check if the user_info has a status code
+# 		status_code = user_info.get('status') or None
+# 		if status_code and int(status_code) != 200:
+# 			raise HTTPException(status_code=int(status_code), detail=user_info.get('message'))
   
-		# Check if the user already exists
-		existing_user = await db.execute(select(User).where((User.email == user_info.get('email')) | (User.username == user_info.get('username'))))
-		existing_user = existing_user.scalars().first()
-		if existing_user:
-			access_token = create_access_token(data={
-				"sub": str(existing_user.id), 
-				"email": existing_user.email,
-				"username": existing_user.username
-            })
-			return UJSONResponse(
-				content={"access_token": access_token, "token_type": "bearer"}, 
-    			status_code=status.HTTP_200_OK
-       		)
+# 		# Check if the user already exists
+# 		existing_user = await db.execute(select(User).where((User.email == user_info.get('email')) | (User.username == user_info.get('username'))))
+# 		existing_user = existing_user.scalars().first()
+# 		if existing_user:
+# 			access_token = create_access_token(data={
+# 				"sub": str(existing_user.id), 
+# 				"email": existing_user.email,
+# 				"username": existing_user.username
+#             })
+# 			return UJSONResponse(
+# 				content={"access_token": access_token, "token_type": "bearer"}, 
+#     			status_code=status.HTTP_200_OK
+#        		)
 			
 
-		# Create a new user instance
-		new_user = User(
-			full_name=user_info.get('name'), 
-			email=user_info.get('email'),
-			username=user_info.get('username'),
-			oauth_provider=provider,
-			access=1
-		)
-		# Add the new user to the database
-		db.add(new_user)
-		await db.commit()
-		await db.refresh(new_user)
+# 		# Create a new user instance
+# 		new_user = User(
+# 			full_name=user_info.get('name'), 
+# 			email=user_info.get('email'),
+# 			username=user_info.get('username'),
+# 			oauth_provider=provider,
+# 			access=1
+# 		)
+# 		# Add the new user to the database
+# 		db.add(new_user)
+# 		await db.commit()
+# 		await db.refresh(new_user)
 		
-		access_token = create_access_token(data={
-			"sub": str(new_user.id), 
-			"email": new_user.email,
-			"username": new_user.username
-		})
-		return UJSONResponse(
-			content={"access_token": access_token, "token_type": "bearer"}, 
-			status_code=status.HTTP_201_CREATED
-		)
-	except HTTPException as err:
-			logging.error(err.detail)
-			raise
-	except ValueError as e:
-		return HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-	except Exception as e:
-		logging.exception(str(e))
-		return UJSONResponse(detail=str(e), status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+# 		access_token = create_access_token(data={
+# 			"sub": str(new_user.id), 
+# 			"email": new_user.email,
+# 			"username": new_user.username
+# 		})
+# 		return UJSONResponse(
+# 			content={"access_token": access_token, "token_type": "bearer"}, 
+# 			status_code=status.HTTP_201_CREATED
+# 		)
+# 	except HTTPException as err:
+# 			logging.error(err.detail)
+# 			raise
+# 	except ValueError as e:
+# 		return HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+# 	except Exception as e:
+# 		logging.exception(str(e))
+# 		return UJSONResponse(detail=str(e), status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 ##################################################################################################################
 class ResponseApiKeys(BaseModel):
