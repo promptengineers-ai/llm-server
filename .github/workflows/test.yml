@@ -23,27 +23,6 @@ on:
       - '.dockerignore'
       - 'README.md'
 
-env:
-  APP_ENV: ${{ vars.APP_ENV }}
-  APP_LOG_LEVEL: ${{ vars.APP_LOG_LEVEL }}
-  APP_SECRET: ${{ secrets.APP_SECRET }}
-  APP_ADMIN_EMAIL: ${{ vars.APP_ADMIN_EMAIL }}
-  APP_ADMIN_PASS: ${{ secrets.APP_ADMIN_PASS }}
-  POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
-  REDIS_URL: ${{ secrets.REDIS_URL }}
-  AZURE_OPENAI_API_VERSION: ${{ vars.AZURE_OPENAI_API_VERSION }}
-  AZURE_OPENAI_DEPLOYMENT: ${{ vars.AZURE_OPENAI_DEPLOYMENT }}
-  AZURE_OPENAI_ENDPOINT: ${{ vars.AZURE_OPENAI_ENDPOINT }}
-  AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
-  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-  GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-  BUCKET: ${{ vars.BUCKET }}
-  ACCESS_KEY_ID: ${{ vars.ACCESS_KEY_ID }}
-  ACCESS_SECRET_KEY: ${{ secrets.ACCESS_SECRET_KEY }}
-  S3_REGION: ${{ vars.S3_REGION }}
-
 jobs:
   ###############################################################
   ## Test Backend use Cache
@@ -51,7 +30,26 @@ jobs:
   test:
     runs-on: ubuntu-latest
     environment: Test
-    
+    env:
+      APP_ENV: ${{ vars.APP_ENV }}
+      APP_LOG_LEVEL: ${{ vars.APP_LOG_LEVEL }}
+      APP_SECRET: ${{ secrets.APP_SECRET }}
+      APP_ADMIN_EMAIL: ${{ vars.APP_ADMIN_EMAIL }}
+      APP_ADMIN_PASS: ${{ secrets.APP_ADMIN_PASS }}
+      POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
+      AZURE_OPENAI_API_VERSION: ${{ vars.AZURE_OPENAI_API_VERSION }}
+      AZURE_OPENAI_DEPLOYMENT: ${{ vars.AZURE_OPENAI_DEPLOYMENT }}
+      AZURE_OPENAI_ENDPOINT: ${{ vars.AZURE_OPENAI_ENDPOINT }}
+      AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      BUCKET: ${{ vars.BUCKET }}
+      ACCESS_KEY_ID: ${{ vars.ACCESS_KEY_ID }}
+      ACCESS_SECRET_KEY: ${{ secrets.ACCESS_SECRET_KEY }}
+      S3_REGION: ${{ vars.S3_REGION }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
