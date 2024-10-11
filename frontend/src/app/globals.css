@@ -75,3 +75,20 @@ body {
         transform: rotate(360deg);
     }
 }
+
+@keyframes ellipsis {
+  0% {
+    content: ".";
+  }
+  50% {
+    content: "..";
+  }
+  100% {
+    content: "...";
+  }
+}
+
+.ellipsis::after {
+  content: "";
+  animation: ellipsis 1s infinite steps(3);
+}

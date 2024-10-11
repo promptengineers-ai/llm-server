@@ -7,9 +7,17 @@ import { FaChevronDown } from "react-icons/fa";
 import { useChatContext } from "@/contexts/ChatContext";
 import { Tool } from "@/types/chat";
 import { useEffect } from "react";
+import { useToolContext } from "@/contexts/ToolContext";
+import TrashIcon from "../icons/TrashIcon";
+import EditIcon from "../icons/EditIcon";
+import { useAppContext } from "@/contexts/AppContext";
+import { ToolClient } from "@/utils/api";
 
+const toolClient = new ToolClient();
 
 const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
+    const { setIsCustomizeOpen, setIsNewToolOpen } = useAppContext();
+    const { deleteTool, updateToolState, setInitTool } = useToolContext();
     const { initChatPayload, setInitChatPayload, setChatPayload } =
         useChatContext();
 
@@ -27,6 +35,16 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                 tools: updatedTools,
             };
         });
+    };
+
+    const handleDeleteClick = async (tool: any) => {
+        const confirmDelete = confirm(
+            `Are you sure you want to delete ${tool.name} tool?`
+        );
+        if (!confirmDelete) {
+            return;
+        }
+        await deleteTool(tool);
     };
 
     useEffect(() => {
@@ -64,6 +82,7 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                                 <div className="font-bold">
                                     <a
                                         href={tool.link}
+                                        target="_blank"
                                         className="text-blue-500 underline"
                                     >
                                         {tool.name}
@@ -73,7 +92,7 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                                     {tool.description}
                                 </div>
                             </div>
-                            <div className="flex items-center mt-2">
+                            <div className="flex items-center justify-between mt-2">
                                 <input
                                     type="checkbox"
                                     checked={initChatPayload.tools.includes(
@@ -82,6 +101,34 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                                     className="mr-2"
                                     onChange={() => toggleTool(tool.value)}
                                 />
+                                
+                                {tool.id && (
+                                    <div className="flex space-x-2">
+                                        <button
+                                            className="hover:text-blue-500"
+                                            onClick={async () => {
+                                                setIsCustomizeOpen(false);
+                                                setIsNewToolOpen(true);
+                                                const item = await toolClient.find(tool)
+                                                updateToolState(item.tool);
+                                                setInitTool(item.tool);
+                                            }}
+                                            title="Edit tool"
+                                        >
+                                            <EditIcon />
+                                        </button>
+                                        <button
+                                            className="hover:text-red-700"
+                                            onClick={async () =>
+                                                handleDeleteClick(tool)
+                                            }
+                                            title="Delete tool"
+                                        >
+                                            <TrashIcon />
+                                        </button>
+                                    </div>
+                                )}
+                            
                             </div>
                         </li>
                     ))}

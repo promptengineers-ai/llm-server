@@ -40,7 +40,7 @@ const MarkdownCard = ({ content }: { content: string }) => {
                         </div>
                     ) : (
                         <code
-                            className="rounded px-1 py-0.5 font-bold"
+                            className="rounded px-1 py-0.5 font-bold whitespace-pre-wrap"
                             {...props}
                         />
                     );

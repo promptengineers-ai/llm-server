@@ -5,6 +5,7 @@ from fastapi import Depends, HTTPException, status, APIRouter, Request
 from fastapi.responses import StreamingResponse, Response, UJSONResponse
 
 from src.repositories.chat import ChatRepository
+from src.repositories.tool import ToolRepository, tool_repo
 from src.services.db import get_db
 from src.middleware.auth import current_user
 from src.chains.agent import agent_chain
@@ -39,7 +40,7 @@ retrieval_service = RetrievalService()
 		}
 	}
 )
-async def chat(request: Request, body: Agent):
+async def chat(request: Request, body: Agent, repo: ToolRepository = Depends(tool_repo)):
 	chain_type = 'chat'
 	try:     
 		if not body.tools and body.retrieval.provider and body.retrieval.indexes:
@@ -47,9 +48,11 @@ async def chat(request: Request, body: Agent):
 			chain = retrieval_chain(body, request.state.user_id)
 			query = {'input': body.messages[-1]['content']}
 		else:
+			endpoints = await repo.endpoints()	
 			if body.tools:
 				chain_type = 'agent'
-			chain, filtered_messages = agent_chain(body)
+				endpoints = await repo.endpoints()	
+			chain, filtered_messages = agent_chain(body, endpoints, user_id=request.state.user_id)
 			query = filtered_messages
    
 		if body.streaming:

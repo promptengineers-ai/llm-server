@@ -4,17 +4,21 @@ import { useState } from "react";
 export const defaultAppState = {
     loading: false,
     isOpen: false,
+    isCustomizeOpen: false,
     isDrawerOpen: false,
     isPopoverOpen: false,
-    isWebLoaderOpen: false
+    isWebLoaderOpen: false,
+    isNewToolOpen: false,
 };
 
 export const useAppState = () => {
     const [loading, setLoading] = useState<boolean>(defaultAppState.loading);
     const [isOpen, setIsOpen] = useState<boolean>(defaultAppState.isOpen);
+    const [isCustomizeOpen, setIsCustomizeOpen] = useState<boolean>(defaultAppState.isCustomizeOpen);
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(defaultAppState.isDrawerOpen);
     const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(defaultAppState.isPopoverOpen);
     const [isWebLoaderOpen, setIsWebLoaderOpen] = useState<boolean>(defaultAppState.isWebLoaderOpen);
+    const [isNewToolOpen, setIsNewToolOpen] = useState<boolean>(defaultAppState.isNewToolOpen);
 
     const isMobile = () => {
         const isClient = typeof window === "object";
@@ -47,6 +51,10 @@ export const useAppState = () => {
         setIsPopoverOpen,
         isWebLoaderOpen,
         setIsWebLoaderOpen,
+        isNewToolOpen,
+        setIsNewToolOpen,
+        isCustomizeOpen,
+        setIsCustomizeOpen,
         // Functions
         isMobile,
         // Mutations

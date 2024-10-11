@@ -1,45 +1,44 @@
 version: '3'
 
 services:
-  # Redis (Cache / Broker / Vector Index / Stream)
-  # redis:
-  #   container_name: redis
-  #   restart: unless-stopped
-  #   image: redis/redis-stack-server:latest
-  #   ports:
-  #     - 6379:6379
-  #   volumes:
-  #     - ./docker/redis/data:/data
-
-  # Database (MySQL)
-  # mysql:
-  #   image: mysql:8.2.0
-  #   container_name: mysql
-  #   restart: unless-stopped
-  #   ports:
-  #     - "3306:3306"
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: password
-  #     MYSQL_USER: admin
-  #     MYSQL_PASSWORD: password
-  #     MYSQL_DATABASE: llm_server
-  #   volumes:
-  #     - ./docker/mysql/data:/var/lib/mysql
+  # Database (Postgres)
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: test1234
+      POSTGRES_MULTIPLE_DATABASES: "llm_server_dev,llm_server_test"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./backend/data/postgres:/var/lib/postgresql/data
+      - ./docker/postgres/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    # user: root
       
   # # phpMyAdmin
-  # phpmyadmin:
-  #   image: phpmyadmin/phpmyadmin
-  #   container_name: phpmyadmin
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - mysql
-  #   ports:
-  #     - "8081:80"
-  #   environment:
-  #     PMA_HOST: mysql
-  #     MYSQL_ROOT_PASSWORD: password
-  #     MYSQL_PASSWORD: password
-  #     MYSQL_USER: admin
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: test1234
+    ports:
+      - "4040:80"
+    volumes:
+      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json
+    depends_on:
+      - postgres
+      
+  # Redis (Cache / Broker / Vector Index / Stream)
+  redis:
+    container_name: redis
+    restart: unless-stopped
+    image: redis/redis-stack-server:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - ./docker/redis/data:/data
 
   # # SearXNG
   # searxng:
@@ -70,17 +69,17 @@ services:
   #   command: server /data --console-address ":9001"
 
   # # API
-  api:
-    container_name: api
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+  # api:
+  #   container_name: api
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
     # volumes:
     #   - ./backend/data:/app/data  # Mount for SQLite database to host directory
-    ports:
-      - 8000:8000
-    env_file:
-      - ./backend/.env
+    # ports:
+    #   - 8000:8000
+    # env_file:
+    #   - ./backend/.env
 
   # # Proxy (Nginx)
   # nginx:

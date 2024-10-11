@@ -6,11 +6,23 @@ from sqlalchemy.dialects.mysql import LONGTEXT
 APP_ENV = os.environ.get("APP_ENV", "local")
 APP_VERSION = os.environ.get("APP_VERSION", "0.0.1")
 APP_SECRET = os.environ.get("APP_SECRET")
+
 APP_LOG_LEVEL = os.environ.get("APP_LOG_LEVEL", "INFO")
 APP_ALGORITHM = os.environ.get("APP_ALGORITHM", "HS256")
 APP_WORKERS = os.environ.get("APP_WORKERS", 1)
 APP_ADMIN_EMAIL = os.environ.get("APP_ADMIN_EMAIL", "admin@example.com")
 APP_ADMIN_PASS= os.environ.get("APP_ADMIN_PASS", "test1234")
+
+## Auth
+# OAUTH_GITHUB_REDIRECT_URI = os.environ.get("OAUTH_GITHUB_REDIRECT_URI")
+# OAUTH_GITHUB_CLIENT_ID = os.environ.get("OAUTH_GITHUB_CLIENT_ID")
+# OAUTH_GITHUB_CLIENT_SECRET = os.environ.get("OAUTH_GITHUB_CLIENT_SECRET")
+# OAUTH_AZURE_CLIENT_ID = os.environ.get("OAUTH_AZURE_CLIENT_ID")
+# OAUTH_AZURE_CLIENT_SECRET = os.environ.get("OAUTH_AZURE_CLIENT_SECRET")
+# OAUTH_AZURE_REDIRECT_URI = os.environ.get("OAUTH_AZURE_REDIRECT_URI")
+# OAUTH_GOOGLE_CLIENT_ID = os.environ.get("OAUTH_GOOGLE_CLIENT_ID")
+# OAUTH_GOOGLE_CLIENT_SECRET = os.environ.get("OAUTH_GOOGLE_CLIENT_SECRET")
+# OAUTH_GOOGLE_REDIRECT_URI = os.environ.get("OAUTH_GOOGLE_REDIRECT_URI")
 
 ## DB
 DATABASE_URL = os.environ.get("DATABASE_URL", 'sqlite+aiosqlite:///./data/test.sqlite')
@@ -22,8 +34,7 @@ POSTGRES_URL = os.environ.get("POSTGRES_URL", 'postgresql+psycopg://langchain:la
 
 ## LLM
 AZURE_OPENAI_API_VERSION = os.environ.get("AZURE_OPENAI_API_VERSION", "2024-06-01")
-AZURE_OPENAI_LLM_DEPLOYMENT = os.environ.get("AZURE_OPENAI_DEPLOYMENT", 'pe-gpt-4o')
-AZURE_OPENAI_EMBED_DEPLOYMENT = os.environ.get("AZURE_OPENAI_EMBED_DEPLOYMENT", 'pe-text-embedding-3-large')
+AZURE_OPENAI_DEPLOYMENT = os.environ.get("AZURE_OPENAI_DEPLOYMENT")
 AZURE_OPENAI_ENDPOINT = os.environ.get("AZURE_OPENAI_ENDPOINT")
 AZURE_OPENAI_API_KEY = os.environ.get("AZURE_OPENAI_API_KEY")
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
