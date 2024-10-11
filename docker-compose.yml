@@ -1,16 +1,6 @@
 version: '3'
 
 services:
-  # Redis (Cache / Broker / Vector Index / Stream)
-  # redis:
-  #   container_name: redis
-  #   restart: unless-stopped
-  #   image: redis/redis-stack-server:latest
-  #   ports:
-  #     - 6379:6379
-  #   volumes:
-  #     - ./docker/redis/data:/data
-
   # Database (Postgres)
   postgres:
     image: pgvector/pgvector:pg16
@@ -39,6 +29,16 @@ services:
       - ./docker/pgadmin/servers.json:/pgadmin4/servers.json
     depends_on:
       - postgres
+      
+  # Redis (Cache / Broker / Vector Index / Stream)
+  redis:
+    container_name: redis
+    restart: unless-stopped
+    image: redis/redis-stack-server:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - ./docker/redis/data:/data
 
   # # SearXNG
   # searxng:

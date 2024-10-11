@@ -1,0 +1,80 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - '*'
+    paths-ignore:
+      - 'frontend/**'
+      - 'Changelog.md'
+      - 'docker/**'
+      - 'docker-compose.yml'
+      - 'docs/**'
+      - '.dockerignore'
+      - 'README.md'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths-ignore:
+      - 'frontend/**'
+      - 'Changelog.md'
+      - 'docker/**'
+      - 'docker-compose.yml'
+      - 'docs/**'
+      - '.dockerignore'
+      - 'README.md'
+
+jobs:
+  ###############################################################
+  ## Test Backend use Cache
+  ###############################################################
+  test:
+    runs-on: ubuntu-latest
+    environment: Test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Cache Python dependencies
+      id: cache-python
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/backend/requirements.txt', '**/backend/requirements-dev.txt', '**/backend/constraints.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      working-directory: ./backend
+      run: |
+        env | sort
+        pip install --upgrade pip
+        pip install uv
+        uv pip install -v --system --no-cache-dir \
+        -c constraints.txt \
+        -r requirements.txt \
+        -r requirements-dev.txt
+
+    - name: Save Python dependencies cache
+      if: steps.cache-python.outputs.cache-hit != 'true'
+      id: save-cache-python
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/backend/requirements.txt', '**/backend/requirements-dev.txt', '**/backend/constraints.txt') }}
+
+
+    - name: Run tests
+      working-directory: ./backend
+      env:
+        PYTHONPATH: ./src:.
+      run: |
+        # Create the database directory
+        mkdir -p data
+        # Run your tests
+        pytest -rs
