@@ -13,6 +13,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' && github.ref == 'refs/heads/development' }}
+    environment: Preview
     env:
       APP_ENV: development
       APP_SECRET: ${{ secrets.APP_SECRET }}
@@ -34,13 +35,10 @@ jobs:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      # OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
-      # MINIO_HOST: ${{ secrets.MINIO_HOST }}
-      BUCKET: ${{ secrets.BUCKET }}
-      S3_REGION: ${{ secrets.S3_REGION }}
-      ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+      BUCKET: pe-oss-bucket
+      S3_REGION: us-east-1
+      ACCESS_KEY_ID: AKIAVQYLUAYDAEEURO64
       ACCESS_SECRET_KEY: ${{ secrets.ACCESS_SECRET_KEY }}
-      SEARX_SEARCH_HOST_URL: ${{ secrets.SEARX_SEARCH_HOST_URL }}
     steps:
     - name: Authenticate to Google Cloud
       id: 'auth'
