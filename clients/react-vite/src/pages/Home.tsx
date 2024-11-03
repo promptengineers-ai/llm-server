@@ -28,7 +28,11 @@ export default function Home() {
                     cursor: "pointer",
                 }}
             >
-                <a href="https://github.com/promptengineers-ai/llm-server" target="_blank">
+                <a 
+                    href="https://github.com/promptengineers-ai/llm-server" 
+                    target="_blank"
+                    aria-label="View on GitHub"
+                >
                     <FaGithub fontSize={"2rem"} />
                 </a>
             </div>

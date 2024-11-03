@@ -1,2 +1,4 @@
 docker/mysql/data
 docker/redis/data
+# Test coverage
+coverage/
