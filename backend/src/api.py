@@ -1,10 +1,11 @@
 """Application entry point."""
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
+from src.config import APP_PORTAL_ENABLED
 from src.middleware.auth import current_user
 from src.models import Harvest
 from src.routes.status import router as status_router
@@ -35,15 +36,22 @@ app.include_router(prefix='/api/v1', dependencies=[Depends(current_user)], route
 app.include_router(prefix='/api/v1', dependencies=[Depends(current_user)], router=index_router)
 app.include_router(prefix='/api/v1', dependencies=[Depends(current_user)], router=storage_router)
 
-# Define the path to the directory containing the HTML files
+# Define the paths to the directories
 static_dir = Path(__file__).parent / "static"
+public_dir = Path(__file__).parent / "public"
 
 # Mount the static directory
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
+# Mount the public directory if it exists (for React app)
+if public_dir.exists():
+    app.mount("/", StaticFiles(directory=public_dir, html=True), name="public")
 
 # API Landing Page
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def read_root():
+    if APP_PORTAL_ENABLED and public_dir.exists():
+        return FileResponse(public_dir / "index.html")
+    
     with open(static_dir / "pages/index.html") as f:
         html_content = f.read()
     return HTMLResponse(content=html_content, status_code=200)

@@ -91,7 +91,7 @@ const Chat = () => {
 
     useEffect(() => {
         fetchChats();
-    }, [fetchChats]);
+    }, []);
 
     return (
         <main className="overflow w-full h-svh relative flex z-0">

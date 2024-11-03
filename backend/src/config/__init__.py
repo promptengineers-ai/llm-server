@@ -11,6 +11,7 @@ APP_ALGORITHM = os.environ.get("APP_ALGORITHM", "HS256")
 APP_WORKERS = os.environ.get("APP_WORKERS", 1)
 APP_ADMIN_EMAIL = os.environ.get("APP_ADMIN_EMAIL", "admin@example.com")
 APP_ADMIN_PASS= os.environ.get("APP_ADMIN_PASS", "test1234")
+APP_PORTAL_ENABLED = os.environ.get("APP_PORTAL_ENABLED", "false").lower() == "true"
 
 ## DB
 DATABASE_URL = os.environ.get("DATABASE_URL", 'sqlite+aiosqlite:///./data/test.sqlite')
