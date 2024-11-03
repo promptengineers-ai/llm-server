@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "public": "rm -rf ../backend/src/public && mv dist ../backend/src/public",
+    "public": "rm -rf ../../backend/src/public && mv dist ../../backend/src/public",
     "build": "tsc -b && vite build && npm run public",
     "lint": "eslint .",
     "preview": "vite preview"

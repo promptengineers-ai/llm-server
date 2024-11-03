@@ -39,10 +39,9 @@ export const topRowDivStyle = {
 };
 
 export const userMessageTitleStyle = {
-    backgroundColor: "#f0f0f0",
-    textColor: "#000",
-    showAvatar: true,
-    avatarSrc: "https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/usericon.png",
+    fontSize: "18px",
+    fontWeight: 600,
+    margin: "5px 0px",
 };
 
 export const assistantMessageTitleStyle = {
