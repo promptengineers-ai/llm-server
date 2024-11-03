@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import DotsIcon from "../icons/DotsIcon";
-import SidebarIcon from "../icons/SidebarIcon";
+import DotsIcon from "../../../../clients/react-vite/src/components/icons/DotsIcon";
+import SidebarIcon from "../../../../clients/react-vite/src/components/icons/SidebarIcon";
 import PlusIcon from "../icons/PlusIcon";
-import ChatHistoryButton from "../buttons/ChatHistoryButton";
+import ChatHistoryButton from "../../../../clients/react-vite/src/components/buttons/ChatHistoryButton";
 import { useChatContext } from "@/contexts/ChatContext";
 import SettingsPopover from "../dialog/SettingsPopover";
 import { useRouter } from "next/navigation";
