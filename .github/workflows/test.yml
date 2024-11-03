@@ -11,6 +11,7 @@ on:
       - 'docs/**'
       - '.dockerignore'
       - 'README.md'
+      - 'deployment/**'
   pull_request:
     types: [opened, synchronize, reopened]
     paths-ignore:
@@ -20,7 +21,7 @@ on:
       - 'docs/**'
       - '.dockerignore'
       - 'README.md'
-
+      - 'deployment/**'
 jobs:
   ###############################################################
   ## Test Frontend

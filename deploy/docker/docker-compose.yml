@@ -1,0 +1,130 @@
+version: '3'
+
+services:
+  # Database (Postgres)
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: test1234
+      POSTGRES_MULTIPLE_DATABASES: "llm_server_dev,llm_server_test"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./backend/data/postgres:/var/lib/postgresql/data
+      - ./docker/postgres/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      
+  # # phpMyAdmin
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: test1234
+    ports:
+      - "4040:80"
+    volumes:
+      - ./docker/pgadmin/servers.json:/pgadmin4/servers.json
+    depends_on:
+      - postgres
+      
+  # Redis (Cache / Broker / Vector Index / Stream)
+  redis:
+    container_name: redis
+    restart: unless-stopped
+    image: redis/redis-stack-server:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - ./docker/redis/data:/data
+
+  # API
+  api:
+    container_name: api
+    image: promptengineers/llm-server:2c0af91
+    # build:
+    #   context: ./backend
+    #   dockerfile: Dockerfile
+    environment:
+      APP_PORTAL_ENABLED: 1
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend/data:/app/data  # Mount for SQLite database to host directory
+    ports:
+      - 8000:8000
+    env_file:
+      - ./backend/.env
+
+  # # SearXNG
+  # searxng:
+  #   image: searxng/searxng
+  #   container_name: searxng
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ./docker/searxng:/etc/searxng
+  #   environment:
+  #     BASE_URL: "http://localhost:8080/"
+  #     INSTANCE_NAME: "my-instance"
+
+  # Minio (File Storage) -- CURRENTLY ALL FILES AND IMAGES ARE BASE64 ENCODED
+  # minio:
+  #   image: minio/minio
+  #   container_name: minio
+  #   ports:
+  #     - "9000:9000"
+  #     - "9001:9001"
+  #   environment:
+  #     MINIO_ROOT_USER: CHANGEME
+  #     MINIO_ROOT_PASSWORD: CHANGEME
+  #   volumes:
+  #     - ~/minio/data:/data
+  #     - ~/minio/config:/root/.minio
+  #   command: server /data --console-address ":9001"
+
+  # # Proxy (Nginx)
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: nginx
+  #   volumes:
+  #     - ./docker/nginx:/etc/nginx/conf.d
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   depends_on:
+  #     - api
+
+  # OpenAI Whisper ASR Service
+  # https://github.com/ahmetoner/whisper-asr-webservice/
+  # whisper_asr:
+  #   image: onerahmet/openai-whisper-asr-webservice:latest-gpu
+  #   container_name: whisper_asr
+  #   ports:
+  #     - 9000:9000
+  #   environment:
+  #     ASR_MODEL: base
+  #     ASR_ENGINE: openai_whisper
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - capabilities: [gpu]
+
+  # Ollama (AI Service)
+  # ollama:
+  #   container_name: ollama
+  #   image: ollama/ollama
+  #   volumes:
+  #     - ./docker/ollama:/ollama  # Mount the directory containing entrypoint.sh
+  #   ports:
+  #     - 11434:11434
+  #   entrypoint: ["/ollama/entrypoint.sh"]  # Specify the entrypoint script
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - capabilities: [gpu]

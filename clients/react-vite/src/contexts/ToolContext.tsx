@@ -14,7 +14,6 @@ export const ToolContext = createContext({
         headers: {},
         args: {},
     },
-    updateToolState: (newState: any) => {},
 });
 
 export default function ToolProvider({ children }: IContextProvider) {

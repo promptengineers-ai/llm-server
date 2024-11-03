@@ -72,7 +72,7 @@ const JsonGeneratorPopover = ({ isOpen, setIsOpen, onGenerate }: {
 const NewToolModal = () => {
     const { tool, updateToolState, createTool, updateTool, toolEqual } =
         useToolContext();
-    const { isNewToolOpen, setIsNewToolOpen, setIsOpen, setIsCustomizeOpen } =
+    const { isNewToolOpen, setIsNewToolOpen, setIsCustomizeOpen } =
         useAppContext();
     const [jsonError, setJsonError] = useState<string | null>(null);
     const [jsonContent, setJsonContent] = useState<string>('');
