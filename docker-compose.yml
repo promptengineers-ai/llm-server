@@ -42,7 +42,7 @@ services:
   # API
   api:
     container_name: api
-    image: promptengineers/llm-server:2c0af91
+    image: promptengineers/llm-server:2d72b15
     # build:
     #   context: ./backend
     #   dockerfile: Dockerfile
