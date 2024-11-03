@@ -11,8 +11,10 @@ import AppProvider from "@/contexts/AppContext"
 import ChatProvider from "@/contexts/ChatContext"
 import Home from './pages/Home'
 import Chat from './pages/Chat'
+import Settings from './pages/Settings.tsx';
 import NotFound from './pages/NotFound.tsx'
 import ToolProvider from './contexts/ToolContext.tsx';
+
 
 function Router() {
   return (
@@ -27,6 +29,7 @@ function Router() {
                     <Route index element={<Home />} />
                     <Route path="/chat" element={<Chat />} />
                     <Route path="/chat/:id" element={<Chat />} />
+                    <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<NotFound />} />
                   </Route>
                 </Routes>

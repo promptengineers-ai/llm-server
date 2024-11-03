@@ -1,7 +1,9 @@
 import { useAppContext } from "@/contexts/AppContext";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const SettingsPopover = () => {
+    const navigate = useNavigate();
     const { logout, retrieveUser } = useAuthContext();
     const { setIsCustomizeOpen } = useAppContext();
 
@@ -137,6 +139,10 @@ const SettingsPopover = () => {
                     id="headlessui-menu-item-:rmk:"
                     role="menuitem"
                     data-headlessui-state=""
+                    onClick={(event) => {
+                        event.preventDefault();
+                        navigate("/settings");
+                    }}
                 >
                     <svg
                         width="24"
