@@ -20,6 +20,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Download frontend build artifacts
+      uses: dawidd6/action-download-artifact@v3
+      with:
+        workflow: test.yml
+        name: frontend-dist
+        path: ./backend/src/public/
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
@@ -36,5 +43,4 @@ jobs:
         DOCKER_IMAGE=docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA}
         
         echo "Building image: $DOCKER_IMAGE"
-        # docker buildx build --platform linux/amd64,linux/arm64 --push -t $DOCKER_IMAGE .
         docker build --squash --push -t $DOCKER_IMAGE .
