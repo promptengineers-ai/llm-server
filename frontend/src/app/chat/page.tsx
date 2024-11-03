@@ -164,6 +164,7 @@ const Chat = () => {
                                             margin: "5px 10px",
                                         }}
                                         onMouseDown={() => setIsCustomizeOpen(true)}
+                                        title={chatPayload.tools.map((tool: string) => tool).join(',\n')}
                                     >
                                         <div className="text-center flex">
                                             <div className="text-xl">
