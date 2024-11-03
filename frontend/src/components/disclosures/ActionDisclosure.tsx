@@ -5,7 +5,7 @@ import {
     DisclosurePanel,
 } from "@headlessui/react";
 import { FaChevronDown } from "react-icons/fa";
-import ConsoleCard from "../cards/ConsoleCard";
+import ConsoleCard from "../../../../clients/react-vite/src/components/cards/ConsoleCard";
 import { useChatContext } from "@/contexts/ChatContext";
 
 const ActionDisclosure = () => {

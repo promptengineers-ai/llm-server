@@ -5,8 +5,8 @@ from sqlalchemy.dialects.mysql import LONGTEXT
 
 ## APP
 APP_ENV = os.environ.get("APP_ENV", "local")
-APP_VERSION_DEFAULT = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('utf-8').strip()
-APP_VERSION = os.environ.get("APP_VERSION", APP_VERSION_DEFAULT)
+# APP_VERSION_DEFAULT = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('utf-8').strip()
+APP_VERSION = os.environ.get("APP_VERSION", '0.0.1')
 APP_SECRET = os.environ.get("APP_SECRET")
 
 APP_LOG_LEVEL = os.environ.get("APP_LOG_LEVEL", "INFO")
@@ -14,6 +14,7 @@ APP_ALGORITHM = os.environ.get("APP_ALGORITHM", "HS256")
 APP_WORKERS = os.environ.get("APP_WORKERS", 1)
 APP_ADMIN_EMAIL = os.environ.get("APP_ADMIN_EMAIL", "admin@example.com")
 APP_ADMIN_PASS= os.environ.get("APP_ADMIN_PASS", "test1234")
+APP_PORTAL_ENABLED = os.environ.get("APP_PORTAL_ENABLED", "false").lower() == "true"
 
 ## Auth
 # OAUTH_GITHUB_REDIRECT_URI = os.environ.get("OAUTH_GITHUB_REDIRECT_URI")

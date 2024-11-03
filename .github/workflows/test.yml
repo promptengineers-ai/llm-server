@@ -5,7 +5,6 @@ on:
     branches:
       - '*'
     paths-ignore:
-      - 'frontend/**'
       - 'Changelog.md'
       - 'docker/**'
       - 'docker-compose.yml'
@@ -15,7 +14,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths-ignore:
-      - 'frontend/**'
       - 'Changelog.md'
       - 'docker/**'
       - 'docker-compose.yml'
@@ -25,9 +23,44 @@ on:
 
 jobs:
   ###############################################################
+  ## Test Frontend
+  ###############################################################
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: './clients/react-vite/package-lock.json'
+
+    - name: Install dependencies
+      working-directory: ./clients/react-vite
+      run: npm ci
+
+    - name: Run tests
+      working-directory: ./clients/react-vite
+      run: npm test
+
+    - name: Build frontend
+      working-directory: ./clients/react-vite
+      run: npm run build
+
+    - name: Upload frontend build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-dist
+        path: ./clients/react-vite/dist/
+        retention-days: 1
+
+  ###############################################################
   ## Test Backend use Cache
   ###############################################################
-  test:
+  test-backend:
     runs-on: ubuntu-latest
     environment: Test
     env:
