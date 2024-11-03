@@ -74,7 +74,7 @@ async def chat(request: Request, body: Agent, repo: ToolRepository = Depends(too
 				}
 			)
 		else:
-			if not body.tools and body.retrieval.provider and body.retrieval.index_name:
+			if not body.tools and body.retrieval.provider and body.retrieval.indexes:
 				result = await chain.ainvoke(query)
 				content = {
 					'result': {

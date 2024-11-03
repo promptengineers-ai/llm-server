@@ -6,7 +6,7 @@ from src.utils import retrieve_system_message, retrieve_chat_messages
 from src.utils.tool import gather_tools
 
 retrieval_service = RetrievalService()
-
+    
 def agent_chain(body: Agent, endpoints: list[dict] = None, user_id: str = None):
     system = retrieve_system_message(body.messages, use_class=True if not body.tools else False)
     filtered_messages = retrieve_chat_messages(body, use_class=True, return_system=False)
@@ -35,6 +35,7 @@ def agent_chain(body: Agent, endpoints: list[dict] = None, user_id: str = None):
             history=chat_history,
             memory=body.memory
         )
-
+    else:
+        filtered_messages.insert(0, system)
     chain = agent if body.tools else llm
     return chain, filtered_messages
