@@ -2,15 +2,11 @@ import { useThemeContext } from "@/contexts/ThemeContext";
 import { FaSun, FaMoon } from "react-icons/fa";
 
 const ToggleThemeButton = () => {
-    const { theme, setTheme } = useThemeContext();
-
-    const toggleTheme = () => {
-        setTheme(theme === "light" ? "dark" : "light");
-    };
+    const { theme } = useThemeContext();
 
     return (
         <button
-            onClick={toggleTheme}
+            // onClick={toggleTheme}
             style={{ display: "flex", alignItems: "center", gap: "8px" }}
         >
             {theme === "light" ? <FaMoon fontSize={'20px'} /> : <FaSun fontSize={'20px'} />}

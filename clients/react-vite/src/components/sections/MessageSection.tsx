@@ -1,20 +1,14 @@
 import { useChatContext } from "@/contexts/ChatContext";
 import ViewImagesSection from "./ViewImageSection";
-import DocumentSection from "./DocumentSection";
 import CsvSection from "./CsvSection";
 import ScrollToBottomButton from "../buttons/ScrollToBottomButton";
-import { useAppContext } from "@/contexts/AppContext";
-
 
 const MessageSection = ({ showScrollButton, scrollToBottom }: any) => {
-    const { isMobile } = useAppContext();
     const {
         messages,
         renderConversation,
         selectedImage,
         setSelectedImage,
-        selectedDocument,
-        setSelectedDocument,
         setCsvContent,
         csvContent,
     } = useChatContext();

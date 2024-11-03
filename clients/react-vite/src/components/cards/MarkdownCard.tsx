@@ -19,7 +19,7 @@ const MarkdownCard = ({ content }: { content: string }) => {
                     <p className={`py-1`} {...props} />
                 ),
                 code: (props) => {
-                    const { children, className, node, ...rest } = props;
+                    const { className} = props;
                     const match = /language-(\w+)/.exec(className || "");
                     return match ? (
                         <div className="text-white dark bg-gray-950 rounded-md border-[0.5px] border-token-border-medium">

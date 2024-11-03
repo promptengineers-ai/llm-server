@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FiClipboard, FiCheck } from "react-icons/fi"; // Ensure you have FiCheck imported
+import { FiCheck } from "react-icons/fi"; // Ensure you have FiCheck imported
 import CopyIcon from "../icons/CopyIcon";
 
 const CopyCodeButton = () => {

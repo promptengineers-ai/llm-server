@@ -1,6 +1,5 @@
 import { useChatContext } from "@/contexts/ChatContext";
 import { Field, Fieldset } from "@headlessui/react";
-import { useState } from "react";
 
 const GitbookLoaderForm = () => {
     const { setLoaders, loaders } = useChatContext();

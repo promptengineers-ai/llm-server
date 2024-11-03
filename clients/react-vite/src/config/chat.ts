@@ -1,5 +1,5 @@
 import { ModelType, EmbeddingModel, SearchProvider, SearchType } from "@/types/llm";
-import { API_URL, ON_PREM } from "./app";
+import { ON_PREM } from "./app";
 
 export const defaultState = {
     chatInputRef: null,

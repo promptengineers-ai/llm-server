@@ -1,4 +1,4 @@
-import { useContext, createContext, useState, useEffect, useMemo } from "react";
+import { useContext, createContext, useState, useMemo } from "react";
 import { IContextProvider } from "../interfaces/provider";
 
 export const ExampleContext = createContext({});

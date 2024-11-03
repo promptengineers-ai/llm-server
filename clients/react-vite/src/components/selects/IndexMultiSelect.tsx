@@ -1,4 +1,4 @@
-import Select, { MultiValue, ActionMeta, components } from "react-select";
+import Select, { MultiValue, components } from "react-select";
 import { SearchProvider } from "@/types/llm";
 import { useChatContext } from "@/contexts/ChatContext";
 import { useEffect, useState } from "react";
@@ -9,7 +9,7 @@ type OptionType = {
 };
 
 const CustomOption = (props: any) => {
-    const { data, innerRef, innerProps } = props;
+    const { data } = props;
     const { deleteIndex, updateIndexName, initChatPayload } = useChatContext();
 
     const handleDeleteClick = async (event: React.MouseEvent) => {
@@ -73,7 +73,6 @@ const IndexMultiSelect = () => {
 
     const handleChange = (
         newValue: MultiValue<OptionType>,
-        actionMeta: ActionMeta<OptionType>
     ) => {
         setInitChatPayload((prev: any) => ({
             ...prev,

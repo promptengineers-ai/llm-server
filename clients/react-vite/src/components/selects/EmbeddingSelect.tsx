@@ -13,10 +13,10 @@ type ChatPayload = {
     };
 };
 
-type ProviderSelectProps = {
-    initChatPayload: ChatPayload;
-    setInitChatPayload: React.Dispatch<React.SetStateAction<ChatPayload>>;
-};
+// type ProviderSelectProps = {
+//     initChatPayload: ChatPayload;
+//     setInitChatPayload: React.Dispatch<React.SetStateAction<ChatPayload>>;
+// };
 
 type LLM = {
     model_name: string;
@@ -44,20 +44,20 @@ if (!ON_PREM) {
 const EmbeddingSelect: React.FC = () => {
     const { initChatPayload, setInitChatPayload, models } = useChatContext();
 
-    const handleProviderChange = (
-        selectedOption: SingleValue<{ value: string; label: string }>
-    ) => {
-        if (selectedOption) {
-            setInitChatPayload((prev: ChatPayload) => ({
-                ...prev,
-                retrieval: {
-                    ...prev.retrieval,
-                    provider: selectedOption.value,
-                },
-            }));
-            sessionStorage.setItem("provider", selectedOption.value);
-        }
-    };
+    // const handleProviderChange = (
+    //     selectedOption: SingleValue<{ value: string; label: string }>
+    // ) => {
+    //     if (selectedOption) {
+    //         setInitChatPayload((prev: ChatPayload) => ({
+    //             ...prev,
+    //             retrieval: {
+    //                 ...prev.retrieval,
+    //                 provider: selectedOption.value,
+    //             },
+    //         }));
+    //         sessionStorage.setItem("provider", selectedOption.value);
+    //     }
+    // };
 
     const handleEmbeddingChange = (
         selectedOption: SingleValue<{ value: string; label: string }>

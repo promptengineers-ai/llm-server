@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useChatContext } from "@/contexts/ChatContext";
 import { FaCog } from "react-icons/fa";
-import { FaCamera, FaGlobe, FaDatabase } from "react-icons/fa";
+import { FaCamera, FaGlobe } from "react-icons/fa";
 import FileIcon from "../icons/FileIcon";
 import { useAppContext } from "@/contexts/AppContext";
 import { multiModalModels } from "@/types/llm";

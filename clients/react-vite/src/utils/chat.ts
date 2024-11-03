@@ -1,4 +1,4 @@
-import { ChatPayload, LLM, Message } from "@/types/chat";
+import { ChatPayload, Message } from "@/types/chat";
 import { formatDate } from "./datetime";
 
 export const constructBubbleMessage = (
@@ -47,7 +47,7 @@ export const prompt = (chatPayload: ChatPayload) => {
 export const combinePrompts = (
     chatPayload: ChatPayload,
     messages: Message[],
-    userInput: string
+    // userInput: string
 ) => {
     const sysPrompt = prompt(chatPayload);
     // const initialUserInput = { role: "user", content: userInput };

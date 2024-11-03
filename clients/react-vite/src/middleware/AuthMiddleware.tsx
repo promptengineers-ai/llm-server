@@ -6,7 +6,7 @@ import { ComponentType } from "react";
 export const withAuth = (
     WrappedComponent: ComponentType<any>,
     getRoute: (id: string | undefined) => string,
-    minimumPlan: string[]
+    // minimumPlan: string[]
 ) => {
     const WithAuthComponent = (props: any) => {
         const location = useLocation();

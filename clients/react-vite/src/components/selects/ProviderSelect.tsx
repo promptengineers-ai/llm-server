@@ -12,10 +12,10 @@ type ChatPayload = {
     };
 };
 
-type ProviderSelectProps = {
-    initChatPayload: ChatPayload;
-    setInitChatPayload: React.Dispatch<React.SetStateAction<ChatPayload>>;
-};
+// type ProviderSelectProps = {
+//     initChatPayload: ChatPayload;
+//     setInitChatPayload: React.Dispatch<React.SetStateAction<ChatPayload>>;
+// };
 
 const options = [
     { value: SearchProvider.POSTGRES, label: capitalizeFirstLetter(SearchProvider.POSTGRES) },

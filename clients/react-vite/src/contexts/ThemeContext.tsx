@@ -6,7 +6,6 @@ const DEFAULT_COLOR_MODE = "light";
 
 const themeState = {
     theme: DEFAULT_COLOR_MODE,
-    setTheme: (theme: string) => {},
 };
 
 const ThemeContext = createContext(themeState);
@@ -50,7 +49,7 @@ export const ThemeProvider = ({ children }: IContextProvider) => {
     }, [theme]);
 
     return (
-        <ThemeContext.Provider value={{ theme, setTheme }}>
+        <ThemeContext.Provider value={{ theme }}>
             {children}
         </ThemeContext.Provider>
     );

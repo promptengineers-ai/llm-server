@@ -54,7 +54,7 @@ export default function ChatSection() {
         selectedImage,
         setSelectedImage,
         handleImageClick,
-        adjustHeight,
+        // adjustHeight,
         abortSseRequest,
         createIndex,
     } = useChatContext();

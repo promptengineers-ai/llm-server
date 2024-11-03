@@ -1,6 +1,5 @@
-"use client";
 import { useState, useRef, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { ModelType, modelLabels, multiModalModels } from "@/types/llm";
 import { useChatContext } from "@/contexts/ChatContext";
 import { IoMdImages } from "react-icons/io";
@@ -10,7 +9,6 @@ const ModelSelect: React.FC = () => {
     const { setChatPayload, chatPayload, models } = useChatContext();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
     const toggleMenu = () => {

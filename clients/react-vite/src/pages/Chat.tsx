@@ -91,7 +91,7 @@ const Chat = () => {
 
     useEffect(() => {
         fetchChats();
-    }, []);
+    }, [fetchChats]);
 
     return (
         <main className="overflow w-full h-svh relative flex z-0">
@@ -203,4 +203,8 @@ const Chat = () => {
     );
 };
 
-export default withAuth(Chat, () => "/chat", ["free"]);
+export default withAuth(
+    Chat, 
+    () => "/chat", 
+    // ["free"]
+);

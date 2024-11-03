@@ -1,5 +1,3 @@
-import { API_URL } from "./app";
-
 const boxShadowChatWindow = "0px 12px 24px rgba(0, 0, 0, 0.1)";
 const boxShadowChatWindowButton = "0px 2px 4px rgba(0, 0, 0, 0.1)";
 const primaryColor = "#f0f0f0";

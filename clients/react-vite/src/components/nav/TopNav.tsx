@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
+import React from "react";
 // import ToggleThemeButton from "../buttons/ToggleThemeButton";
 import ChatHistoryButton from "../buttons/ChatHistoryButton";
 import SidebarIcon from "../icons/SidebarIcon";

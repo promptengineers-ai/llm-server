@@ -175,7 +175,7 @@ export const useChatState = () => {
         index_name: string
     ) => {
         try {
-            const response = await fetch(
+            await fetch(
                 `${API_URL}/api/v1/indexes/${provider}`,
                 {
                     method: "DELETE",
@@ -464,7 +464,11 @@ export const useChatState = () => {
                     chatPayload.retrieval.index_name &&
                     !acceptRagSystemMessage.has(chatPayload.model)
                         ? messages
-                        : combinePrompts(chatPayload, messages, userInput),
+                        : combinePrompts(
+                            chatPayload, 
+                            messages, 
+                            // userInput
+                        ),
                 tools: chatPayload.tools,
                 retrieval: chatPayload.retrieval,
                 temperature: chatPayload.temperature,
@@ -481,32 +485,32 @@ export const useChatState = () => {
 
             setSseSource(source);
 
-            let streamTimeout: ReturnType<typeof setTimeout>;
+            // let streamTimeout: ReturnType<typeof setTimeout>;
 
-            const resetStreamTimeout = () => {
-                clearTimeout(streamTimeout);
-                streamTimeout = setTimeout(() => {
-                    console.error("Stream timed out. Closing connection.");
-                    if (!done) {
-                        setDone(true);
-                        source.close();
-                        const finalMessages = [...updatedMessages];
-                        finalMessages[tempIndex] = {
-                            role: "assistant",
-                            content: responseRef.current,
-                            model: chatPayload.model,
-                        };
-                        setMessages(finalMessages);
+            // const resetStreamTimeout = () => {
+            //     clearTimeout(streamTimeout);
+            //     streamTimeout = setTimeout(() => {
+            //         console.error("Stream timed out. Closing connection.");
+            //         if (!done) {
+            //             setDone(true);
+            //             source.close();
+            //             const finalMessages = [...updatedMessages];
+            //             finalMessages[tempIndex] = {
+            //                 role: "assistant",
+            //                 content: responseRef.current,
+            //                 model: chatPayload.model,
+            //             };
+            //             setMessages(finalMessages);
 
-                        updateMessages(
-                            chatPayload.system,
-                            finalMessages,
-                            chatPayload.retrieval,
-                            chatPayload.tools
-                        );
-                    }
-                }, 5 * 1000);
-            };
+            //             updateMessages(
+            //                 chatPayload.system,
+            //                 finalMessages,
+            //                 chatPayload.retrieval,
+            //                 chatPayload.tools
+            //             );
+            //         }
+            //     }, 5 * 1000);
+            // };
 
             source.addEventListener("error", (e: any) => {
                 console.error("Error received from server:", e);

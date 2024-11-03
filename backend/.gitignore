@@ -8,3 +8,4 @@ test.sqlite
 alembic.ini
 vercel.json
 data/
+public/

@@ -1,5 +1,4 @@
-"use client";
-import { useContext, createContext, useMemo, useState, useCallback } from "react";
+import { useContext, createContext } from "react";
 import { ChatClient } from "../utils/api";
 import { Message } from "../types/chat";
 import { IContextProvider } from "../interfaces/provider";

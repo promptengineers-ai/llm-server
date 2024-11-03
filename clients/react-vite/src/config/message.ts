@@ -1,7 +1,5 @@
 import defaultTheme from "./theme";
 
-const messageTitleMargin = "0";
-
 export const userMessageStyle = (theme?: any) => {
     return {
         backgroundColor:

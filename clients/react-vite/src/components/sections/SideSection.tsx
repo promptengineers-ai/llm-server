@@ -19,7 +19,7 @@ const SideSection: React.FC<DrawerProps> = ({ isOpen }) => {
     const navigate = useNavigate();
     const {isPopoverOpen, setIsPopoverOpen, loading} = useAppContext();
     const { retrieveUser } = useAuthContext();
-    const { resetChat, chats, shallowUrl } = useChatContext();
+    const { resetChat, chats } = useChatContext();
     
     if (!isOpen) return null;
 

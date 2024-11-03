@@ -1,7 +1,7 @@
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useThemeContext } from "@/contexts/ThemeContext"; // Make sure to import the theme context
 import { useAppState } from "@/hooks/state/useAppState";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 
 const LoginForm = () => {
