@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import SubmitIcon from "../icons/SubmitIcon";
 import { useChatContext } from "../../../../clients/react-vite/src/contexts/ChatContext";
 import { FcCancel } from "react-icons/fc";
@@ -10,6 +10,7 @@ import DocumentIcon from "../icons/DocumentIcon";
 import { generateRandomNumber } from "@/utils/random";
 import { ChatClient } from "@/utils/api";
 import { useAppContext } from "@/contexts/AppContext";
+import { useVersion } from "@/hooks/api/useVersion";
 
 const SUGGESTIONS = [
     {
@@ -59,6 +60,8 @@ export default function ChatSection() {
         abortSseRequest,
         createIndex,
     } = useChatContext();
+
+    const version = useVersion();
 
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
         e.preventDefault(); // Prevent the default paste action
@@ -361,8 +364,10 @@ export default function ChatSection() {
             </form>
             <div className="relative px-2 py-2 text-center text-[11px] text-secondary-100 bg-white">
                 <span>
-                    ChatGPT can make mistakes. Consider checking important
-                    information.
+                    AI can make mistakes. Verify your results.
+                    {version && <span className="ml-1">
+                        {version.split('.').length > 1 ? `v${version}` : `Commit: ${version}`}
+                    </span>}
                 </span>
             </div>
         </div>

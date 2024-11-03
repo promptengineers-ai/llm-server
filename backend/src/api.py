@@ -10,6 +10,7 @@ from src.middleware.auth import current_user
 from src.models import Harvest
 from src.routes.status import router as status_router
 from src.routes.user import router as user_router
+from src.routes.tool import router as tool_router
 from src.routes.chat import router as chat_router
 from src.routes.index import router as index_router
 from src.routes.retrieval import router as retrieval_router
@@ -31,6 +32,7 @@ app.add_middleware(
 
 app.include_router(user_router)
 app.include_router(status_router)
+app.include_router(prefix='/api/v1', dependencies=[Depends(current_user)], router=tool_router)
 app.include_router(prefix='/api/v1', dependencies=[Depends(current_user)], router=chat_router)
 app.include_router(prefix='/api/v1', dependencies=[Depends(current_user)], router=retrieval_router)
 app.include_router(prefix='/api/v1', dependencies=[Depends(current_user)], router=index_router)

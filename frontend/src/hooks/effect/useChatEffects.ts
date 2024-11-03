@@ -1,10 +1,12 @@
 import { useEffect, useRef } from "react";
 import equal from "fast-deep-equal/react";
-import { Hook, Console, Decode, Unhook } from "console-feed";
+import { Hook, Unhook } from "console-feed";
 import { ChatPayload, LLM, Message } from "@/types/chat";
 import { logFilter } from "@/utils/log";
 import { HookedConsole } from "console-feed/lib/definitions/Console";
-import { API_URL } from "@/config/app";
+import { ChatClient } from "@/utils/api";
+
+const chatClient = new ChatClient();
 
 export const useFetchModelsEffect = (models: LLM[], fetchModels: any) => {
     useEffect(() => {
@@ -169,9 +171,8 @@ export const useFetchToolsEffect = (setTools: any) => {
     useEffect(() => {
         const fetchTools = async () => {
             try {
-                const response = await fetch(`${API_URL}/tools`);
-                const data = await response.json();
-                setTools(data.tools);
+                const res = await chatClient.listTools();
+                setTools(res.tools);
             } catch (error) {
                 console.error("Error fetching tools:", error);
             }

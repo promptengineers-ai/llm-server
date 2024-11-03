@@ -4,8 +4,6 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import (APIRouter, Body, Depends, HTTPException, Request,
 					Response, status)
 
-from src.db.strategies import VectorstoreContext
-from src.factories.retrieval import RetrievalFactory
 from src.infrastructure.logger import logger as logging
 from src.controllers.index import (retrieve_pinecone_vectorstores, 
 								   delete_pinecone_index, 

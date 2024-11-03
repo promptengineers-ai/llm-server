@@ -1,0 +1,108 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - completed
+
+jobs:
+  ###############################################################
+  ## Deploy to Cloud Run
+  ###############################################################
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.ref == 'refs/heads/development' }}
+    environment: Preview
+    env:
+      APP_ENV: development
+      APP_SECRET: ${{ secrets.APP_SECRET }}
+      APP_ADMIN_EMAIL: admin@example.com
+      APP_ADMIN_PASS: test1234
+      APP_WORKERS: 1
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+      PINECONE_ENV: ${{ secrets.PINECONE_ENV }}
+      PINECONE_INDEX: ${{ secrets.PINECONE_INDEX }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
+      POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+      DOCKER_USERNAME: promptengineers
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      BUCKET: pe-oss-bucket
+      S3_REGION: us-east-1
+      ACCESS_KEY_ID: AKIAVQYLUAYDAEEURO64
+      ACCESS_SECRET_KEY: ${{ secrets.ACCESS_SECRET_KEY }}
+    steps:
+    - name: Authenticate to Google Cloud
+      id: 'auth'
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ env.GCP_SA_KEY }}
+
+    - name: Setup Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        version: 'latest'
+
+    - name: Deploy to Cloud Run
+      run: |
+        COMMIT_SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+        DOCKER_IMAGE=docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA}
+
+        gcloud config set project ${{ env.GCP_PROJECT }}
+
+        echo "Deploying $DOCKER_IMAGE to Cloud Run Server"
+
+        declare -a ENV_VARS=(
+          ## App
+          "APP_ENV=$APP_ENV"
+          "APP_VERSION=$COMMIT_SHORT_SHA"
+          "APP_SECRET=$APP_SECRET"
+          "APP_ADMIN_EMAIL=$APP_ADMIN_EMAIL"
+          "APP_ADMIN_PASS=$APP_ADMIN_PASS"
+          "APP_WORKERS=$APP_WORKERS"
+
+          ## Database
+          "DATABASE_URL=$DATABASE_URL"
+          "PINECONE_API_KEY=$PINECONE_API_KEY"
+          "PINECONE_ENV=$PINECONE_ENV"
+          "PINECONE_INDEX=$PINECONE_INDEX"
+          "REDIS_URL=$REDIS_URL"
+          "POSTGRES_URL=$POSTGRES_URL"
+
+          ## LLM
+          "AZURE_OPENAI_API_KEY=$AZURE_OPENAI_API_KEY"
+          "AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT"
+          "OPENAI_API_KEY=$OPENAI_API_KEY"
+          "GROQ_API_KEY=$GROQ_API_KEY"
+          "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
+          # "OLLAMA_BASE_URL=$OLLAMA_BASE_URL" # Commented out if not using Ollama (Requires GPU server)
+
+          ## Tools
+          "SEARX_SEARCH_HOST_URL=$SEARX_SEARCH_HOST_URL"
+
+          ## Storage
+          # "MINIO_HOST=$MINIO_HOST"           # Commented out if not using Minio (Requires Minio server)
+          "BUCKET=$BUCKET"
+          "S3_REGION=$S3_REGION"
+          "ACCESS_KEY_ID=$ACCESS_KEY_ID"
+          "ACCESS_SECRET_KEY=$ACCESS_SECRET_KEY"
+        )
+
+        # Join array elements into a comma-separated string
+        VARS=$(IFS=,; echo "${ENV_VARS[*]}")
+
+        # Deploy
+        gcloud run deploy llm-server \
+            --image docker.io/promptengineers/llm-server:${COMMIT_SHORT_SHA} \
+            --platform managed \
+            --region us-central1 \
+            --allow-unauthenticated \
+            --set-env-vars $VARS

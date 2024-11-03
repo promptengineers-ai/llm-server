@@ -1,12 +1,11 @@
 from src.infrastructure.logger import logger as logging
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, Request
-from src.services.db import get_db
+from src.repositories.tool import ToolRepository
 from src.utils.exception import NotFoundException
 
-def get_repo(request: Request, db: AsyncSession, cls=None):
+def get_repo(request: Request, cls=None, **kwargs):
 	try:
-		return cls(request=request, db=db)
+		return cls(request=request, **kwargs)
 	except NotFoundException as e:
 		# Handle specific NotFoundException with a custom message or logging
 		logging.warning(f"Failed to initialize {cls.__name__}: {str(e)}")

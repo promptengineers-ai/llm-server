@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v0.0.1
 ### Fixed
+  - bugfix/24-fix-retrieval-agent (2024-08-18)
+  - bugfix/18-processing-spinner-showing-back-up (2024-08-18)
+  - bugfix/20-reopen-customize-on-new-tool-cancel (2024-08-18)
+  - bugfix/7-code-block-does-not-wrap (2024-08-11)
   - bugfix/111-agent-duplicating-chat-history-messages (2024-07-02)
   - bugfix/88-submit-button-not-enabled-on-stream-done (2024-06-23)
   - bugfix/54-back-to-login-on-jwt-expire (2024-06-06)
@@ -14,6 +18,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - bugfix/33-groq-rag-not-working (2024-05-19)
 ### Changed 
   - feature/139-simple-static-frontend-for-standalone-deploy (2024-09-27)
+  - feature/145-api-tool-from-json-config (2024-11-03)
+  - feature/25-ai-create-tool (2024-08-19)
+  - feature/14-settings-page (2024-08-18)
+  - feature/16-improve-oauth-callback-page-ux (2024-08-18)
+  - feature/17-google-oauth (2024-08-18)
+  - feature/10-add-oauth-github (2024-08-14)
+  - feature/8-deep-check-to-enable-update-tool (2024-08-11)
+  - feature/9-init-database-on-up (2024-08-11)
+  - feature/6-add-toolkit-field-to-newtoolmodal-for-grouping (2024-08-11)
+  - feature/3-able-to-update-api-tool (2024-08-10)
+  - feature/2-add-default-to-tool-args (2024-08-10)
+  - feature/1-dynamic-api-tool (2024-08-08)
   - feature/136-lord-of-the-retriever (2024-07-18)
   - feature/131-pgvector-support (2024-07-13)
   - feature/124-message-out-of-order (2024-07-02)

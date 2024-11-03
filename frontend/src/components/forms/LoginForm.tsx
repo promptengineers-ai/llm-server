@@ -4,11 +4,12 @@ import { useTheme } from "@/contexts/ThemeContext"; // Make sure to import the t
 import { useAppState } from "@/hooks/state/useAppState";
 import { useState, useEffect } from "react";
 import { FaSpinner } from "react-icons/fa";
+import { FaMicrosoft, FaGithub, FaGoogle } from "react-icons/fa"; // Import the icons for the OAuth buttons
 
 const LoginForm = () => {
     const { theme } = useTheme();
     const { loading, setLoading } = useAppState();
-    const { login } = useAuthContext();
+    const { login, oauthLogin } = useAuthContext();
     const [payload, setPayload] = useState({
         email: "admin@example.com",
         password: "test1234",
@@ -128,14 +129,6 @@ const LoginForm = () => {
                                 >
                                     Password
                                 </label>
-                                {/* <div className="text-sm">
-                                    <a
-                                        href="#"
-                                        className={`font-semibold ${themeClasses.link}`}
-                                    >
-                                        Forgot password?
-                                    </a>
-                                </div> */}
                             </div>
                             <div className="mt-2">
                                 <input
@@ -174,12 +167,63 @@ const LoginForm = () => {
                             </button>
                         </div>
                     </form>
+
                     {loading && timeoutExceeded && (
                         <div className="mt-4 text-center text-xs text-red-600">
                             Serverless Enabled: please wait for cold boot to
                             finish
                         </div>
                     )}
+
+                    {/* Separator */}
+                    {/* <div className="relative mt-6">
+                        <div
+                            className="absolute inset-0 flex items-center"
+                            aria-hidden="true"
+                        >
+                            <div className="w-full border-t border-gray-300" />
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span
+                                className={`px-2 bg-white ${themeClasses.text}`}
+                            >
+                                Or continue with
+                            </span>
+                        </div>
+                    </div> */}
+
+                    {/* OAuth Buttons */}
+                    {/* <div className="mt-6 grid grid-cols-3 gap-3">
+                        <div>
+                            <button
+                                type="button"
+                                className="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                                onClick={() => oauthLogin("google")}
+                            >
+                                <FaGoogle className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <div>
+                            <button
+                                type="button"
+                                className="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                                onClick={() => oauthLogin("github")}
+                            >
+                                <FaGithub className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <div>
+                            <button
+                                type="button"
+                                disabled={true}
+                                className="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                                // onClick={() => oauthLogin("azure")}
+                                onClick={() => alert("Not implemented")}
+                            >
+                                <FaMicrosoft className="w-5 h-5" />
+                            </button>
+                        </div>
+                    </div> */}
                 </div>
             </div>
         </>

@@ -14,17 +14,17 @@
 			],
 			"jinja": true,
 			"justMyCode": false,
-			"envFile": "${workspaceFolder}/.env"
+			"envFile": "${workspaceFolder}/.env.oss",
 		},
 		{
             "name": "Debug Single Test",
             "type": "debugpy",
             "request": "launch",
             "module": "pytest",
-            "args": ["-s", "-v", "test/unit/infra/vectorstores/test_pg.py"],
+            "args": ["-s", "-v", "test"],
             "envFile": "${workspaceFolder}/.env.test",
             "justMyCode": false,
-            "preLaunchTask": "Unset DATABASE_URL"
+            // "preLaunchTask": "Unset DATABASE_URL"
         },
 		{
             "name": "Python: Run Script",
