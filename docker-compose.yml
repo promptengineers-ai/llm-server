@@ -40,6 +40,20 @@ services:
     volumes:
       - ./docker/redis/data:/data
 
+  # API
+  api:
+    container_name: api
+    image: promptengineers/llm-server:6e8b6df
+    # build:
+    #   context: ./backend
+    #   dockerfile: Dockerfile
+    volumes:
+      - ./backend/data:/app/data  # Mount for SQLite database to host directory
+    ports:
+      - 8000:8000
+    env_file:
+      - ./backend/.env
+
   # # SearXNG
   # searxng:
   #   image: searxng/searxng
@@ -67,19 +81,6 @@ services:
   #     - ~/minio/data:/data
   #     - ~/minio/config:/root/.minio
   #   command: server /data --console-address ":9001"
-
-  # # API
-  # api:
-  #   container_name: api
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-    # volumes:
-    #   - ./backend/data:/app/data  # Mount for SQLite database to host directory
-    # ports:
-    #   - 8000:8000
-    # env_file:
-    #   - ./backend/.env
 
   # # Proxy (Nginx)
   # nginx:

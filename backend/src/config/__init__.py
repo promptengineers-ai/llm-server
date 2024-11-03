@@ -5,8 +5,8 @@ from sqlalchemy.dialects.mysql import LONGTEXT
 
 ## APP
 APP_ENV = os.environ.get("APP_ENV", "local")
-APP_VERSION_DEFAULT = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('utf-8').strip()
-APP_VERSION = os.environ.get("APP_VERSION", APP_VERSION_DEFAULT)
+# APP_VERSION_DEFAULT = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('utf-8').strip()
+APP_VERSION = os.environ.get("APP_VERSION", '0.0.1')
 APP_SECRET = os.environ.get("APP_SECRET")
 
 APP_LOG_LEVEL = os.environ.get("APP_LOG_LEVEL", "INFO")
