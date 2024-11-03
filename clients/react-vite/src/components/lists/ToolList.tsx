@@ -5,7 +5,7 @@ import { Tool } from "@/types/chat";
 const ToolsList = () => {
     const {tools} = useChatContext();
     
-    const groupedTools = tools.reduce(
+    const groupedTools = tools?.reduce(
         (acc: { [key: string]: Tool[] }, tool: Tool) => {
             if (!acc[tool.toolkit]) {
                 acc[tool.toolkit] = [];
