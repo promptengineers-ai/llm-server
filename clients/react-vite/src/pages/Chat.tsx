@@ -2,7 +2,7 @@ import TopNav from "@/components/nav/TopNav";
 import ChatSection from "@/components/sections/ChatSection";
 import SideSection from "@/components/sections/SideSection";
 import ModelSelect from "@/components/selects/ModelSelect";
-import { useChatContext } from "@/contexts/ChatContext";
+import { useChatContext } from "../contexts/ChatContext";
 import { withAuth } from "@/middleware/AuthMiddleware";
 import { useState, useEffect, useRef } from "react";
 import { MdOutlineArrowBackIosNew, MdOutlineArrowForwardIos } from "react-icons/md";
@@ -45,6 +45,10 @@ const Chat = () => {
     const { isMobile } = useAppContext();
     const { messages, fetchChats, expand, selectedDocument, chatPayload } = useChatContext();
 
+    if (!messages || !fetchChats || expand === undefined || !chatPayload) {
+        return <div>Loading...</div>;
+    }
+
     const toggleSideSection = () => setIsOpen(!isOpen);
 
     const handleScroll = () => {
@@ -86,9 +90,7 @@ const Chat = () => {
     }, [messages, isUserScrolledUp]);
 
     useEffect(() => {
-        if (fetchChats) {
-            fetchChats();
-        }
+        fetchChats();
     }, []);
 
     return (

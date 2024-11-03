@@ -1,6 +1,5 @@
 import { Message } from "../types/chat";
 import { API_URL } from "@/config/app";
-import { generateRandomNumber } from "./random";
 import { EmbeddingModel, SearchProvider } from "@/types/llm";
 
 

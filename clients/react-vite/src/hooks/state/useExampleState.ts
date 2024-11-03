@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const initialState = {};
 
-export const useMyState = () => {
+export const useExampleState = () => {
     const [state, setState] = useState(initialState);
 
     const updateState = (newState: any) => {

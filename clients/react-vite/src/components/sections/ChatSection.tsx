@@ -148,7 +148,7 @@ export default function ChatSection() {
     const selectedFiles = images && files ? [...images, ...files] : files || [];
     const loadingPlaceholder = () => {
         if (!loading) {
-            return files?.length > 0
+            return files.length > 0
                 ? "List 5 key takeaways..."
                 : "Acting as a expert at...";
         } else {

@@ -101,9 +101,24 @@ export default function AuthProvider({ children }: IContextProvider) {
     }, []);
 
     const updateToken = useCallback((token: string) => {
-        const user = localStorage.getItem("user") || "{}";
-        dispatch({ type: "LOGIN", payload: { user: JSON.parse(user), token } });
-    }, []);
+        if (token) {
+            try {
+                const decodedToken = jwtDecode<{ exp: number }>(token);
+                if (decodedToken.exp * 1000 > Date.now()) {
+                    const user = localStorage.getItem("user") || "{}";
+                    dispatch({ type: "LOGIN", payload: { user: JSON.parse(user), token } });
+                } else {
+                    console.warn("Token expired, logging out");
+                    logout();
+                }
+            } catch (error) {
+                console.error("Failed to decode token:", error);
+                logout();
+            }
+        } else {
+            logout();
+        }
+    }, [logout]);
 
     const retrieveUser = () => {
         const user = localStorage.getItem("user");

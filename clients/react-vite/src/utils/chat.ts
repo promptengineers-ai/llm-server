@@ -56,7 +56,15 @@ export const combinePrompts = (
 };
 
 export const shallowUrl = (url: string) => {
-    window.history.pushState({}, '', url);
+    window.history.replaceState(
+        {
+            ...window.history.state,
+            as: url,
+            url: url,
+        },
+        "",
+        url
+    );
 };
 
 export const parseCSV = (text: string) => {

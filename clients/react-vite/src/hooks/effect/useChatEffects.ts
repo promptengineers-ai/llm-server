@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import equal from "fast-deep-equal/react";
-import { Hook, Console, Decode, Unhook } from "console-feed";
+import { Hook, Unhook } from "console-feed";
 import { ChatPayload, LLM, Message } from "@/types/chat";
 import { logFilter } from "@/utils/log";
 import { HookedConsole } from "console-feed/lib/definitions/Console";
@@ -8,7 +8,7 @@ import { API_URL } from "@/config/app";
 
 export const useFetchModelsEffect = (models: LLM[], fetchModels: any) => {
     useEffect(() => {
-        if (models.length === 0) {
+        if (models?.length === 0) {
             fetchModels();
         }
 
@@ -48,7 +48,7 @@ export const useUpdateMessageOnResponesEffect = (
     setMessages: any
 ) => {
     useEffect(() => {
-        response.length &&
+        response?.length &&
             setMessages((prev: Message[]) => {
                 const lastMessage = prev[prev.length - 1];
 
@@ -88,7 +88,7 @@ export const useSubmitQuestionStreamEffect = (
     submitQuestionStream: any
 ) => {
     useEffect(() => {
-        if (userInput.length && !done) {
+        if (userInput?.length && !done) {
             submitQuestionStream();
         }
 
@@ -121,9 +121,9 @@ export const usePrintActionsToLogsEffect = (
     const actionsSetRef = useRef(new Set());
 
     useEffect(() => {
-        const newActions = actions.slice(previousActionsLengthRef.current);
+        const newActions = actions?.slice(previousActionsLengthRef.current);
 
-        if (newActions.length > 0) {
+        if (newActions?.length > 0) {
             Hook(
                 window.console as HookedConsole,
                 (log: any) => {

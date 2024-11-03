@@ -1,5 +1,4 @@
-'use client';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { ComponentType } from "react";
@@ -14,21 +13,25 @@ export const withAuth = (
         const { id } = useParams();
         const navigate = useNavigate();
         const { logout, token, updateToken } = useAuthContext();
+        const [isLoading, setIsLoading] = useState(true);
 
         useEffect(() => {
-            const token = localStorage.getItem("token");
-            updateToken(token);
-            if (!token) {
+            const localToken = localStorage.getItem("token");
+            updateToken(localToken);
+            
+            if (!localToken) {
                 logout();
+                setIsLoading(false);
             } else {
                 const route = getRoute(id);
                 if (location.pathname !== route) {
                     navigate(route);
                 }
+                setIsLoading(false);
             }
-        }, [location.pathname, id, logout, updateToken, navigate]);
+        }, [location.pathname, id, logout, updateToken]);
 
-        if (!token) {
+        if (isLoading) {
             return (
                 <div
                     style={{
@@ -44,7 +47,7 @@ export const withAuth = (
             );
         }
 
-        return <WrappedComponent {...props} />;
+        return token ? <WrappedComponent {...props} /> : null;
     };
 
     WithAuthComponent.displayName = `WithAuth(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;

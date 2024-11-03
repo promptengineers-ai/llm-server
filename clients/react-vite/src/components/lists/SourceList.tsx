@@ -1,4 +1,4 @@
-import SourceCard from "../../../../clients/react-vite/src/components/cards/SourceCard";
+import SourceCard from "@/components/cards/SourceCard";
 
 const SourceList = ({
     sources,

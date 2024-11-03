@@ -59,17 +59,17 @@ const LoginForm = () => {
             setTimeoutExceeded(false);
         }
     };
-    useEffect(() => {
-        let timer: ReturnType<typeof setTimeout>;
-        if (loading) {
-            timer = setTimeout(() => {
-                setTimeoutExceeded(true);
-            }, 5000); // 5 seconds timeout
-        }
-        return () => {
-            clearTimeout(timer);
-        };
-    }, [loading]);
+    // useEffect(() => {
+    //     let timer: ReturnType<typeof setTimeout>;
+    //     if (loading) {
+    //         timer = setTimeout(() => {
+    //             setTimeoutExceeded(true);
+    //         }, 5000); // 5 seconds timeout
+    //     }
+    //     return () => {
+    //         clearTimeout(timer);
+    //     };
+    // }, [loading]);
 
     return (
         <>
