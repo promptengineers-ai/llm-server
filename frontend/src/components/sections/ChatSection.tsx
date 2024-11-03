@@ -364,8 +364,8 @@ export default function ChatSection() {
             </form>
             <div className="relative px-2 py-2 text-center text-[11px] text-secondary-100 bg-white">
                 <span>
-                    ChatGPT can make mistakes. Check but verify.
-                    {version && <span className="ml-2">
+                    AI can make mistakes. Verify your results.
+                    {version && <span className="ml-1">
                         {version.split('.').length > 1 ? `v${version}` : `Commit: ${version}`}
                     </span>}
                 </span>
