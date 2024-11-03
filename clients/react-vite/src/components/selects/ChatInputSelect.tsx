@@ -24,12 +24,12 @@ const ChatInputSelect: React.FC = () => {
     const toggleMenu = (e?: any) => {
         if (e) e.preventDefault();
         !isMenuOpen
-            ? adjustHeight(
+            ? adjustHeight && adjustHeight(
                   isMobile() && chatPayload.model in multiModalModels
                       ? "170px"
                       : "145px"
               )
-            : adjustHeight();
+            : adjustHeight && adjustHeight();
         setIsMenuOpen(!isMenuOpen);
     };
 

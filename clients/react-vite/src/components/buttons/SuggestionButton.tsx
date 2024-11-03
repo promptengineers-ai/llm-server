@@ -10,7 +10,9 @@ export default function SuggestionButton({ title, description }: { title: string
             }}
             onClick={(e) => {
                 e.preventDefault();
-                setUserInput(description);
+                if (setUserInput && typeof setUserInput === 'function') {
+                    setUserInput(description);
+                }
             }}
         >
             <button className="btn relative btn-neutral group w-full whitespace-nowrap rounded-xl text-left text-gray-700 dark:text-gray-300 md:whitespace-normal border-solid border-2 border-secondary-outline-dark">

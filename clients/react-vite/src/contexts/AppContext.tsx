@@ -14,7 +14,7 @@ interface AppContextType {
     isMobile: () => boolean;
 }
 
-const AppContext = createContext<AppContextType | undefined>(undefined);
+const AppContext = createContext<AppContextType | undefined | any>(undefined);
 
 export default function AppProvider({ children }: IContextProvider) {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);

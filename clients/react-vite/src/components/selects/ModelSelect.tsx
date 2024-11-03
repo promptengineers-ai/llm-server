@@ -100,7 +100,7 @@ const ModelSelect: React.FC = () => {
                     tabIndex={-1}
                 >
                     <div className="py-1" role="none">
-                        {models.filter((model: LLM) => !model.embedding).map((model: LLM) => (
+                        {models?.filter((model: LLM) => !model.embedding).map((model: LLM) => (
                             <a
                                 key={model.model_name}
                                 href="#"

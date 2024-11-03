@@ -7,7 +7,7 @@ const secondaryColor = "#e0e0e0";
 const tertiaryColor = "#ffffff";
 
 // Use import.meta.env instead of process.env
-const logo = import.meta.env.VITE_LOGO_URL || "/logo.png";
+const logo = import.meta.env.VITE_LOGO_URL || "/icons/512.png";
 
 export default {
     button: {

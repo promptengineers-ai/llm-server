@@ -1,9 +1,10 @@
 import TopNav from "@/components/nav/TopNav";
 import ChatSection from "@/components/sections/ChatSection";
 import SideSection from "@/components/sections/SideSection";
+import ModelSelect from "@/components/selects/ModelSelect";
 import { useChatContext } from "@/contexts/ChatContext";
 import { withAuth } from "@/middleware/AuthMiddleware";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MdOutlineArrowBackIosNew, MdOutlineArrowForwardIos } from "react-icons/md";
 import HomeSection from "@/components/sections/HomeSection";
 import MessageSection from "@/components/sections/MessageSection";
@@ -28,42 +29,176 @@ const useDefaultOpenState = () => {
     return { isOpen, setIsOpen };
 };
 
-function Chat() {
+const mobileFixedBottomStyle: React.CSSProperties = {
+    position: "fixed",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: "100%",
+};
+
+const Chat = () => {
+    const messagesContainerRef = useRef<null | HTMLDivElement>(null);
+    const [isUserScrolledUp, setIsUserScrolledUp] = useState(false);
+    const [showScrollButton, setShowScrollButton] = useState(false);
     const { isOpen, setIsOpen } = useDefaultOpenState();
-    const { messages, selectedConversation } = useChatContext();
-    const { isDrawerOpen } = useAppContext();
+    const { isMobile } = useAppContext();
+    const { messages, fetchChats, expand, selectedDocument, chatPayload } = useChatContext();
+
+    const toggleSideSection = () => setIsOpen(!isOpen);
+
+    const handleScroll = () => {
+        const element = messagesContainerRef.current;
+        if (!element) return;
+        const isCloseToBottom =
+            element.scrollHeight - element.scrollTop <=
+            element.clientHeight + 100;
+        setIsUserScrolledUp(!isCloseToBottom);
+    };
+
+    const scrollToBottom = () => {
+        const element = messagesContainerRef.current;
+        if (element) {
+            element.scrollTo({
+                top: element.scrollHeight,
+                // behavior: "smooth",
+            });
+            setIsUserScrolledUp(false);
+        }
+    };
+
+    useEffect(() => {
+        setShowScrollButton(isUserScrolledUp);
+    }, [isUserScrolledUp]);
+
+    useEffect(() => {
+        const element = messagesContainerRef.current;
+        if (element) {
+            element.addEventListener("scroll", handleScroll);
+            return () => element.removeEventListener("scroll", handleScroll);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (messagesContainerRef.current && !isUserScrolledUp) {
+            scrollToBottom();
+        }
+    }, [messages, isUserScrolledUp]);
+
+    useEffect(() => {
+        if (fetchChats) {
+            fetchChats();
+        }
+    }, []);
 
     return (
-        <div className="flex h-screen flex-col">
-            <TopNav />
-            
-            <div className="flex flex-1 overflow-hidden pt-[57px]">
-                {/* Side Panel */}
-                <SideSection isOpen={false} />
+        <main className="overflow w-full h-svh relative flex z-0">
+            <SideSection isOpen={isOpen} />
+            {!isMobile() ? (
+                <>
+                    {/* <div
+                        style={{
+                            position: "absolute",
+                            top: 20,
+                            right: 20,
+                            zIndex: 1000,
+                        }}
+                    >
+                        <ToggleThemeButton />
+                    </div> */}
 
-                {/* Main Content */}
-                <main className={`flex-1 overflow-hidden transition-all duration-200 ${isDrawerOpen ? 'md:pl-64' : ''}`}>
-                    <div className="relative h-full w-full transition-width">
-                        {messages.length === 0 && !selectedConversation ? (
-                            <HomeSection />
+                    <button onClick={toggleSideSection}>
+                        {isOpen ? (
+                            <MdOutlineArrowBackIosNew />
                         ) : (
-                            <div className="flex h-full flex-col">
-                                <MessageSection />
-                                <ChatSection />
-                            </div>
+                            <MdOutlineArrowForwardIos />
                         )}
+                    </button>
+                </>
+            ) : (
+                <TopNav />
+            )}
+            {!isMobile() && expand && selectedDocument && (
+                <div className="w-4/6 flex flex-col">
+                    <DocumentSection
+                        expand={true}
+                        document={selectedDocument.src}
+                        style={{ background: "#fff" }}
+                    />
+                </div>
+            )}
+            <div
+                className={
+                    expand && selectedDocument
+                        ? "w-2/6 flex flex-col"
+                        : "relative flex h-full max-w-full flex-1 flex-col overflow-hidden"
+                }
+            >
+                <div className="relative h-full w-full flex-1 overflow-auto transition-width">
+                    <div
+                        role="presentation"
+                        className="flex h-full flex-col position-relative"
+                    >
+                        <CustomizeModal />
+                        <WebLoaderModal />
+                        {!isMobile() && (
+                            <>
+                                <div
+                                    style={{
+                                        margin: `10px 0px 0px ${
+                                            expand ? "10px" : "0px"
+                                        }`,
+                                        top: 0,
+                                        left: 0,
+                                        position: "absolute",
+                                    }}
+                                >
+                                    <ModelSelect />
+                                </div>
+                                {chatPayload?.tools?.length > 0 && (
+                                    <div style={{ position: 'absolute', right: 0, margin: '5px 10px' }}>
+                                        <div className="text-center flex">
+                                            <div className="text-xl">
+                                                {chatPayload.tools.length}
+                                            </div>
+                                            <FaTools className="mt-[6.5px] ml-1" />
+                                        </div>
+                                        <div>
+                                            <div className="text-xs">Tools</div>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                        <div
+                            className={`flex-1 overflow-auto px-2 mt-16 ${
+                                !expand && "lg:px-48 xl:px-[27%]"
+                            } pb-[40px] md:pb-[30px] ${
+                                isMobile() && "mb-[50px]"
+                            }`}
+                            ref={messagesContainerRef}
+                        >
+                            {messages.length === 0 ? (
+                                <HomeSection />
+                            ) : (
+                                <MessageSection
+                                    showScrollButton={showScrollButton}
+                                    scrollToBottom={scrollToBottom}
+                                />
+                            )}
+                        </div>
+                        <div
+                            style={
+                                isMobile() ? mobileFixedBottomStyle : undefined
+                            }
+                        >
+                            <ChatSection />
+                        </div>
                     </div>
-                </main>
-
-                {/* Document Panel */}
-                {isOpen && <DocumentSection />}
+                </div>
             </div>
-
-            {/* Modals */}
-            <CustomizeModal />
-            <WebLoaderModal />
-        </div>
+        </main>
     );
-}
+};
 
-export default withAuth(Chat); 
+export default withAuth(Chat, () => "/chat", ["free"]);

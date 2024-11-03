@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import SubmitIcon from "@/components/icons/SubmitIcon";
 import { useChatContext } from "../../contexts/ChatContext";
 import { FcCancel } from "react-icons/fc";
@@ -136,15 +136,19 @@ export default function ChatSection() {
             resetChat();
         }
     };
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
-        adjustHeight();
+        if (textareaRef?.current) {
+            textareaRef.current.style.height = 'auto';
+            textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+        }
     }, [userInput]);
 
-    const selectedFiles = [...images, ...files]
+    const selectedFiles = images && files ? [...images, ...files] : files || [];
     const loadingPlaceholder = () => {
         if (!loading) {
-            return files.length > 0
+            return files?.length > 0
                 ? "List 5 key takeaways..."
                 : "Acting as a expert at...";
         } else {
@@ -293,8 +297,12 @@ export default function ChatSection() {
                             )}
                             <textarea
                                 ref={chatInputRef}
-                                value={userInput}
-                                onChange={(e) => setUserInput(e.target.value)}
+                                value={userInput || ''}
+                                onChange={(e) => {
+                                    if (typeof setUserInput === 'function') {
+                                        setUserInput(e.target.value);
+                                    }
+                                }}
                                 onPaste={handlePaste}
                                 onKeyDown={handleKeyDown}
                                 id="prompt-textarea"
