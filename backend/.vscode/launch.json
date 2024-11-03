@@ -14,7 +14,7 @@
 			],
 			"jinja": true,
 			"justMyCode": false,
-			"envFile": "${workspaceFolder}/.env"
+			"envFile": "${workspaceFolder}/.env.oss",
 		},
 		{
             "name": "Debug Single Test",

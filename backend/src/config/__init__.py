@@ -1,10 +1,11 @@
 import os
+import subprocess
 import sqlalchemy as sa
 from sqlalchemy.dialects.mysql import LONGTEXT
 
 ## APP
 APP_ENV = os.environ.get("APP_ENV", "local")
-APP_VERSION = os.environ.get("APP_VERSION", "0.0.1")
+APP_VERSION = os.environ.get("APP_VERSION", subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('utf-8').strip())
 APP_SECRET = os.environ.get("APP_SECRET")
 
 APP_LOG_LEVEL = os.environ.get("APP_LOG_LEVEL", "INFO")
