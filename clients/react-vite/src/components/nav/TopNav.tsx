@@ -21,6 +21,7 @@ const TopNav: React.FC = () => {
         isDrawerOpen,
         isPopoverOpen,
         setIsPopoverOpen,
+        setIsCustomizeOpen,
     } = useAppContext();
     const { retrieveUser } = useAuthContext();
     const { chats, resetChat, chatPayload } = useChatContext();
@@ -53,7 +54,10 @@ const TopNav: React.FC = () => {
                         <ModelSelect />
                         {/* <ToggleThemeButton /> */}
                         {chatPayload.tools.length > 0 ? (
-                            <div>
+                            <button
+                                onMouseDown={() => setIsCustomizeOpen(true)}
+                                title={chatPayload.tools.map((tool: string) => tool).join(',\n')}
+                            >
                                 <div className="text-center flex">
                                     <div className="text-xl">
                                         {chatPayload.tools.length}
@@ -63,7 +67,7 @@ const TopNav: React.FC = () => {
                                 <div>
                                     <div className="text-xs">Tools</div>
                                 </div>
-                            </div>
+                            </button>
                         ) : (
                             <NewChatIcon />
                         )}

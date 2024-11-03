@@ -1,5 +1,6 @@
 import { Message } from "../types/chat";
 import { API_URL } from "@/config/app";
+import { generateRandomNumber } from "./random";
 import { EmbeddingModel, SearchProvider } from "@/types/llm";
 
 
@@ -13,6 +14,25 @@ export class Client {
     }
 }
 
+export class AuthClient extends Client {
+    
+    public async login(provider: string) {
+        try {
+            const res = await fetch(`${this.apiUrl}/auth/${provider}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const data = await res.json();
+            window.location.href = data.url;
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error: " + error);
+        }
+    }
+}
+
 export class ChatClient extends Client {
     protected controller: AbortController | null = null;
 
@@ -20,7 +40,7 @@ export class ChatClient extends Client {
         super(_apiUrl);
     }
 
-    public async createDocs(payload: { loaders: any[], task_id: string }) {
+    public async createDocs(payload: { loaders: any[]; task_id: string }) {
         try {
             const response = await fetch(`${this.apiUrl}/api/v1/documents`, {
                 method: "POST",
@@ -48,7 +68,7 @@ export class ChatClient extends Client {
         }
     }
 
-    public async createDocuments(payload: { task_id: string, data: any[] }) {
+    public async createDocuments(payload: { task_id: string; data: any[] }) {
         try {
             const response = await fetch(`${this.apiUrl}/api/v1/documents`, {
                 method: "POST",
@@ -136,6 +156,25 @@ export class ChatClient extends Client {
 
             const data = await response.json();
             return data; // This will return the response data from the server
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error: " + error);
+        }
+    }
+
+    public async listTools() {
+        try {
+            // Construct the URL with conditional query parameter
+            let url = `${this.apiUrl}/api/v1/tools`;
+            const response = await fetch(url, { 
+                method: "GET", 
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                }
+            });
+
+            const data = await response.json();
+            return data;
         } catch (error) {
             console.error("Error:", error);
             alert("Error: " + error);
@@ -250,6 +289,106 @@ export class ChatClient extends Client {
     public abortRequest() {
         if (this.controller) {
             this.controller.abort();
+        }
+    }
+}
+
+export class ToolClient extends Client {
+    constructor(_apiUrl?: string, _botId?: string, _theme?: any) {
+        super(_apiUrl);
+    }
+
+    public async list() {
+        try {
+            // Construct the URL with conditional query parameter
+            let url = `${this.apiUrl}/api/v1/tools`;
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error: " + error);
+        }
+    }
+
+    public async create(payload: any) {
+        try {
+            const response = await fetch(`${this.apiUrl}/api/v1/tools`, {
+                method: "POST",
+                headers: {
+                    accept: "application/json",
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+            return data; // This will return the response data from the server
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error: " + error);
+        }
+    }
+
+    public async find(tool: any) {
+        try {
+            const response = await fetch(
+                `${this.apiUrl}/api/v1/tools/${tool.value}`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "token"
+                        )}`,
+                    },
+                }
+            );
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error: " + error);
+        }
+    }
+
+    public async update(tool: any) {
+        try {
+            const response = await fetch(`${this.apiUrl}/api/v1/tools/${tool.name}`, {
+                method: "PUT",
+                headers: {
+                    accept: "application/json",
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify(tool),
+            });
+
+            const data = await response.json();
+            return data; // This will return the response data from the server
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error: " + error);
+        }
+    }
+
+    public async delete(tool: any) {
+        try {
+            await fetch(`${this.apiUrl}/api/v1/tools/${tool.value}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error: " + error);
         }
     }
 }

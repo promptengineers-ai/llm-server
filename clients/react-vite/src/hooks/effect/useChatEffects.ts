@@ -4,11 +4,13 @@ import { Hook, Unhook } from "console-feed";
 import { ChatPayload, LLM, Message } from "@/types/chat";
 import { logFilter } from "@/utils/log";
 import { HookedConsole } from "console-feed/lib/definitions/Console";
-import { API_URL } from "@/config/app";
+import { ChatClient } from "@/utils/api";
+
+const chatClient = new ChatClient();
 
 export const useFetchModelsEffect = (models: LLM[], fetchModels: any) => {
     useEffect(() => {
-        if (models?.length === 0) {
+        if (models.length === 0) {
             fetchModels();
         }
 
@@ -48,7 +50,7 @@ export const useUpdateMessageOnResponesEffect = (
     setMessages: any
 ) => {
     useEffect(() => {
-        response?.length &&
+        response.length &&
             setMessages((prev: Message[]) => {
                 const lastMessage = prev[prev.length - 1];
 
@@ -88,7 +90,7 @@ export const useSubmitQuestionStreamEffect = (
     submitQuestionStream: any
 ) => {
     useEffect(() => {
-        if (userInput?.length && !done) {
+        if (userInput.length && !done) {
             submitQuestionStream();
         }
 
@@ -121,9 +123,9 @@ export const usePrintActionsToLogsEffect = (
     const actionsSetRef = useRef(new Set());
 
     useEffect(() => {
-        const newActions = actions?.slice(previousActionsLengthRef.current);
+        const newActions = actions.slice(previousActionsLengthRef.current);
 
-        if (newActions?.length > 0) {
+        if (newActions.length > 0) {
             Hook(
                 window.console as HookedConsole,
                 (log: any) => {
@@ -169,9 +171,8 @@ export const useFetchToolsEffect = (setTools: any) => {
     useEffect(() => {
         const fetchTools = async () => {
             try {
-                const response = await fetch(`${API_URL}/tools`);
-                const data = await response.json();
-                setTools(data.tools);
+                const res = await chatClient.listTools();
+                setTools(res.tools);
             } catch (error) {
                 console.error("Error fetching tools:", error);
             }

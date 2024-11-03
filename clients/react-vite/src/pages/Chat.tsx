@@ -13,6 +13,7 @@ import { useAppContext } from "@/contexts/AppContext";
 import CustomizeModal from "@/components/dialog/CustomizeModal";
 import { FaTools } from "react-icons/fa";
 import WebLoaderModal from "@/components/dialog/WebLoaderModal";
+import NewToolModal from "@/components/dialog/NewToolModal";
 
 const useDefaultOpenState = () => {
     const isClient = typeof window === "object";
@@ -42,7 +43,7 @@ const Chat = () => {
     const [isUserScrolledUp, setIsUserScrolledUp] = useState(false);
     const [showScrollButton, setShowScrollButton] = useState(false);
     const { isOpen, setIsOpen } = useDefaultOpenState();
-    const { isMobile } = useAppContext();
+    const { isMobile, setIsCustomizeOpen } = useAppContext();
     const { messages, fetchChats, expand, selectedDocument, chatPayload } = useChatContext();
 
     if (!messages || !fetchChats || expand === undefined || !chatPayload) {
@@ -143,6 +144,7 @@ const Chat = () => {
                     >
                         <CustomizeModal />
                         <WebLoaderModal />
+                        <NewToolModal />
                         {!isMobile() && (
                             <>
                                 <div
@@ -157,8 +159,16 @@ const Chat = () => {
                                 >
                                     <ModelSelect />
                                 </div>
-                                {chatPayload?.tools?.length > 0 && (
-                                    <div style={{ position: 'absolute', right: 0, margin: '5px 10px' }}>
+                                {chatPayload.tools.length > 0 && (
+                                    <button
+                                        style={{
+                                            position: "absolute",
+                                            right: 0,
+                                            margin: "5px 10px",
+                                        }}
+                                        onMouseDown={() => setIsCustomizeOpen(true)}
+                                        title={chatPayload.tools.map((tool: string) => tool).join(',\n')}
+                                    >
                                         <div className="text-center flex">
                                             <div className="text-xl">
                                                 {chatPayload.tools.length}
@@ -168,7 +178,7 @@ const Chat = () => {
                                         <div>
                                             <div className="text-xs">Tools</div>
                                         </div>
-                                    </div>
+                                    </button>
                                 )}
                             </>
                         )}

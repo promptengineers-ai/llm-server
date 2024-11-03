@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAppContext } from "@/contexts/AppContext";
 import { useChatContext } from "@/contexts/ChatContext";
 import {
@@ -15,8 +16,13 @@ import { useFetchIndexesEffect, useFetchToolsEffect, useUpdateInitChatPayloadEff
 import ToolList from "../lists/ToolList";
 
 const CustomizeModal = () => {
-    const { isOpen, setIsOpen, setIsPopoverOpen, setIsDrawerOpen } =
-        useAppContext();
+    const {
+        isCustomizeOpen,
+        setIsCustomizeOpen,
+        setIsPopoverOpen,
+        setIsDrawerOpen,
+        setIsNewToolOpen,
+    } = useAppContext();
     const {
         chatPayload,
         setChatPayload,
@@ -27,12 +33,13 @@ const CustomizeModal = () => {
         setTools,
         fetchIndexes,
     } = useChatContext();
+    const [selectedIndex, setSelectedIndex] = useState(0);
 
     useUpdateInitChatPayloadEffect(setInitChatPayload);
     useFetchToolsEffect(setTools);
     useFetchIndexesEffect(initChatPayload.retrieval.provider, fetchIndexes);
 
-    if (!isOpen) {
+    if (!isCustomizeOpen) {
         return null;
     }
 
@@ -59,7 +66,10 @@ const CustomizeModal = () => {
                             </div>
                         </div>
                         <div className="flex-grow overflow-y-auto p-4">
-                            <TabGroup>
+                            <TabGroup
+                                selectedIndex={selectedIndex}
+                                onChange={setSelectedIndex}
+                            >
                                 <TabList className="flex gap-2">
                                     <Tab className="rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
                                         Instructions
@@ -119,11 +129,11 @@ const CustomizeModal = () => {
                                                 "Are you sure you want to exit? Any changes you made will be permanently lost."
                                             );
                                         } else {
-                                            setIsOpen(false);
+                                            setIsCustomizeOpen(false);
                                             setIsDrawerOpen(true);
                                         }
                                         if (confirmCancel) {
-                                            setIsOpen(false);
+                                            setIsCustomizeOpen(false);
                                             setIsDrawerOpen(true);
                                             setInitChatPayload(
                                                 (prev: ChatPayload) => ({
@@ -143,7 +153,7 @@ const CustomizeModal = () => {
                                             ...prev,
                                             ...initChatPayload,
                                         }));
-                                        setIsOpen(false);
+                                        setIsCustomizeOpen(false);
                                         setIsPopoverOpen(false);
                                     }}
                                     className={`px-4 py-2 rounded-3xl ${
@@ -155,6 +165,18 @@ const CustomizeModal = () => {
                                 >
                                     Save
                                 </button>
+
+                                {selectedIndex === 2 && (
+                                    <button 
+                                        className="ml-auto px-4 py-2 rounded-3xl bg-black text-white" 
+                                        onClick={() => {
+                                            setIsCustomizeOpen(false);
+                                            setIsNewToolOpen(true);
+                                        }}
+                                    >
+                                        New Tool
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </DialogPanel>
