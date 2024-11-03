@@ -16,18 +16,57 @@ import EndpointForm from "../forms/tools/EndpointForm";
 import ArgsDataGrid from "../forms/tools/ArgDataGrid";
 import { useToolContext } from "@/contexts/ToolContext";
 import { initToolState } from "@/hooks/state/useToolState";
+import { useState } from "react";
 
 const NewToolModal = () => {
     const { tool, updateToolState, createTool, updateTool, toolEqual } =
         useToolContext();
     const { isNewToolOpen, setIsNewToolOpen, setIsOpen, setIsCustomizeOpen } =
         useAppContext();
+    const [jsonError, setJsonError] = useState<string | null>(null);
+    const [jsonContent, setJsonContent] = useState<string>('');
 
     if (!isNewToolOpen) {
         return null;
     }
 
     const action = tool.id ? "Update" : "Create";
+
+    const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const jsonStr = e.target.value;
+        setJsonContent(jsonStr);
+
+        try {
+            if (!jsonStr.trim()) {
+                setJsonError(null);
+                return;
+            }
+
+            const config = JSON.parse(jsonStr);
+            
+            // Validate required fields
+            if (!config.name || !config.description || !config.method || !config.url) {
+                setJsonError("Missing required fields: name, description, method, and url are required");
+                return;
+            }
+
+            // Update the entire tool state with the parsed configuration
+            updateToolState({
+                name: config.name,
+                description: config.description,
+                link: config.link || "",
+                method: config.method,
+                toolkit: config.toolkit || "API",
+                url: config.url,
+                headers: config.headers || {},
+                args: config.args || {},
+            });
+
+            setJsonError(null);
+        } catch (error) {
+            setJsonError("Invalid JSON format");
+        }
+    };
 
     return (
         <div
@@ -53,21 +92,24 @@ const NewToolModal = () => {
                         </div>
                         <div className="flex-grow p-4">
                             <TabGroup>
-                                <TabList className="flex gap-2">
-                                    <Tab className="rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
+                                <TabList className="flex gap-2 overflow-x-auto pb-2">
+                                    <Tab className="rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white whitespace-nowrap">
                                         Details
                                     </Tab>
-                                    <Tab className="disabled:opacity-50 rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
+                                    <Tab className="disabled:opacity-50 rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white whitespace-nowrap">
                                         Endpoint
                                     </Tab>
-                                    <Tab className="disabled:opacity-50 rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
+                                    <Tab className="disabled:opacity-50 rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white whitespace-nowrap">
                                         Headers
                                     </Tab>
-                                    <Tab className="disabled:opacity-50 rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white">
+                                    <Tab className="disabled:opacity-50 rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white whitespace-nowrap">
                                         Arguments
                                     </Tab>
+                                    <Tab className="rounded-full py-1 px-3 text-sm/6 font-semibold focus:outline-none data-[selected]:bg-black/10 data-[hover]:bg-black/5 data-[selected]:data-[hover]:bg-black/10 data-[focus]:outline-1 data-[focus]:outline-white whitespace-nowrap">
+                                        JSON
+                                    </Tab>
                                 </TabList>
-                                <div className="max-h-[60vh] overflow-y-auto md:max-h-[calc(100vh-300px)]">
+                                <div className="max-h-[60vh] overflow-y-auto md:max-h-[calc(100vh-300px)] min-h-[200px]">
                                     <TabPanels className={"mt-3"}>
                                         <TabPanel>
                                             <ToolDetailsForm />
@@ -111,6 +153,50 @@ const NewToolModal = () => {
                                                 </Field>
                                             </Fieldset>
                                         </TabPanel>
+                                        <TabPanel>
+                                            <Fieldset className={"mb-2"}>
+                                                <Field className={"border rounded-md p-2"}>
+                                                    <label className="font-semibold">JSON Configuration</label>
+                                                    <p className="mt-1 mb-1 text-xs">
+                                                        Paste your tool configuration JSON here
+                                                    </p>
+                                                    <textarea
+                                                        className={`w-full h-48 p-2 border rounded-md font-mono text-sm ${
+                                                            jsonError ? 'border-red-500' : ''
+                                                        }`}
+                                                        placeholder={`{
+  "name": "Tool Name",
+  "description": "Tool Description",
+  "link": "https://docs.example.com",
+  "method": "GET",
+  "toolkit": "API",
+  "url": "https://api.example.com",
+  "headers": {
+    "Authorization": {
+      "value": "Bearer token",
+      "encrypted": true
+    }
+  },
+  "args": {
+    "param1": {
+      "description": "Parameter description",
+      "type": "str",
+      "default": "",
+      "required": true
+    }
+  }
+}`}
+                                                        value={jsonContent}
+                                                        onChange={handleJsonChange}
+                                                    />
+                                                    {jsonError && (
+                                                        <p className="text-red-500 text-xs mt-1">
+                                                            {jsonError}
+                                                        </p>
+                                                    )}
+                                                </Field>
+                                            </Fieldset>
+                                        </TabPanel>
                                     </TabPanels>
                                 </div>
                             </TabGroup>
@@ -121,6 +207,8 @@ const NewToolModal = () => {
                                         setIsNewToolOpen(false);
                                         setIsCustomizeOpen(true);
                                         updateToolState(initToolState.tool);
+                                        setJsonContent('');
+                                        setJsonError(null);
                                     }}
                                 >
                                     Cancel
