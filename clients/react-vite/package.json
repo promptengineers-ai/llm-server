@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "public": "rm -rf ../../backend/src/public && mv dist ../../backend/src/public",
-    "build": "tsc -b && vite build && npm run public",
+    "deploy": "tsc -b && vite build && npm run public",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
