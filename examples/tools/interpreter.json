@@ -1,0 +1,63 @@
+[
+    {
+        "name": "install_packages",
+        "description": "Installs specified packages in a session environment.",
+        "link": "",
+        "toolkit": "Interpreter",
+        "url": "http://localhost:8001/install",
+        "method": "POST",
+        "args": {
+            "session_id": {
+                "description": "The session ID for the installation context.",
+                "type": "str",
+                "required": true
+            },
+            "packages": {
+                "description": "List of packages to install.",
+                "type": "list",
+                "required": true
+            }
+        }
+    },
+    {
+        "name": "run_code",
+        "description": "Executes code within a specified session environment.",
+        "link": "",
+        "toolkit": "Interpreter",
+        "url": "http://localhost:8001/execute",
+        "method": "POST",
+        "args": {
+            "session_id": {
+                "description": "The session ID in which code is executed.",
+                "type": "str",
+                "required": true
+            },
+            "code": {
+                "description": "The code to execute.",
+                "type": "str",
+                "required": true
+            },
+            "env": {
+                "description": "Environment variables to set for the code execution.",
+                "type": "dict",
+                "default": {},
+                "required": false
+            }
+        }
+    },
+    {
+        "name": "terminate_session",
+        "description": "Terminates a specified session.",
+        "link": "",
+        "toolkit": "Interpreter",
+        "url": "http://localhost:8001/terminate",
+        "method": "POST",
+        "args": {
+            "session_id": {
+                "description": "The session ID to terminate.",
+                "type": "str",
+                "required": true
+            }
+        }
+    }
+]

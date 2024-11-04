@@ -58,6 +58,21 @@ services:
     env_file:
       - ./backend/.env
 
+  # Code Interpreter
+  interpreter:
+    container_name: interpreter
+    restart: unless-stopped
+    image: promptengineers/interpreter:latest
+    ports:
+      - "8888:8888"
+      - "8001:8000"
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - PYTHONPATH=/home/jovyan
+    entrypoint: ["sh", "-c", "start-notebook.sh --NotebookApp.token='' & uvicorn api:app --host 0.0.0.0 --port 8000"]
+    volumes:
+      - ./uploads:/tmp
+
   # # SearXNG
   # searxng:
   #   image: searxng/searxng
