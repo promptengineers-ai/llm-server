@@ -9,3 +9,4 @@ alembic.ini
 vercel.json
 data/
 public/
+.cursor*
