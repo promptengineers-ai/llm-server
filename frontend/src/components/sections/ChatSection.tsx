@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import SubmitIcon from "../icons/SubmitIcon";
-import { useChatContext } from "../../../../clients/react-vite/src/contexts/ChatContext";
+import { useChatContext } from "@/contexts/ChatContext";
 import { FcCancel } from "react-icons/fc";
 import { FaStop } from "react-icons/fa";
-import SuggestionButton from "../../../../clients/react-vite/src/components/buttons/SuggestionButton";
+import SuggestionButton from "@/components/buttons/SuggestionButton";
 import ChatInputSelect from "../selects/ChatInputSelect";
 import { multiModalModels } from "@/types/llm";
 import DocumentIcon from "../icons/DocumentIcon";

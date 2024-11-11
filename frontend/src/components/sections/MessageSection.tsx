@@ -2,7 +2,7 @@ import { useChatContext } from "@/contexts/ChatContext";
 import ViewImagesSection from "./ViewImageSection";
 import DocumentSection from "./DocumentSection";
 import CsvSection from "./CsvSection";
-import ScrollToBottomButton from "../../../../clients/react-vite/src/components/buttons/ScrollToBottomButton";
+import ScrollToBottomButton from "@/components/buttons/ScrollToBottomButton";
 import { useAppContext } from "@/contexts/AppContext";
 
 
