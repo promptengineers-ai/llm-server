@@ -3,7 +3,7 @@ import {
     DisclosureButton,
     DisclosurePanel,
 } from "@headlessui/react";
-import { FaChevronDown } from "react-icons/fa";
+import { FaChevronDown, FaCheck, FaTimes } from "react-icons/fa";
 import { useChatContext } from "@/contexts/ChatContext";
 import { Tool } from "@/types/chat";
 import { useEffect } from "react";
@@ -62,10 +62,48 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
         }
     }, [setInitChatPayload]);
 
+    const enabledCount = tools.filter(tool => 
+        initChatPayload.tools.includes(tool.value)
+    ).length;
+
+    const toggleAllTools = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setInitChatPayload((prevPayload: any) => {
+            const otherTools = prevPayload.tools.filter(
+                (tool: string) => !tools.some(groupTool => groupTool.value === tool)
+            );
+            
+            const updatedTools = enabledCount === tools.length
+                ? otherTools  // Deselect all in group
+                : [...otherTools, ...tools.map(tool => tool.value)];  // Select all in group
+            
+            sessionStorage.setItem("tools", JSON.stringify(updatedTools));
+            
+            return {
+                ...prevPayload,
+                tools: updatedTools,
+            };
+        });
+    };
+
     return (
         <Disclosure as="div" className="border rounded-md w-full">
             <DisclosureButton className="group flex items-center justify-between p-3 w-full">
-                <label className="font-semibold mr-3">{title}</label>
+                <div className="flex items-center">
+                    <label className="font-semibold mr-3">{title}</label>
+                    <span className="text-sm text-gray-500">({enabledCount} enabled)</span>
+                    <button
+                        onClick={toggleAllTools}
+                        className="ml-2 p-1 hover:bg-gray-200 rounded-full transition-colors"
+                        title={enabledCount === tools.length ? "Deselect all tools in this group" : "Select all tools in this group"}
+                    >
+                        {enabledCount === tools.length ? (
+                            <FaTimes size={12} />
+                        ) : (
+                            <FaCheck size={12} />
+                        )}
+                    </button>
+                </div>
                 <FaChevronDown
                     size={12}
                     className="group-data-[open]:rotate-180 mr-1"
@@ -76,7 +114,12 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                     {tools.map((tool, index) => (
                         <li
                             key={index}
-                            className="border p-3 rounded-md shadow-sm bg-white flex flex-col justify-between relative group"
+                            onClick={() => toggleTool(tool.value)}
+                            className={`border p-3 rounded-md shadow-sm flex flex-col justify-between relative group cursor-pointer transition-colors ${
+                                initChatPayload.tools.includes(tool.value)
+                                    ? "bg-gray-200"
+                                    : "bg-white"
+                            }`}
                         >
                             <div>
                                 <div className="font-bold">
@@ -84,6 +127,7 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                                         href={tool.link}
                                         target="_blank"
                                         className="text-blue-500 underline"
+                                        onClick={(e) => e.stopPropagation()}
                                     >
                                         {tool.name}
                                     </a>
@@ -92,26 +136,19 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                                     {tool.description}
                                 </div>
                             </div>
-                            <div className="flex items-center justify-between mt-2">
-                                <input
-                                    type="checkbox"
-                                    checked={initChatPayload.tools.includes(
-                                        tool.value
-                                    )}
-                                    className="mr-2"
-                                    onChange={() => toggleTool(tool.value)}
-                                />
-                                
-                                {tool.id && (
+                            {tool.id && (
+                                <div className="flex justify-end mt-2">
                                     <div className="flex space-x-2">
                                         <button
                                             className="hover:text-blue-500"
-                                            onClick={async () => {
+                                            onClick={(e) => {
+                                                e.stopPropagation();
                                                 setIsCustomizeOpen(false);
                                                 setIsNewToolOpen(true);
-                                                const item = await toolClient.find(tool)
-                                                updateToolState(item.tool);
-                                                setInitTool(item.tool);
+                                                toolClient.find(tool).then((item) => {
+                                                    updateToolState(item.tool);
+                                                    setInitTool(item.tool);
+                                                });
                                             }}
                                             title="Edit tool"
                                         >
@@ -119,17 +156,17 @@ const ToolDisclosure = ({ title, tools }: { title: string; tools: Tool[] }) => {
                                         </button>
                                         <button
                                             className="hover:text-red-700"
-                                            onClick={async () =>
-                                                handleDeleteClick(tool)
-                                            }
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteClick(tool);
+                                            }}
                                             title="Delete tool"
                                         >
                                             <TrashIcon />
                                         </button>
                                     </div>
-                                )}
-                            
-                            </div>
+                                </div>
+                            )}
                         </li>
                     ))}
                 </ul>
